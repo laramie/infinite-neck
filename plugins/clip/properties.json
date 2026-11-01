@@ -37,6 +37,24 @@
     "visibleInMenu": false
   },
   {
+    "name": "midiPasteMapId",
+    "caption": "midi paste map",
+    "trigger": "m",
+    "datatype": "String",
+    "value": "",
+    "defaultValue": "",
+    "visibleInMenu": false
+  },
+  {
+    "name": "midiPasteUserMaps",
+    "caption": "midi paste maps (yours)",
+    "trigger": "",
+    "datatype": "org.dynamide.ObjectArray",
+    "value": [],
+    "defaultValue": [],
+    "visibleInMenu": false
+  },
+  {
     "name": "includeNamed",
     "caption": "named",
     "trigger": "n",

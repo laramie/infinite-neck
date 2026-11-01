@@ -5,6 +5,20 @@ import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHel
 import { getSong } from '../../infinite-neck.js';
 import { GraveType } from '../../graveyard.js';
 import { Note } from '../../Note.js';
+import EventBus from '../../event-bus.js';
+import { allTunings } from '../../tunings.js';
+import {
+  MAP_CHOICE_TRIGGERS,
+  MAX_USER_MAPS,
+  applyStringMap,
+  findMapIgnoringCase,
+  listMidiPasteMaps,
+  normalizeMapId,
+  parseAddInput,
+  parseMapSpec,
+  prepareStringPairs,
+  resolveMidiPasteMap
+} from './midiPasteMaps.js';
 import {
   TARGET_TABLE_OPTION_LIMIT,
   canMidiPasteBetweenTunings,
@@ -84,6 +98,23 @@ function arraysEqual(left = [], right = []) {
 
 function valuesEqual(leftValue, rightValue) {
   return JSON.stringify(leftValue) === JSON.stringify(rightValue);
+}
+
+function escapeHtml(value) {
+  return `${value ?? ''}`
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function tuningStringCount(tuning) {
+  const explicit = toInteger(tuning?.nStrings, 0);
+  if (explicit > 0) {
+    return explicit;
+  }
+  return Array.isArray(tuning?.rowRange) ? tuning.rowRange.length : 0;
 }
 
 function getMaxRecordedCol(payload) {
@@ -249,6 +280,7 @@ export class ClipPlugin {
       this.buildReviveMenuNode(song),
       this.buildMidiPasteMenuNode(song),
       this.buildCopyMenuNode('copyListenedToGraveyard', 'L copy Listened notes', 'L', 'defaultListenerClipName'),
+      this.buildMidiPasteMapMenuNode(),
       this.getProperty('automatic').getMenuNodeSpec(this),
       this.getProperty('overwrite').getMenuNodeSpec(this),
       this.buildIncludeMenuNode(song),
@@ -347,6 +379,115 @@ export class ClipPlugin {
   buildMidiPasteChoicePreviewNodes(song = getSong()) {
     const records = this.getMidiPasteClipRecords(song);
     return this.buildChoicePreviewNodes(records, 'midi-paste');
+  }
+
+  buildMidiPasteMapMenuNode() {
+    return new MenuItemProxy(this, {
+      name: 'midiPasteMap',
+      caption: buildCaption('midi paste map', 'm'),
+      trigger: 'm',
+      children: [
+        this.buildMidiPasteMapSelectNode(),
+        new MenuItemProxy(this, {
+          name: 'midiPasteMapAdd',
+          caption: buildCaption('add', 'a'),
+          trigger: 'a',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'addMidiPasteMap',
+          popOnBang: true,
+          input: {
+            type: 'input',
+            caption: '"id" 1:2, 3:4',
+            datatype: 'string',
+            id: 'value'
+          }
+        }),
+        this.buildMidiPasteMapDeleteNode(),
+        new MenuItemProxy(this, {
+          name: 'midiPasteMapList',
+          caption: buildCaption('list', 'l'),
+          trigger: 'l',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'listMidiPasteMaps',
+          popOnBang: false
+        })
+      ]
+    });
+  }
+
+  buildMidiPasteMapSelectNode() {
+    const token = `plugin:${this.id}:midiPasteMapId`;
+    const activeId = this.getActiveMidiPasteMapId();
+    const choices = listMidiPasteMaps(this.getUserMidiPasteMaps())
+      .slice(0, MAP_CHOICE_TRIGGERS.length)
+      .map((map, index) => new MenuItemProxy(this, {
+        name: `midiPasteMapSelect:${map.id}`,
+        caption: `<b>${MAP_CHOICE_TRIGGERS[index]}</b>) ${escapeHtml(map.id)}${map.id === activeId ? ' &#x2713;' : ''}`,
+        trigger: MAP_CHOICE_TRIGGERS[index],
+        action: 'pluginAction:invoke',
+        pluginId: this.id,
+        actionName: `selectMidiPasteMap:${encodeURIComponent(map.id)}`,
+        popOnBang: true
+      }));
+    choices.push(new MenuItemProxy(this, {
+      name: 'midiPasteMapSelect:none',
+      caption: buildCaption('none', 'n'),
+      trigger: 'n',
+      action: 'pluginAction:invoke',
+      pluginId: this.id,
+      actionName: 'selectMidiPasteMap:',
+      popOnBang: true
+    }));
+    return new MenuItemProxy(this, {
+      name: 'midiPasteMapSelect',
+      caption: `${buildCaption('map', 'm')} [${buildValueReference(token)}]`,
+      trigger: 'm',
+      vars: [token],
+      children: choices
+    });
+  }
+
+  buildMidiPasteMapDeleteNode() {
+    const userMaps = this.getUserMidiPasteMaps().slice(0, MAP_CHOICE_TRIGGERS.length);
+    const children = userMaps.length > 0
+      ? userMaps.map((map, index) => new MenuItemProxy(this, {
+        name: `midiPasteMapDelete:${map.id}`,
+        caption: `<b>${MAP_CHOICE_TRIGGERS[index]}</b>) ${escapeHtml(map.id)}`,
+        trigger: MAP_CHOICE_TRIGGERS[index],
+        children: [
+          new MenuItemProxy(this, {
+            name: `midiPasteMapDeleteYes:${map.id}`,
+            caption: `<b>Y</b>es: delete ${escapeHtml(map.id)}`,
+            trigger: 'Y',
+            action: 'pluginAction:invoke',
+            pluginId: this.id,
+            actionName: `deleteMidiPasteMap:${encodeURIComponent(map.id)}`,
+            popOnBang: true
+          }),
+          new MenuItemProxy(this, {
+            name: `midiPasteMapDeleteNo:${map.id}`,
+            caption: '<b>n</b>o: keep map',
+            trigger: 'n',
+            action: 'pluginAction:invoke',
+            pluginId: this.id,
+            actionName: 'keepMidiPasteMap',
+            popOnBang: true
+          })
+        ]
+      }))
+      : [new MenuItemProxy(this, {
+        name: 'midiPasteMapDelete:none',
+        caption: 'no maps of your own',
+        trigger: ''
+      })];
+    return new MenuItemProxy(this, {
+      name: 'midiPasteMapDelete',
+      caption: buildCaption('delete', 'd'),
+      trigger: 'd',
+      children
+    });
   }
 
   buildChoicePreviewNodes(records = [], prefix = 'clip') {
@@ -475,8 +616,18 @@ export class ClipPlugin {
       if (!property || property.datatype === 'org.dynamide.Action') {
         return;
       }
+      if (name === 'midiPasteUserMaps' || name === 'midiPasteMapId') {
+        // A damaged stored map must never block opening the Song.
+        try {
+          this.setPropertyValue(name, value, context);
+        } catch (error) {
+          this.emitUserLogMessage(`MIDI Paste map data "${escapeHtml(name)}" ignored: ${escapeHtml(error.message)}`);
+        }
+        return;
+      }
       this.setPropertyValue(name, value, context);
     });
+    this.sanitizeMidiPasteMapState();
     this.refreshDynamicPropertyOptions(context.song || getSong());
   }
 
@@ -522,6 +673,9 @@ export class ClipPlugin {
     }
     if (fieldName === 'defaultMidiPasteChoice') {
       return this.getMidiPasteClipRecords(song).length > 0 ? '1' : '';
+    }
+    if (fieldName === 'midiPasteMapId') {
+      return escapeHtml(this.getActiveMidiPasteMapId() || 'none');
     }
     if (fieldName === 'recordedStatus') {
       return this.buildRecordedStatus(song);
@@ -572,6 +726,12 @@ export class ClipPlugin {
         return this.pasteRecordedNotes(song, 'flatten');
       case 'clearClips':
         return this.clearClips(song);
+      case 'addMidiPasteMap':
+        return this.addMidiPasteMap(context.args?.value);
+      case 'listMidiPasteMaps':
+        return this.listMidiPasteMapsMessage();
+      case 'keepMidiPasteMap':
+        return { result: 'MIDI Paste map kept' };
       case 'help':
         return {
           result: 'Clip help shown',
@@ -583,6 +743,12 @@ export class ClipPlugin {
         }
         if (actionName === 'midiPasteClipChoice') {
           return this.midiPasteClipChoice(song, context.args?.value);
+        }
+        if (actionName.startsWith('selectMidiPasteMap:')) {
+          return this.selectMidiPasteMap(decodeURIComponent(actionName.slice('selectMidiPasteMap:'.length)));
+        }
+        if (actionName.startsWith('deleteMidiPasteMap:')) {
+          return this.deleteMidiPasteMap(decodeURIComponent(actionName.slice('deleteMidiPasteMap:'.length)));
         }
         if (actionName.startsWith('reviveClip:')) {
           return this.reviveClip(song, actionName.slice('reviveClip:'.length));
@@ -613,7 +779,8 @@ Copies, cuts, and revives clip records for the current section and selected tabl
 - supported played-note lanes include Single, Tiny, Bend, and optional Fingering
 - cut removes only the included note lanes from the current section/table
 - revive merges into the current section/table and drops out-of-range played notes
-- MIDI Paste remaps played notes by MIDI on the same string for supported 6-string guitars
+- MIDI Paste remaps played notes by MIDI. With no map selected it keeps the same string and works between 6-string guitars; with a midi paste map selected (m) it moves notes between the strings the map names, 1-based, string 1 at the top
+- midi paste map = ${escapeHtml(this.getActiveMidiPasteMapId() || 'none')}; maps look like 1:1, 2:2 (source:dest), strings left out are skipped, and the reverse of A &gt; B is inferred
 - Listener Copy captures listened-to model notes for true Listener tables only, ignores Observers, and projects played notes by row plus MIDI into the selected listener table before clipping
 
 ${buildPluginEventsHelpFooter(this)}</pre>`;
@@ -1000,7 +1167,16 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     };
   }
 
-  mapRecordedSourceBeatsForMidiPaste(sourceBeats, sourceTuning, targetTuning) {
+  mapRecordedSourceBeatsForMidiPaste(sourceBeats, sourceTuning, targetTuning, resolvedMap = null) {
+    if (resolvedMap) {
+      const run = this.startStringMapRun(sourceTuning, targetTuning, resolvedMap);
+      const mappedBeats = sourceBeats.map((sourceBeat) => ({
+        ...sourceBeat,
+        notes: this.mapNotesInStringMapRun(run, sourceBeat.notes)
+      }));
+      this.finishStringMapRun(run);
+      return { sourceBeats: mappedBeats, droppedOutOfRange: run.dropped, mapRun: run };
+    }
     const sourceLayout = createTuningLayout(sourceTuning);
     const targetLayout = createTuningLayout(targetTuning);
     let droppedOutOfRange = 0;
@@ -1039,6 +1215,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const exactPitchLayout = `${sourceTuning.nStrings || ''}` === `${targetTuning.nStrings || ''}`
       && arraysEqual(sourceTuning.midiPitches || [], getMidiPitchArray(targetTuning));
     let droppedOutOfRange = 0;
+    let mapRun = null;
     const recordedMidiPaste = this.isRecordedMidiPasteEnabled();
     if (!recordedMidiPaste) {
       if (getTuningCompatibilityID(source) !== getTuningCompatibilityID(targetTuning)) {
@@ -1051,12 +1228,16 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         return { error: `${source.baseID || 'source'} pitch layout mismatch` };
       }
     } else if (!exactPitchLayout) {
-      if (!canMidiPasteBetweenTunings(sourceTuning, targetTuning)) {
-        return { error: `${source.baseID || 'source'} unsupported for MIDI Paste to ${targetTuning.baseID}` };
+      const resolvedMap = this.resolveMidiPasteMapFor(song, sourceTuning, targetTuning);
+      if (!resolvedMap && !canMidiPasteBetweenTunings(sourceTuning, targetTuning)) {
+        const activeMapId = this.getActiveMidiPasteMapId();
+        const hint = activeMapId ? ` (map "${escapeHtml(activeMapId)}" does not fit)` : '';
+        return { error: `${source.baseID || 'source'} unsupported for MIDI Paste to ${targetTuning.baseID}${hint}` };
       }
-      const mapped = this.mapRecordedSourceBeatsForMidiPaste(sourceBeats, sourceTuning, targetTuning);
+      const mapped = this.mapRecordedSourceBeatsForMidiPaste(sourceBeats, sourceTuning, targetTuning, resolvedMap);
       sourceBeats = mapped.sourceBeats;
       droppedOutOfRange = mapped.droppedOutOfRange;
+      mapRun = mapped.mapRun || null;
     }
     return {
       ...selected,
@@ -1066,7 +1247,8 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       sectionNotes: section.getSectionNotes(tableID),
       sourceBeats,
       recordedMidiPaste,
-      droppedOutOfRange
+      droppedOutOfRange,
+      mapRun
     };
   }
 
@@ -1225,7 +1407,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     context.record.lastRevived = Date.now();
     this.refreshSongUi(song);
     const droppedSuffix = context.droppedOutOfRange > 0 ? `; dropped ${context.droppedOutOfRange}` : '';
-    return { result: `${outcome.result}${droppedSuffix}` };
+    const mapSuffix = context.mapRun
+      ? `${this.describeStringMapRun(context.mapRun)}; unmapped ${context.mapRun.unmapped}; collisions ${context.mapRun.collisions}`
+      : '';
+    return { result: `${outcome.result}${droppedSuffix}${mapSuffix}` };
   }
 
   getCompatibleClipRecords(song = getSong()) {
@@ -1275,6 +1460,211 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return merged;
   }
 
+  emitUserLogMessage(message) {
+    if (!message) {
+      return;
+    }
+    EventBus.trigger('UserLog', { subSystem: 'ClipPlugin', message });
+  }
+
+  getUserMidiPasteMaps() {
+    const value = this.getProperty('midiPasteUserMaps')?.getValue();
+    return Array.isArray(value) ? value : [];
+  }
+
+  getActiveMidiPasteMapId() {
+    return `${this.getProperty('midiPasteMapId')?.getValue() || ''}`;
+  }
+
+  getMidiPasteMapList() {
+    return listMidiPasteMaps(this.getUserMidiPasteMaps());
+  }
+
+  // Drops stored maps that no longer parse or collide, and a stale active id.  Logs, never throws.
+  sanitizeMidiPasteMapState() {
+    const userProperty = this.getProperty('midiPasteUserMaps');
+    const idProperty = this.getProperty('midiPasteMapId');
+    if (!userProperty || !idProperty) {
+      return;
+    }
+    const builtins = listMidiPasteMaps([]);
+    const kept = [];
+    userProperty.getValue().forEach((entry) => {
+      const label = escapeHtml(`${entry?.id ?? ''}`);
+      const normalized = normalizeMapId(entry?.id);
+      const parsed = parseMapSpec(entry?.spec);
+      const problem = normalized.error || parsed.errors[0] || '';
+      if (problem) {
+        this.emitUserLogMessage(`MIDI Paste map "${label}" dropped: ${escapeHtml(problem)}`);
+        return;
+      }
+      if (findMapIgnoringCase([...builtins, ...kept], normalized.id)) {
+        this.emitUserLogMessage(`MIDI Paste map "${label}" dropped: id already exists`);
+        return;
+      }
+      if (kept.length >= MAX_USER_MAPS) {
+        this.emitUserLogMessage(`MIDI Paste map "${label}" dropped: more than ${MAX_USER_MAPS} maps`);
+        return;
+      }
+      kept.push({ id: normalized.id, spec: parsed.spec });
+    });
+    if (!valuesEqual(kept, userProperty.getValue())) {
+      userProperty.setValue(kept);
+    }
+    const activeId = this.getActiveMidiPasteMapId();
+    if (activeId && !this.getMidiPasteMapList().some((map) => map.id === activeId)) {
+      this.emitUserLogMessage(`MIDI Paste map "${escapeHtml(activeId)}" is not available; no map selected`);
+      idProperty.setValue('');
+    }
+  }
+
+  addMidiPasteMap(rawValue) {
+    const parsed = parseAddInput(rawValue);
+    const reject = (reason) => {
+      const message = `MIDI Paste map not added: ${reason}`;
+      this.emitUserLogMessage(message);
+      return { result: message };
+    };
+    if (!parsed.ok) {
+      return reject(parsed.errors.map(escapeHtml).join('; '));
+    }
+    const maps = this.getMidiPasteMapList();
+    if (findMapIgnoringCase(maps, parsed.id)) {
+      return reject(`id "${escapeHtml(parsed.id)}" already exists`);
+    }
+    const userMaps = this.getUserMidiPasteMaps();
+    if (userMaps.length >= MAX_USER_MAPS) {
+      return reject(`no more than ${MAX_USER_MAPS} maps of your own`);
+    }
+    this.getProperty('midiPasteUserMaps').setValue([...userMaps, { id: parsed.id, spec: parsed.spec }]);
+    const warnings = parsed.warnings.map(escapeHtml);
+    warnings.forEach((warning) => this.emitUserLogMessage(`MIDI Paste map "${escapeHtml(parsed.id)}": ${warning}`));
+    const warningSuffix = warnings.length > 0 ? ` (${warnings.join('; ')})` : '';
+    return { result: `MIDI Paste map added: "${escapeHtml(parsed.id)}" ${escapeHtml(parsed.spec)}${warningSuffix}` };
+  }
+
+  selectMidiPasteMap(id) {
+    const idProperty = this.getProperty('midiPasteMapId');
+    if (!id) {
+      idProperty.setValue('');
+      return { result: 'MIDI Paste map: none' };
+    }
+    if (!this.getMidiPasteMapList().some((map) => map.id === id)) {
+      return { result: `MIDI Paste map skipped: "${escapeHtml(id)}" not found` };
+    }
+    idProperty.setValue(id);
+    return { result: `MIDI Paste map: "${escapeHtml(id)}"` };
+  }
+
+  deleteMidiPasteMap(id) {
+    const userMaps = this.getUserMidiPasteMaps();
+    if (!userMaps.some((map) => map.id === id)) {
+      const builtin = this.getMidiPasteMapList().some((map) => map.builtin && map.id === id);
+      return { result: `MIDI Paste map not deleted: "${escapeHtml(id)}" ${builtin ? 'is built in' : 'not found'}` };
+    }
+    this.getProperty('midiPasteUserMaps').setValue(userMaps.filter((map) => map.id !== id));
+    const wasActive = this.getActiveMidiPasteMapId() === id;
+    if (wasActive) {
+      this.getProperty('midiPasteMapId').setValue('');
+    }
+    return { result: `MIDI Paste map deleted: "${escapeHtml(id)}"${wasActive ? '; no map selected' : ''}` };
+  }
+
+  listMidiPasteMapsMessage() {
+    const maps = this.getMidiPasteMapList();
+    const activeId = this.getActiveMidiPasteMapId();
+    const rows = maps.map((map, index) => {
+      const key = index < MAP_CHOICE_TRIGGERS.length ? MAP_CHOICE_TRIGGERS[index] : '-';
+      return `<tr><td>${key}</td><td>${escapeHtml(map.id)}${map.id === activeId ? ' &#x2713;' : ''}</td><td>${escapeHtml(map.spec)}</td><td>${map.builtin ? 'built-in' : 'yours'}</td></tr>`;
+    });
+    const html = [
+      "<table border='1' class='tblDisplayOptions'>",
+      '<caption>MIDI Paste maps</caption>',
+      '<tr><th>key</th><th>id</th><th>map (source:dest)</th><th>from</th></tr>',
+      rows.join('\n'),
+      '</table>'
+    ].join('\n');
+    return {
+      result: `${maps.length} MIDI Paste maps; current: ${escapeHtml(activeId || 'none')}`,
+      message: html
+    };
+  }
+
+  lookupTuningForMapEndpoint(song = getSong()) {
+    const songTunings = Array.isArray(song?.myTunings) ? song.myTunings.filter(Boolean) : [];
+    const libraryTunings = Array.isArray(allTunings?.tunings) ? allTunings.tunings : [];
+    return (id) => (
+      songTunings.find((tuning) => `${tuning.fromBaseID || tuning.baseID || ''}` === id)
+      || songTunings.find((tuning) => `${tuning.baseID || ''}` === id)
+      || libraryTunings.find((tuning) => tuning.baseID === id)
+      || null
+    );
+  }
+
+  resolveMidiPasteMapFor(song, sourceTuning, targetTuning) {
+    const activeId = this.getActiveMidiPasteMapId();
+    if (!activeId) {
+      return null;
+    }
+    return resolveMidiPasteMap({
+      maps: this.getMidiPasteMapList(),
+      activeId,
+      sourceTuning,
+      targetTuning,
+      lookupTuning: this.lookupTuningForMapEndpoint(song)
+    });
+  }
+
+  canMidiPasteBetween(song, sourceTuning, targetTuning) {
+    return !!this.resolveMidiPasteMapFor(song, sourceTuning, targetTuning)
+      || canMidiPasteBetweenTunings(sourceTuning, targetTuning);
+  }
+
+  startStringMapRun(sourceTuning, targetTuning, resolved) {
+    const { rowPairs, skipped } = prepareStringPairs(
+      resolved.pairs,
+      tuningStringCount(sourceTuning),
+      tuningStringCount(targetTuning)
+    );
+    return {
+      resolved,
+      sourceLayout: createTuningLayout(sourceTuning),
+      targetLayout: createTuningLayout(targetTuning),
+      rowPairs,
+      skipped,
+      dropped: 0,
+      unmapped: 0,
+      collisions: 0
+    };
+  }
+
+  mapNotesInStringMapRun(run, notes = []) {
+    const result = applyStringMap({
+      notes,
+      rowPairs: run.rowPairs,
+      placeNote: (note, targetRow) => this.buildMidiPasteCandidateForRow(note, run.sourceLayout, run.targetLayout, targetRow)
+    });
+    run.dropped += result.dropped;
+    run.unmapped += result.unmapped;
+    run.collisions += result.collisions;
+    return result.candidates;
+  }
+
+  finishStringMapRun(run) {
+    const label = escapeHtml(run.resolved.id);
+    if (run.skipped.length > 0) {
+      const pairs = run.skipped.map(({ from, to }) => `${from}:${to}`).join(', ');
+      this.emitUserLogMessage(`MIDI Paste map "${label}": skipped pairs ${pairs} because an instrument has fewer strings`);
+    }
+    if (run.collisions > 0) {
+      this.emitUserLogMessage(`MIDI Paste map "${label}": ${run.collisions} notes landed on the same cell (many-to-one); the later pair won`);
+    }
+  }
+
+  describeStringMapRun(run) {
+    return ` [map "${escapeHtml(run.resolved.id)}" ${run.resolved.route}]`;
+  }
+
   getMidiPasteClipRecords(song = getSong()) {
     const graveyard = song?.graveyard;
     const targetTuning = this.getSelectedTargetTuning(song);
@@ -1291,7 +1681,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         continue;
       }
       const sourceTuning = this.getSourceTuningForRecord(record, song);
-      if (!canMidiPasteBetweenTunings(sourceTuning, targetTuning)) {
+      if (!this.canMidiPasteBetween(song, sourceTuning, targetTuning)) {
         continue;
       }
       result.push({ record, index, sourceTuning });
@@ -1383,11 +1773,15 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (!Number.isInteger(sourceRow) || sourceRow < 0) {
       return null;
     }
+    return this.buildMidiPasteCandidateForRow(note, sourceLayout, targetLayout, sourceRow);
+  }
+
+  buildMidiPasteCandidateForRow(note, sourceLayout, targetLayout, targetRow) {
     const sourceMidinum = this.resolveClipNoteMidinum(note, sourceLayout);
     if (!Number.isInteger(sourceMidinum)) {
       return null;
     }
-    const targetCell = getCellByRowMidi(targetLayout, sourceRow, sourceMidinum);
+    const targetCell = getCellByRowMidi(targetLayout, targetRow, sourceMidinum);
     if (!targetCell) {
       return null;
     }
@@ -1561,8 +1955,11 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
     const payload = JSON.parse(record.json || '{}');
     const sourceTuning = this.getSourceTuningForRecord(record, song);
-    if (!canMidiPasteBetweenTunings(sourceTuning, targetTuning)) {
-      return { result: 'MIDI Paste skipped: source/target tunings are not supported for MIDI Paste' };
+    const resolvedMap = this.resolveMidiPasteMapFor(song, sourceTuning, targetTuning);
+    const activeMapId = this.getActiveMidiPasteMapId();
+    if (!resolvedMap && !canMidiPasteBetweenTunings(sourceTuning, targetTuning)) {
+      const hint = activeMapId ? ` (map "${escapeHtml(activeMapId)}" does not fit ${escapeHtml(sourceTuning.fromBaseID || sourceTuning.baseID)} to ${escapeHtml(targetTuning.fromBaseID || targetTuning.baseID)})` : '';
+      return { result: `MIDI Paste skipped: source/target tunings are not supported for MIDI Paste${hint}` };
     }
 
     const sectionNotes = section.getSectionNotes(tableID);
@@ -1576,21 +1973,34 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const playedNotes = Array.isArray(sectionNotes.playedNotes) ? sectionNotes.playedNotes : [];
     const collisionMap = new Map(playedNotes.map((note, index) => [playedCollisionKey(note), index]));
 
-    (payload?.sectionNotes?.playedNotes || []).forEach((note) => {
-      const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
-      if (!candidate) {
-        summary.droppedOutOfRange += 1;
-        return;
-      }
-      this.applyPlayedCandidate(candidate, playedNotes, collisionMap, overwrite, summary);
-    });
+    let mapRun = null;
+    if (resolvedMap) {
+      mapRun = this.startStringMapRun(sourceTuning, targetTuning, resolvedMap);
+      this.mapNotesInStringMapRun(mapRun, payload?.sectionNotes?.playedNotes || []).forEach((candidate) => {
+        this.applyPlayedCandidate(candidate, playedNotes, collisionMap, overwrite, summary);
+      });
+      summary.droppedOutOfRange += mapRun.dropped;
+      this.finishStringMapRun(mapRun);
+    } else {
+      (payload?.sectionNotes?.playedNotes || []).forEach((note) => {
+        const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
+        if (!candidate) {
+          summary.droppedOutOfRange += 1;
+          return;
+        }
+        this.applyPlayedCandidate(candidate, playedNotes, collisionMap, overwrite, summary);
+      });
+    }
 
     sectionNotes.playedNotes = playedNotes;
     record.lastRevived = Date.now();
     this.refreshSongUi(song);
 
+    const mapLabel = mapRun ? this.describeStringMapRun(mapRun) : '';
+    const mapTotals = mapRun ? `; unmapped ${mapRun.unmapped}; collisions ${mapRun.collisions}` : '';
+    const notApplied = !mapRun && activeMapId ? ` [map "${escapeHtml(activeMapId)}" not applied: does not fit]` : '';
     return {
-      result: `MIDI Paste revived ${this.getClipRecordLabel(record, recordIndex)}: named +${summary.namedAdded} overwrite ${summary.namedOverwritten} skip ${summary.namedSkipped}; played +${summary.playedAdded} overwrite ${summary.playedOverwritten} skip ${summary.playedSkipped}; dropped ${summary.droppedOutOfRange}`
+      result: `MIDI Paste revived ${this.getClipRecordLabel(record, recordIndex)}${mapLabel}: named +${summary.namedAdded} overwrite ${summary.namedOverwritten} skip ${summary.namedSkipped}; played +${summary.playedAdded} overwrite ${summary.playedOverwritten} skip ${summary.playedSkipped}; dropped ${summary.droppedOutOfRange}${mapTotals}${notApplied}`
     };
   }
 

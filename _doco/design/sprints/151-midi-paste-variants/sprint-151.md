@@ -16,9 +16,15 @@ Purpose of this sprint is to:
 ## Sprint document locations
 
 - [design document](151-design.md) 
+- [implementation plan](151-implementation-plan.md)
 
 ## Iterations
 
   - "Iteration 1": 
     - Define behavior and menu.
+  - "Iteration 2": implemented.
+    - Code: `plugins/clip/midiPasteMaps.js`, `plugins/clip/midiPasteMapBuiltins.js`, `plugins/clip/ClipPlugin.js`, `plugins/PluginProperty.js`.
+    - Tests: `_tests/jest/midi-paste-maps.test.js`, `_tests/jest/clip-plugin-midi-paste-maps.test.js`.
+    - Docs: `help-plugins.html` (MIDI Paste Maps).
+    - Deviations from the plan: map endpoints also match an exact `baseID`; the menu cap is 34 keys because `n` is reserved for `n)one`; Bass built-ins use the library tuning layouts.
 

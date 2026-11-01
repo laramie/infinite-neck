@@ -563,6 +563,14 @@
                     </tr>
                     <tr>
                         <td class="greenCmd">
+                            <a class="optionLink" href="#helpCmd-fpc-m">
+                                                        <b>m</b>idi paste map
+                            </a>
+                        </td>
+                        <td class="cmdHelp"> <b>m</b>ap, <b>a</b>dd, <b>d</b>elete, <b>l</b>ist</td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
                             <a class="optionLink" href="#helpCmd-fpc-a">
                                                         <b>a</b>utomatic
                             </a>
@@ -1879,6 +1887,12 @@
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
+                        <td class="greenCmd" id="helpCmd-fpc-m">
+                            <b>m</b>idi paste map
+                        </td>
+                        <td class="cmdHelp"> <b>m</b>ap picks the active map (or <b>n</b>one), <b>a</b>dd stores a map such as <code>"Lute &gt; Bass" 1:2, 3:4</code>, <b>d</b>elete removes one of your maps, <b>l</b>ist shows all maps. See <a href="#plugin-clip-midi-paste-map">MIDI Paste Maps</a>.</td>
+                    </tr>
+                    <tr>
                         <td class="greenCmd" id="helpCmd-fpc-a">
                             <b>a</b>utomatic
                         </td>
@@ -1971,7 +1985,7 @@
         <li>Cut authored notes out of one Section and move them elsewhere with <span class="menuExampleLine"><b>X</b> cut</span>.</li>
         <li>Capture only selected lanes, such as named plus bends but not tiny notes, by changing the <span class="menuExampleLine"><b>i</b> include</span> toggles first.</li>
         <li>Paste a same-family clip into a sibling table that shares the tuning family, while letting out-of-range played notes drop silently.</li>
-        <li>Use <span class="menuExampleLine"><b>M</b> MIDI Paste</span> to remap guitar clips across supported 6-string guitar tunings on the same string by MIDI pitch.</li>
+        <li>Use <span class="menuExampleLine"><b>M</b> MIDI Paste</span> to remap guitar clips across supported 6-string guitar tunings on the same string by MIDI pitch. Choose a <span class="menuExampleLine"><b>m</b>idi paste map</span> to paste between other tunings or instruments, or to send strings to different strings.</li>
         <li>Keep <span class="menuExampleLine"><b>a</b> automatic</span> on for fast repeated copy, cut, and paste actions, or turn it off when you want to choose clip names and clip numbers explicitly.</li>
     </ul>
 
@@ -1986,7 +2000,8 @@
         <li>The <b>include</b> caption shows live counts for enabled lanes, for example <span class="menuExampleLine"><b>include [n:2,s:1,t:1,b:1]</b></span>.</li>
         <li>Clip names default to a short count-based label such as <span class="menuExampleLine">named-1-single-1-bend-1-1202</span>, and you can edit that name when automatic mode is off.</li>
         <li><b>V</b> paste lists only compatible same-family clip records for the selected table.</li>
-        <li><b>M</b> MIDI Paste lists only clip records that can be remapped to the selected target table under the current 6-string guitar scope.</li>
+        <li><b>M</b> MIDI Paste lists only clip records that can be remapped to the selected target table: either both tables are 6-string guitars, or the active <b>m</b>idi paste map fits the source and target tunings.</li>
+        <li><b>m</b> midi paste map chooses, adds, deletes, and lists string maps for MIDI Paste. See <a href="#plugin-clip-midi-paste-map">MIDI Paste Maps</a>.</li>
     </ul>
 
     <a name="plugin-clip-actions"></a>
@@ -1996,11 +2011,31 @@
         <li><b>C</b> Copy stores the included note lanes from the current Section and selected table as a <b>CLIP</b> record in the Graveyard.</li>
         <li><b>X</b> Cut stores the clip, then removes only the included lanes from the current Section and selected table.</li>
         <li><b>V</b> paste revives the selected compatible clip into the current Section and selected table using row and fret coordinates directly.</li>
-        <li><b>M</b> MIDI Paste revives the selected clip by matching played notes to the same string and MIDI pitch on the target guitar tuning. Notes without a legal landing are dropped.</li>
+        <li><b>M</b> MIDI Paste revives the selected clip by matching played notes to the same string and MIDI pitch on the target guitar tuning, or to the string the active map names. Notes without a legal landing are dropped.</li>
         <li>NamedNotes participate in both paste modes. Their collisions also follow the current <b>overwrite</b> setting.</li>
         <li><b>c</b> clear clipped notes removes only <b>CLIP</b> records from the Graveyard and leaves other Graveyard record types alone.</li>
         <li><b>h</b> help shows the current ClipPlugin summary, include counts, clip counts, and handled events.</li>
         <li>ClipPlugin does not handle DaCapo loop events. It runs only when you invoke its actions from the command-line menu or the ClipPlugin shortcut.</li>
+    </ul>
+
+    <a name="plugin-clip-midi-paste-map"></a>
+    <h3>MIDI Paste Maps</h3>
+
+    <p>A MIDI Paste map says which target string each source string goes to. Notes still land by MIDI pitch, so a note is dropped when its pitch is not on the target string. Frets are never copied across.</p>
+
+    <ul>
+        <li><b>Syntax:</b> <span class="menuExampleLine">"Foo &gt; Bar" 1:2, 3:4</span>. The quoted id comes first, then <i>source:target</i> string pairs. Strings are numbered from 1, and string 1 is the top row. Strings you leave out are skipped. Use <b>m</b>idi paste map, then <b>a</b>dd, to store one.</li>
+        <li><b>Ids:</b> letters, digits, spaces, and <code>_ - . '</code>, with at most one <code>&gt;</code>. Ids are unique ignoring case, so a duplicate is rejected and logged to the User Log.</li>
+        <li><b>Built-in maps:</b> <code>P46 &gt; P48</code>, <code>P48 &gt; P46</code>, <code>P46 &gt; S6</code>, <code>P48 &gt; S6</code>, <code>Bass5 &gt; Bass4</code>, <code>Bass6 &gt; Bass4</code>, and <code>Bass6 &gt; Bass5</code>. You can not delete them, and the Bass maps follow the library tuning layouts.</li>
+        <li><b>Which tunings match:</b> a name on either side of <code>&gt;</code> matches a table by the tuning it came from, or by an exact table id. It also matches any other tuning of the same instrument family with the same string count, so a map for <code>S6</code> also fits Drop D.</li>
+        <li><b>Reverse:</b> a map <code>A &gt; B</code> also works from B to A, inverted, unless you stored a <code>B &gt; A</code> map of your own. An id with no <code>&gt;</code> applies to any pair of tables and has no reverse.</li>
+        <li><b>Choosing:</b> picking is manual. The active map starts as none, and <b>n</b>one clears it. Only one map is active at a time.</li>
+        <li><b>Sending one string to several:</b> allowed, so one source note can land on several target strings.</li>
+        <li><b>Several strings to one:</b> allowed, and the last pair wins. The collision is logged to the User Log.</li>
+        <li><b>Strings the instrument lacks:</b> the pair is skipped and logged.</li>
+        <li><b>When the map does not fit:</b> MIDI Paste behaves as if no map were active and says so in its result.</li>
+        <li><b>Scope:</b> maps apply to the MIDI Paste clip action and to MIDI Paste of recorded notes. Listener copy and named notes are not affected.</li>
+        <li><b>Storage:</b> your own maps and the active choice are saved in the Song.</li>
     </ul>
 
 

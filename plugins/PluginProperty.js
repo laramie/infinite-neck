@@ -69,6 +69,16 @@ function normalizeIntegerArray(rawValue) {
   });
 }
 
+function normalizeObjectArray(rawValue) {
+  const parsed = Array.isArray(rawValue) ? rawValue : JSON.parse(`${rawValue}`);
+  if (!Array.isArray(parsed)) {
+    throw new Error('Expected a JSON array of objects');
+  }
+  return parsed
+    .filter((item) => item && typeof item === 'object' && !Array.isArray(item))
+    .map((item) => ({ ...item }));
+}
+
 function supportsSelectByBaseID(property) {
   return property.name === 'targetTable'
     && property.caption === 'Instrument'
@@ -112,6 +122,8 @@ export class PluginProperty {
         return normalizeBoolean(rawValue);
       case 'org.dynamide.IntegerArray':
         return normalizeIntegerArray(rawValue);
+      case 'org.dynamide.ObjectArray':
+        return normalizeObjectArray(rawValue);
       case 'org.dynamide.Select':
         return `${rawValue}`;
       case 'org.dynamide.Action':
