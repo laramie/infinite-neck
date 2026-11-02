@@ -16,6 +16,7 @@ import { describeBlocks } from './displayOptionsGates.js';
 import { resolveDisplayOptions, songDefaultValues } from './displayOptionsResolver.js';
 import { escapeHtml, cellText, cellState, gateMarkHtml, keyLabelHtml, WANT_LITERAL_ROWMARK_TEXT, WANT_LITERAL_COLMARK_TEXT } from './displayOptionsCellRules.js';
 import { ZONES } from './displayOptionsMatrixTools.js';
+import { describeColorValue } from '../palette/stylesheetPlan.js';
 
 /** Text longer than this gets a title attribute with the full text (the CSS clips with an ellipsis). */
 export const CLIP_TITLE_LENGTH = 12;
@@ -45,6 +46,20 @@ function cellBody(value) {
     const html = escapeHtml(text) || '&nbsp;';
     const title = text.length > CLIP_TITLE_LENGTH ? ` title='${escapeHtml(text)}'` : '';
     return { html, title };
+}
+
+/** Sprint 150: a Color (currentColorDict) value that names a stylesheet this Song no longer has is struck through.
+ *  Returns {cls, title}: cls is ' dmMissingSheet' (or ''), title replaces the clip title when flagged.  Songs without
+ *  colorDicts (tests, the Legend) are never flagged. */
+function missingSheetMark(song, key, value, fallbackTitle) {
+    if (key !== 'currentColorDict' || typeof value !== 'string' || !value || !song) {
+        return { cls: '', title: fallbackTitle };
+    }
+    const described = describeColorValue(song, value);
+    if (described.status !== 'missing') {
+        return { cls: '', title: fallbackTitle };
+    }
+    return { cls: ' dmMissingSheet', title: ` title='${escapeHtml(`${value} - missing stylesheet: ${described.missing.join(', ')}`)}'` };
 }
 
 /** Runs of adjacent keys with the same group: [{group, count}]. */
@@ -80,9 +95,10 @@ function keyRowHtml(song, interactive, keys) {
     return `<tr class='dmKeyRow'><th class='dmCorner'${dataAttrs(interactive, ZONES.corner)}></th>${cells.join('')}</tr>`;
 }
 
-function specialCellHtml(interactive, key, value) {
-    const { html, title } = value === undefined || value === null ? { html: '', title: '' } : cellBody(value);
-    return `<td class='dmSpecialCell'${dataAttrs(interactive, ZONES.specialCell, { key })}${title}>${html}</td>`;
+function specialCellHtml(interactive, key, value, song = null) {
+    const { html, title: baseTitle } = value === undefined || value === null ? { html: '', title: '' } : cellBody(value);
+    const { cls, title } = missingSheetMark(song, key, value, baseTitle);
+    return `<td class='dmSpecialCell${cls}'${dataAttrs(interactive, ZONES.specialCell, { key })}${title}>${html}</td>`;
 }
 
 /** The DEFAULTS row. */
@@ -95,13 +111,13 @@ export function buildDefaultsRowHtml({ interactive = true, keys = DISPLAY_OPTION
  *  the block is missing or empty.  A plain report of the stored values: no gate classes (a gated key's value just shows). */
 export function buildSongDefaultsRowHtml(song, { interactive = true, keys = DISPLAY_OPTION_KEYS } = {}) {
     const values = songDefaultValues(song);
-    const cells = keys.map((key) => specialCellHtml(interactive, key, values[key]));
+    const cells = keys.map((key) => specialCellHtml(interactive, key, values[key], song));
     return `<tr class='dmSpecialRow dmSongDefaultsRow'><th class='dmSpecialLabel'${dataAttrs(interactive, ZONES.specialLabel)}>Song-DEFAULTS</th>${cells.join('')}</tr>`;
 }
 
 /** The LIVE row (values of the controls).  The builder patches this row in place when the controls change. */
-export function buildLiveRowHtml(live, { interactive = true, keys = DISPLAY_OPTION_KEYS } = {}) {
-    const cells = keys.map((key) => specialCellHtml(interactive, key, live ? live[key] : undefined));
+export function buildLiveRowHtml(live, { interactive = true, keys = DISPLAY_OPTION_KEYS, song = null } = {}) {
+    const cells = keys.map((key) => specialCellHtml(interactive, key, live ? live[key] : undefined, song));
     return `<tr class='dmSpecialRow dmLiveRow'><th class='dmSpecialLabel'${dataAttrs(interactive, ZONES.specialLabel)}>LIVE</th>${cells.join('')}</tr>`;
 }
 
@@ -128,7 +144,10 @@ export function buildSectionRowHtml(song, sectionIndex, { currentIndex = -1, int
             ...gateFlagClasses('dmRowGate', blocks.row),
             ...gateFlagClasses('dmCellGate', blocks.cell),
             ...(blocks.adapter ? ['dmAdapterKey'] : [])];
-        const { html, title } = state === 'absent' ? { html: '', title: '' } : cellBody(block[key]);
+        const { html, title: baseTitle } = state === 'absent' ? { html: '', title: '' } : cellBody(block[key]);
+        const mark = state === 'absent' ? { cls: '', title: baseTitle } : missingSheetMark(song, key, block[key], baseTitle);
+        if (mark.cls) classes.push('dmMissingSheet');
+        const title = mark.title;
         cells.push(`<td class='${classes.join(' ')}'${dataAttrs(interactive, ZONES.cell, { sectionIndex, key })}${title}>${html}</td>`);
     }
     return `<tr class='dmSectionRow${isCurrent ? ' dmCurrentRow' : ''}'${interactive ? ` data-section-row='${sectionIndex}'` : ''}>${cells.join('')}</tr>`;
@@ -141,7 +160,7 @@ export function buildSectionRowHtml(song, sectionIndex, { currentIndex = -1, int
  */
 export function buildMatrixHtml(song, { currentIndex = -1, live = null, interactive = true, keys = DISPLAY_OPTION_KEYS } = {}) {
     const rows = [];
-    rows.push(`<thead>${groupRowHtml(interactive, keys)}${keyRowHtml(song, interactive, keys)}${buildDefaultsRowHtml({ interactive, keys })}${buildSongDefaultsRowHtml(song, { interactive, keys })}${buildLiveRowHtml(live, { interactive, keys })}</thead>`);
+    rows.push(`<thead>${groupRowHtml(interactive, keys)}${keyRowHtml(song, interactive, keys)}${buildDefaultsRowHtml({ interactive, keys })}${buildSongDefaultsRowHtml(song, { interactive, keys })}${buildLiveRowHtml(live, { interactive, keys, song })}</thead>`);
     rows.push('<tbody>');
     rows.push(`<tr class='dmSectionLabelRow'><th class='dmSectionLabel'${dataAttrs(interactive, ZONES.sectionLabel)}>Section&nbsp;#</th><td class='dmSectionLabelFill'${dataAttrs(interactive, ZONES.sectionLabel)} colspan='${keys.length}'></td></tr>`);
     song.sections.forEach((section, idx) => rows.push(buildSectionRowHtml(song, idx, { currentIndex, interactive, keys })));

@@ -101,36 +101,86 @@ export class PaletteBuilder {
         $("#btnRecordUserColors")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
-				ColorFunctions.recordUserColors();
+				ColorFunctions.saveStylesheet();
 			});
 		$("#btnRecordUserColorsFromSection")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
-				ColorFunctions.recordUserColorsFromSection();
+				ColorFunctions.loadEditorFromSection();
+			});
+		$("#btnNewStylesheet")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+				ColorFunctions.newStylesheet();
+			});
+		$("#btnCopyStylesheet")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+				ColorFunctions.copyStylesheet();
+			});
+		$("#btnRenameStylesheet")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+				ColorFunctions.renameStylesheet();
+			});
+		$("#txtColorSchemeName")
+			.off(`input${eventNamespace}`)
+			.on(`input${eventNamespace}`, function() {
+				ColorFunctions.refreshStylesheetHint();
 			});
 
-        // Event delegation for stylesheet selection and deletion links
+		// Looks (named recipes)
+		$("#selColorLooks")
+			.off(`change${eventNamespace}`)
+			.on(`change${eventNamespace}`, function() {
+				ColorFunctions.chooseColorLook($(this).val());
+			});
+		$("#txtColorLookName")
+			.off(`input${eventNamespace}`)
+			.on(`input${eventNamespace}`, function() {
+				ColorFunctions.refreshLookHint();
+			});
+		$("#btnSaveColorLook")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+				ColorFunctions.saveColorLook();
+			});
+		$("#btnRemoveColorLook")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+				ColorFunctions.removeColorLook($('#selColorLooks').val());
+			});
+
+		$("#btnLegend_Stylesheets")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function(event) {
+				const legend = $('#divStylesheetLegend');
+				const opening = !legend.is(':visible');
+				legend.toggle(opening);
+				$('#spanStylesheetLegendArrow').html(opening ? '&#x25BC;' : '&#x25B6;');
+				event.stopPropagation();
+			});
+
+        // Event delegation for stylesheet selection (rows are rebuilt, so use attr() so numeric-looking names stay strings)
         $(document)
             .off(`click${eventNamespace}`, 'a.choose-stylesheet')
             .on(`click${eventNamespace}`, 'a.choose-stylesheet', function(e) {
             e.preventDefault();
-            const dictkey = $(this).data('dictkey');
-            ColorFunctions.chuseStylesheet(dictkey);
+            ColorFunctions.chuseStylesheet($(this).attr('data-dictkey'));
         });
 
         $(document)
-            .off(`click${eventNamespace}`, 'a.delete-stylesheet')
-            .on(`click${eventNamespace}`, 'a.delete-stylesheet', function(e) {
+            .off(`click${eventNamespace}`, 'span.clear-role-picker')
+            .on(`click${eventNamespace}`, 'span.clear-role-picker', function(e) {
             e.preventDefault();
-            const dictkey = $(this).data('dictkey');
-            ColorFunctions.deleteUserStylesheet(dictkey);
+            ColorFunctions.clearRolePicker($(this).attr('data-role'));
         });
 
         $(document)
             .off(`click${eventNamespace}`, 'span.choose-color-picker')
             .on(`click${eventNamespace}`, 'span.choose-color-picker', function(e) {
             e.preventDefault();
-            const target = $(this).data('target');
+            const target = $(this).attr('data-target');
             ColorFunctions.showColorPicker(this, target);
         });
 
@@ -138,7 +188,7 @@ export class PaletteBuilder {
             .off(`click${eventNamespace}`, 'span.choose-hatch-picker')
             .on(`click${eventNamespace}`, 'span.choose-hatch-picker', function(e) {
             e.preventDefault();
-            const target = $(this).data('target');
+            const target = $(this).attr('data-target');
             ColorFunctions.showHatchPicker(this, target);
         });
 

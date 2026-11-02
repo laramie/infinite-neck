@@ -379,18 +379,49 @@
                 <div id="divColorDicts" style="display:none; border: 1px solid green;">
                     <div id="divColorDictsDest"></div>
                     <div class="ActiveStylesheets"></div>
+                    <div id="divStylesheetLooks" class="ssRow">
+                        <label for="selColorLooks">Look:</label>
+                        <select id="selColorLooks" title="Apply a saved Look (a named recipe)"></select>
+                        <input type="text" id="txtColorLookName" size="14" placeholder="look-name">
+                        <button id="btnSaveColorLook" type="button" tabindex="-1" class="MenuButton BtnPunchedOut"
+                            title="Save the current selection as a Look">Save Look</button>
+                        <button id="btnRemoveColorLook" type="button" tabindex="-1" class="MenuButton BtnPunchedOut btnRemoveTuning"
+                            title="Remove the selected Look">&#x232B;</button>
+                        <div id="divColorLookHint" class="ssHint"></div>
+                    </div>
+                    <div id="divStylesheetLegendRow" class="ssRow">
+                        <button type="button" id="btnLegend_Stylesheets" class="safeButton">Legend <span id="spanStylesheetLegendArrow">&#x25B6;</span></button>
+                        <div id="divStylesheetLegend" class="ssLegend" style="display:none;">
+                            <div id="divStylesheetLegendBuiltIns"><b>Built-ins</b> (no buttons): click one to set the built-in level, which ticks every built-in down to it. Your own sheets keep their checkboxes.</div>
+                            <div id="divStylesheetLegendUser"><b>Your sheets</b>: tick to include; click the name to select and edit it. <span class="ssKeyGlyph">&#x2191;</span> <span class="ssKeyGlyph">&#x2193;</span> change the order (later sheets win); <span class="ssKeyGlyph">&#x232B;</span> deletes to the Graveyard.</div>
+                            <div id="divStylesheetLegendRecipe"><b>Active Stylesheets</b> is the recipe: the highest built-in, then the ticked sheets, e.g. <code>Fingerings+mine</code>. A Look is a named recipe; a Section can store either.</div>
+                            <div id="divStylesheetLegendCells"><b>Editor cells</b>: <span class="ssCell ssCell-saved ssLegendCell">saved</span> <span class="ssCell ssCell-edited ssLegendCell">edited</span> <span class="ssCell ssCell-removed ssLegendCell">&#x00D7; removed on Save</span> <span class="ssCell ssCell-inherited ssLegendCell">inherited from a built-in</span></div>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="CustomColorEditors" style="display:none">
-                    <label id="lblStylesheetName">Stylesheet name: <input type="text"
-                            name="txtnColorSchemeName" id="txtColorSchemeName" size="20" value=""
-                            placeholder="sheet-name"></label>
-                    <button id="btnRecordUserColors" type="button" tabindex="-1"
-                        class="MenuButton BtnPunchedOut">Record Stylesheet</button>
-                    <button id="btnRecordUserColorsFromSection" type="button" tabindex="-1"
-                        class="MenuButton BtnPunchedOut">FirstInstrument:NamedNotes => Stylesheet</button>
+                <div id="divStylesheetMessage" class="ssMessage"></div>
 
-                    <br />
+                <div id="CustomColorEditors" style="display:none">
+                    <div id="divStylesheetNameRow" class="ssRow">
+                        <label id="lblStylesheetName">Stylesheet name: <input type="text"
+                                name="txtnColorSchemeName" id="txtColorSchemeName" size="20" value=""
+                                placeholder="sheet-name"></label>
+                    </div>
+                    <div id="divStylesheetButtons" class="ssRow">
+                        <button id="btnNewStylesheet" type="button" tabindex="-1"
+                            class="MenuButton BtnPunchedOut" title="Start a blank stylesheet">New</button>
+                        <button id="btnRecordUserColors" type="button" tabindex="-1"
+                            class="MenuButton BtnPunchedOut" title="Create or update the named stylesheet">Save Stylesheet</button>
+                        <button id="btnCopyStylesheet" type="button" tabindex="-1"
+                            class="MenuButton BtnPunchedOut" title="Copy the selected stylesheet (or built-in) to a new name">Copy</button>
+                        <button id="btnRenameStylesheet" type="button" tabindex="-1"
+                            class="MenuButton BtnPunchedOut" title="Rename the selected stylesheet to the name above">Rename</button>
+                        <button id="btnRecordUserColorsFromSection" type="button" tabindex="-1"
+                            class="MenuButton BtnPunchedOut" title="Load the first visible instrument's Named Note colors into the editor">From Section</button>
+                    </div>
+                    <div id="divStylesheetHint" class="ssHint"></div>
+                    <div id="divStylesheetNote" class="ssHint ssNote"></div>
 
                     <div id="UserColorsEditorDest"></div>
 

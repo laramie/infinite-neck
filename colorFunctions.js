@@ -1,4 +1,6 @@
 //color functions, moved from infinite-neck.js
+// Sprint 150: Stylesheet CRUD UI.  The decisions (names, recipes, plans, editor state) live in the
+// pure module templates/palette/stylesheetPlan.js; this file renders with safe DOM calls and applies the plans.
 import {
 	gColorPickerColors
 } from './colorPickerColors.js';
@@ -17,6 +19,13 @@ import {
 import {
 	toInt
 } from './utils.js';
+import {
+	applyRecipe, buildRecipe, buildSheetEntry, chooseColorDictValue, countChanges, createEditor,
+	describeLookPlan, describePlan, describeUsage, editorClearRole, editorLoadEdits, editorSelect,
+	editorSetPart, findLookUsage, findSheetUsage, freeName, isBuiltInName, isUserSheet, joinClass,
+	moveUserSheet, planCopy, planRename, planSave, planSaveLook, repointReferences, setBuiltInLevel,
+	splitClass, takenNames, userKeys, visibleCell
+} from './templates/palette/stylesheetPlan.js';
 
 var colorFunctionsProviders = {
 	getSong: function () { return null; },
@@ -94,392 +103,250 @@ function resolveLookupContext(lookupContext = {}) {
 
 //================== colorDicts ================================================
 
-	export function clean_ColorSchemeName(colorSchemeName){
-		var result = {};
-		colorSchemeName = colorSchemeName.replace(/([^a-z0-9]+)/gi, '-');
-		if (colorSchemeName.trim().length == 0){
-			colorSchemeName = "user";
-			result.changed = true;
-		}
-		var existingScheme = getSong().colorDicts[colorSchemeName];
-		if (existingScheme){
-			if (existingScheme.readOnly || existingScheme.computed){
-				result.systemSchemeName = colorSchemeName;
-				colorSchemeName += "-user";
-				result.changed = true;
-			}
-		}
-		result.colorSchemeName = colorSchemeName;
-		return result;
+	const GLYPH_UP = '\u2191';
+	const GLYPH_DOWN = '\u2193';
+	const GLYPH_DELETE = '\u232B';
+
+	// The Stylesheet editor's pending state (what the Customize panel shows). Module-level, so
+	// rebuilding the role table or the Stylesheets table never wipes picks.
+	const editor = createEditor();
+
+	const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj || {}, key);
+
+	/** Captions may carry entities ("&#9839;"); decode to plain text and always insert as text. */
+	function decodeEntities(s) {
+		return $('<textarea>').html(String(s ?? '')).val();
 	}
 
-	export function recordUserColorsBoth(doSampleSection, doPickerChoices){
-		const lookupContext = createLookupContext();
-		var colorSchemeName = $('#txtColorSchemeName').val();
-		var chosenSystemSchemeName = $('#txtColorSchemeName').attr('systemSchemeName');
-		var cleanResult = clean_ColorSchemeName(colorSchemeName);
-		colorSchemeName = cleanResult.colorSchemeName;
-		$('#txtColorSchemeName').val(colorSchemeName);
-		if (cleanResult.changed){
-			flashLabel('#lblStylesheetName');
-		}
+	/** Element-id slug for a sheet or role name. */
+	function domId(name) {
+		return String(name).replace(/[^A-Za-z0-9_-]/g, '_');
+	}
 
-		var rootIndex = toInt(getCurrentSection().rootID, 0);
-	    var rootIndexLead = toInt(getCurrentSection().rootIDLead, 0);
+	function songLooks() {
+		const song = getSong();
+		return (song && song.colorLooks) || {};
+	}
 
-		var colorDict = {};
+	function showStylesheetMessage(text) {
+		$('#divStylesheetMessage').text(text || '');
+	}
 
-		if (doSampleSection){
-			let tunings = getSong().getVisibleTunings();
-			if (tunings.length>0){
-				let firstTableID = tunings[0];
-				var notes = getCurrentSection().getSectionNotes(firstTableID).namedNotes;
-				if (notes){
-					var keys = Object.keys(notes);
-					keys.forEach(noteName => {
-						var noteFnNum = noteNameToNoteID(noteName);
-						var rel = (12 + noteFnNum - rootIndex) % 12;
-						var noteKey = "note" + (rel + 1); // Use 1-based for note1, note2, etc.
-						var note = notes[noteName];
-						var cc = note.colorClass;
-						if (cc) {
-							var noteClone = JSON.parse(JSON.stringify(note));
-							noteClone.colorClass = cc;
-							var res = lookupUserColor(noteClone, lookupContext);
-							var defClone = JSON.parse(JSON.stringify(gUserColorDictOEM.dict[noteKey]));
-							defClone.colorClass = res.colorClass;
-							colorDict[noteKey] = defClone;
-						}
-					});
-				} else {
-					console.log("didn't find notes for firstTableID["+firstTableID+"] when doSampleSection in colorFunctions::recordUserColorsBoth()");
-				}
-			} else {
-				console.log("No visible tunings for doSampleSection in colorFunctions::recordUserColorsBoth()");
-			}
-		}
+	function setNameField(value) {
+		$('#txtColorSchemeName').val(value);
+	}
 
-		if (doPickerChoices){
-			for (const [noteKey, captionColor] of Object.entries(saveUserColorChoices())) {
-				if (captionColor.colorClass && !(captionColor.readonly)){
-					//var res = lookupUserColor({"colorClass": captionColor.colorClass});
-					if (!colorDict[noteKey]){
-						colorDict[noteKey] = JSON.parse(JSON.stringify(captionColor));
-					}
-					//colorDict[noteKey].colorClass = res.colorClass;
-					colorDict[noteKey].colorClass = captionColor.colorClass;
-				}
-			}
-		}
+	function roleKeys() {
+		return Object.keys(gUserColorDict.dict).filter((k) => !gUserColorDict.dict[k].readonly);
+	}
 
-		//console.log("new scheme: "+JSON.stringify(colorDict));
-		var recordedScheme = getSong().colorDicts[colorSchemeName];
-		if (recordedScheme){
-			Object.assign(recordedScheme.dict, colorDict);  //this colorDict is already a .dict object.
-			recordedScheme.checked = true;
-		} else {
-			recordedScheme = {
-			    readOnly: false,
-			    computed: false,
-			    checked: true,
-			    dict: {}
-			};
-			if (cleanResult.systemSchemeName){
-				var cloneBase = getSong().colorDicts[cleanResult.systemSchemeName];
-				Object.assign(recordedScheme.dict, cloneBase.dict);
-			} else if (chosenSystemSchemeName){
-				var cloneBase = getSong().colorDicts[chosenSystemSchemeName];
-				Object.assign(recordedScheme.dict, cloneBase.dict);
-			}
-			$('#txtColorSchemeName').attr('systemSchemeName', null);
-
-			Object.assign(recordedScheme.dict, colorDict);  //this colorDict is already a .dict object.
-		}
-
-		getSong().colorDicts[colorSchemeName] = recordedScheme;
-
-		for (const [notekey, captionColor] of Object.entries(recordedScheme.dict)) {
-			if (captionColor.colorClass){
-				gUserColorDict.dict[notekey] = captionColor;
-			}
-		}
-		chuseStylesheet(colorSchemeName);
-		buildColorDicts();
+	/** Every user action that changes which sheets are ticked (or their order or content) ends here:
+	 *  the stored value is recomputed from the ticked set (recipe, or a Look with the same recipe). */
+	function refreshAfterUserChange() {
+		getSong().currentColorDict = '';
+		applyStylesheetsTo_gUserColorDict();
 		buildUserColors();
+		buildColorDicts({ force: true });
+		fullRepaint();
 	}
 
-	export function recordUserColors(){
-		recordUserColorsBoth(false, true);
+	export function resetStylesheetEditor() {
+		Object.assign(editor, createEditor());
+		setNameField('');
+		showStylesheetMessage('');
+		renderAllEditorCells();
+		refreshStylesheetHint();
 	}
 
-	export function recordUserColorsFromSection(){
-		recordUserColorsBoth(true, false);
-	}
+	//------------------------------ table ---------------------------------------
 
-
-	 export function saveUserColorChoices(){
-		 var dict = {};
-	 	$("#UserColorsEditorDest td[id^='colorDestRole']").each(function(i, TD){
-		    var jTD = $(TD);
-		    var hatchClassPicked = jTD.attr("hatchClassPicked");
-		    var colorClassPicked = jTD.attr("colorClassPicked");
-		    var id = TD.id;
-		    var theClass = jTD.attr("class");
-		    if (theClass && theClass.length>0){
-		        var noteKey = 'note'+id.substring('colorDestRole'.length);
-				//console.log(theClass+"==>"+noteKey);
-				var defClone = JSON.parse(JSON.stringify(gUserColorDictOEM.dict[noteKey]));
-				defClone.colorClass = theClass;
-				dict[noteKey] = defClone;
-		    }
-		});
-		return dict;
-	 }
-
-	const COLOR_DICT_ROW = "colorDictRow";
-
-	export function buildColorDicts(){
-		var eventSelectors = [];
-		var tbl = $("<table class='tblColorDicts'>");
+	export function buildColorDicts(options = {}){
+		const song = getSong();
+		if (!song || !song.colorDicts) return;
+		var tbl = $("<table class='tblColorDicts'>").attr('id', 'tblColorDicts');
 
 		// Headers from gUserColorDict.dict, which is the definitive list of all merged Roles+Fingerings+Functions
-		var headerRow = $('<tr>');
-		headerRow.append($('<td style="font-weight: bold; vertical-align: bottom; border: 2px solid black; background-color: lightgray;">').html("Stylesheets"));
-		for (const [notekeyTempl, noteTempl] of Object.entries(gUserColorDict.dict)) {
-			if (noteTempl.readonly){
-				continue;
-			}
-			if (notekeyTempl == "computed" || notekeyTempl == "readOnly"){
-				continue;
-			}
-			headerRow.append($('<td class="vertical-header">').append($('<span>').html( notekeyTempl.substring('note'.length) )));
-		}
+		var headerRow = $('<tr>').attr('id', 'ssRowHeader');
+		headerRow.append($('<td class="ssHeaderCaption">').text('Stylesheets'));
+		roleKeys().forEach((notekey) => {
+			headerRow.append($('<td class="vertical-header">').append($('<span>').text(notekey.substring('note'.length))));
+		});
+		headerRow.append($('<td class="ssHeaderButtons">'));
 		tbl.append(headerRow);
 
 		// then all matching keys in each Dict in the song's list.
-		for (const [dictkey, schemeObj] of Object.entries(getSong().colorDicts)) {
-			tbl.append(colorDictDisplayRow(dictkey, schemeObj, true, eventSelectors));
+		const users = userKeys(song.colorDicts);
+		for (const [dictkey, schemeObj] of Object.entries(song.colorDicts)) {
+			const userIndex = users.indexOf(dictkey);
+			tbl.append(colorDictDisplayRow(dictkey, schemeObj, {
+				link: true,
+				selected: dictkey === editor.selectedKey,
+				userIndex,
+				userCount: users.length
+			}));
 		}
 
 		// Finally, the current, live, merged master list where lookups happen.
-		var resultRow = colorDictDisplayRow("&rArr;&nbsp;Result", gUserColorDict, false, eventSelectors);
-		resultRow.css({"height": "3em"});
+		var resultRow = colorDictDisplayRow("\u21D2\u00A0Result", gUserColorDict, { link: false });
+		resultRow.attr('id', 'ssRowResult').css({"height": "3em"});
 		tbl.append(resultRow);
-
 
 		$('#divColorDictsDest').empty().append(tbl);
 
-		var activeStylesheets = calculateActiveStylesheets();
-		$('.ActiveStylesheets').html("Active Stylesheets: "+activeStylesheets);
-		getSong().activeStylesheets = activeStylesheets;
+		// Keep the stored values in step with what is ticked: the recipe, a matching Look, or (when a Section
+		// pointed at a sheet that is gone) the Section's own spelling, so the Matrix can flag it.
+		const recipe = buildRecipe(song.colorDicts);
+		song.activeStylesheets = recipe;
+		// A Song that never chose a stylesheet keeps storing nothing (so Save does not start writing "Default" into
+		// every Section); any user action (options.force) stores the recomputed value.
+		if (options.force || song.currentColorDict || recipe !== 'Default') {
+			song.currentColorDict = chooseColorDictValue({
+				colorDicts: song.colorDicts,
+				colorLooks: songLooks(),
+				preferred: song.currentColorDict,
+				keepMissing: true
+			});
+		}
+		const lookName = hasOwn(songLooks(), song.currentColorDict) ? song.currentColorDict : '';
+		$('.ActiveStylesheets').text('Active Stylesheets: ' + recipe + (lookName ? '  (Look: ' + lookName + ')' : ''));
 
-		updateCurrentColorDictStrip(activeStylesheets, gUserColorDict);
-		registerColorSchemeCBEventSelectors(eventSelectors);
+		updateCurrentColorDictStrip(recipe, gUserColorDict);
+		refreshLooksUi();
 	}
 
-	export function colorDictDisplayRow(dictkey, schemeObj, doChuseLink, eventSelectors){
-		const CB = '<input id="cbWhichColorDict'+dictkey+'"	type="checkbox" name="cbnWhichColorDict" value="'+dictkey+'" CHECKY_CHECKED>';
-		const SP = "&nbsp;";
-		var row = $('<tr>');
-		row.attr("id", COLOR_DICT_ROW+dictkey);
-		var A;
-		var linkTD = $('<td>');
-		var checky = "-";
-		if (schemeObj.readOnly){
-			if (schemeObj.checked){
-				checky = "&check;&nbsp;";
-			} else {
-				checky = "&nbsp;&nbsp;";
-			}
-		}
-		if (schemeObj.computed){
-			if (schemeObj.checked){
-				checky = "&rArr;&nbsp;";
-			} else {
-				checky = "&#x21CF;&nbsp;";
-			}
-		}
-		if (!schemeObj.readOnly && !schemeObj.computed){
-			if (schemeObj.checked){
-				checky = CB.replace(/CHECKY_CHECKED/g, " checked ");
-			} else {
-				checky = CB.replace(/CHECKY_CHECKED/g, " ");
-			}
-		}
-		if (doChuseLink){
-			var A = $('<a href="#" class="choose-stylesheet" data-dictkey="'+dictkey+'">').html(dictkey);
-			var nobr = $('<nobr>');
-			nobr.append(checky);
-			nobr.append(A);
-			if (!schemeObj.readOnly && !schemeObj.computed){
-				var rightX = $('<span style="width: 2em;">&nbsp;&nbsp;&nbsp;<a href="#" class="delete-stylesheet" data-dictkey="'+dictkey+'">&#x232B;</a></span>');
-				nobr.append(rightX);
-			}
-			linkTD.append(nobr);
-			linkTD.addClass('userColorResultLinks');
-		} else {
-			row.addClass('userColorResultRow');
-			linkTD.addClass('userColorResultCaption');
-			linkTD.html(dictkey);
-		}
-		row.append(linkTD);
-
-		for (const [notekeyTempl, noteTempl] of Object.entries(gUserColorDict.dict)) {
-			if (noteTempl.readonly){
-				continue;
-			}
-			if (notekeyTempl == "computed" || notekeyTempl == "readOnly"){
-				continue;
-			}
-			if (!schemeObj.dict){
-				alert("No dict at "+notekeyTempl);
-			}
-			var note = schemeObj.dict[notekeyTempl];
-			if (!note){
-				row.append($('<td>').html(SP).attr('from', notekeyTempl));
-				continue;
-			}
-			var borderClass = note.colorClass == "noteTransparent" ? " colorDictTransparent" : "";
-			var caption;
-			if (note.tiny){
-				caption = note.tiny;
-			} else {
-				caption = note.caption;
-			}
-			if (!note.colorClass){
-				caption = "";
-			}
-			row.append($('<td>').addClass('colorDictLinkTD').attr('noteRole', notekeyTempl).attr('title', notekeyTempl).html(caption).addClass(note.colorClass+borderClass));
-		}
-
-		if (doChuseLink){
-			eventSelectors.push('#cbWhichColorDict'+dictkey);
-		}
-		
-
-		return row;
-	}
-
-	function colorDictLinkCell(noteRole, note, caption = null) {
-		const displayCaption = caption ?? note?.tiny ?? note?.caption ?? '';
+	function roleCell(noteRole, note, caption = null) {
+		const cellCaption = caption ?? note?.tiny ?? note?.caption ?? '';
 		const colorClass = note?.colorClass || '';
 		const borderClass = colorClass == "noteTransparent" ? " colorDictTransparent" : "";
 		return $('<td>')
 			.addClass('colorDictLinkTD')
 			.attr('noteRole', noteRole)
 			.attr('title', noteRole)
-			.html(displayCaption)
+			.text(decodeEntities(cellCaption))
 			.addClass(colorClass + borderClass);
 	}
 
-	export function registerColorSchemeCBEventSelectorsFAILED(eventSelectors){
-		if (!eventSelectors){
-			console.warn("ERROR getting event selectors, which should look like:" 
-				+"0:#cbWhichColorDictAll-Clear,1:#cbWhichColorDictCycleOfColors,2:#cbWhichColorDictRoles,3:#cbWhichColorDictFingerings,4:#cbWhichColorDictDefault"
-			)
-			return ;
-		}
-		var foo = eventSelectors;
-		Object.keys(eventSelectors).forEach(k => {
-			$(eventSelectors[k]).change(function(){
-				var cb = $(this);
-				var willBeChecked = cb.prop('checked');
-				var id = cb.val();
-				getSong().colorDicts[id].checked = willBeChecked;
-				applyStylesheetsTo_gUserColorDict();
-				fullRepaint();
-				buildColorDicts();
+	function ssButton(id, cssClasses, glyph, title, disabled, onClick) {
+		return $('<button type="button" tabindex="-1">')
+			.attr({ id, title })
+			.addClass(cssClasses)
+			.text(glyph)
+			.prop('disabled', !!disabled)
+			.on('click', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				onClick();
 			});
-		});
 	}
 
-	export function registerColorSchemeCBEventSelectors(eventSelectors){
-		eventSelectors.forEach(function(selector){
-			$(selector).change(function(){
-				var cb = $(this);
-				var willBeChecked = cb.prop('checked');
-				var id = cb.val();
-				getSong().colorDicts[id].checked = willBeChecked;
-				applyStylesheetsTo_gUserColorDict();
-				fullRepaint();
-				buildColorDicts();
-			});
-		});
-	}
+	export function colorDictDisplayRow(dictkey, schemeObj, rowOptions = {}){
+		const { link = false, selected = false, userIndex = -1, userCount = 0 } = rowOptions;
+		const isUser = !schemeObj.readOnly && !schemeObj.computed;
+		const slug = domId(dictkey);
+		var row = $('<tr>');
+		var linkTD = $('<td>');
+		var nobr = $('<nobr>');
 
-	export function moveStylesheetToEnd(lastDictkey){
-		function remainingChecked(scheme){
-			if (remainingCheckedVal == null){
-				return scheme.checked;
-			}
-			return remainingCheckedVal;
-		}
-		var remainingCheckedVal = null;
-		var temp = {};
-		var last = null;
-
-		for (const [key, scheme] of Object.entries(getSong().colorDicts)) {
-			if (key == lastDictkey){
-				if ( !scheme.readOnly && !scheme.computed ){
-					//user clicked user stylesheet
-					scheme.checked = true;
-					remainingCheckedVal = null; //null==KEEP
-					last = scheme;
-				} else {
-					//user clicked system entry: "All-Clear" or "Default" etc.
-					scheme.checked = true; //remainingChecked(scheme);
-					//all previous computed system items are now checked
-					if (scheme.computed){
-						for (const [k, sch] of Object.entries(temp)){
-							sch.checked = true;
-						}
-						//all subsequent items are now unchecked
-						remainingCheckedVal = false;
-					} else if (scheme.readOnly){
-						for (const [k, sch] of Object.entries(temp)){
-							sch.checked = true;
-						}
-						remainingCheckedVal = false;
-					}
-					temp[key] = scheme;
-				}
+		if (link) {
+			row.attr('id', 'ssRow-' + slug).addClass(isUser ? 'ssRowUser' : 'ssRowBuiltIn');
+			if (selected) row.addClass('ssSelected');
+			if (isUser) {
+				nobr.append($('<input type="checkbox" class="ssSheetCheck">')
+					.attr({ id: 'ssCheck-' + slug, 'data-dictkey': dictkey, title: 'Include this stylesheet' })
+					.prop('checked', !!schemeObj.checked)
+					.on('change', function () {
+						const sheet = getSong().colorDicts[dictkey];
+						if (!sheet) return;
+						sheet.checked = this.checked;
+						refreshAfterUserChange();
+						displayOptionsChanged();
+					}));
+			} else if (schemeObj.computed) {
+				nobr.append($('<span class="ssMark">').text(schemeObj.checked ? '\u21D2\u00A0' : '\u21CF\u00A0'));
 			} else {
-				scheme.checked = remainingChecked(scheme);
-				temp[key] = scheme;
-				if (scheme.computed || scheme.readOnly){
-					scheme.checked = remainingChecked(scheme);
-				}
+				nobr.append($('<span class="ssMark">').text(schemeObj.checked ? '\u2713\u00A0' : '\u00A0\u00A0'));
 			}
+			nobr.append($('<a href="#" class="choose-stylesheet">')
+				.attr({
+					id: 'ssLink-' + slug,
+					'data-dictkey': dictkey,
+					title: isUser ? 'Select: tick it and load it into the editor' : 'Select this built-in level (all built-ins up to here)'
+				})
+				.text(dictkey));
+			linkTD.attr('id', 'ssLinkTD-' + slug).addClass('userColorResultLinks').append(nobr);
+		} else {
+			row.addClass('userColorResultRow');
+			linkTD.addClass('userColorResultCaption').text(dictkey);
 		}
-		if (last){
-			temp[lastDictkey] = last;
+		row.append(linkTD);
+
+		roleKeys().forEach((notekeyTempl) => {
+			var note = schemeObj.dict ? schemeObj.dict[notekeyTempl] : null;
+			if (!note) {
+				row.append($('<td>').html('&nbsp;').attr('from', notekeyTempl));
+				return;
+			}
+			row.append(roleCell(notekeyTempl, note, note.colorClass ? undefined : ''));
+		});
+
+		if (link) {
+			const buttonsTD = $('<td>').attr('id', 'ssButtonsTD-' + slug).addClass('ssButtonsTD');
+			if (isUser) {
+				const box = $('<div class="ssButtons">').attr('id', 'ssButtons-' + slug);
+				box.append(ssButton('ssMoveUp-' + slug, 'ssMoveUp btnMoveTuningUp', GLYPH_UP, 'Move up (later sheets win)', userIndex <= 0,
+					() => moveUserStylesheet(dictkey, -1)));
+				box.append(ssButton('ssMoveDown-' + slug, 'ssMoveDown btnMoveTuningDown', GLYPH_DOWN, 'Move down (later sheets win)', userIndex >= userCount - 1,
+					() => moveUserStylesheet(dictkey, 1)));
+				box.append(ssButton('ssRemove-' + slug, 'ssRemove btnRemoveTuning', GLYPH_DELETE, 'Delete this stylesheet (it goes to the Graveyard)', false,
+					() => deleteUserStylesheet(dictkey)));
+				buttonsTD.append(box);
+			}
+			row.append(buttonsTD);
+		} else {
+			row.append($('<td>'));
 		}
-		getSong().colorDicts = temp;
+		return row;
 	}
 
-export function chuseStylesheet(dictkey){
-		var colorScheme = getSong().colorDicts[dictkey];
-		if (colorScheme){
-			getSong().currentColorDict = dictkey;
-			for (const [notekey, captionColor] of Object.entries(colorScheme.dict)) {
-				if (captionColor.colorClass){
-					gUserColorDict.dict[notekey] = captionColor;
-				}
+	export function updateCurrentColorDictStrip(dictLabel, colorScheme){
+		var newRow = $('<tr>');
+		newRow.append($('<td class="userColorResultCaption">').text(dictLabel));
+		['noteTransparent', 'noteAutomatic'].forEach((noteRole) => {
+			const note = gUserColorDict.dict[noteRole];
+			if (note) newRow.append(roleCell(noteRole, note));
+		});
+		roleKeys().forEach((notekey) => {
+			const note = colorScheme.dict[notekey];
+			if (!note) {
+				newRow.append($('<td>').html('&nbsp;'));
+			} else {
+				newRow.append(roleCell(notekey, note, note.colorClass ? undefined : ''));
 			}
+		});
+		var tbl = $("<table class='tblColorDictOneRow'>");
+		tbl.append(newRow);
+		$('.colorDictSwatchStrip').empty().append(tbl);
+	}
 
-			var cleanResult = clean_ColorSchemeName(dictkey);
-			if (cleanResult.systemSchemeName != "All-Clear"){
-				$('#txtColorSchemeName').val(cleanResult.colorSchemeName).attr('systemSchemeName', cleanResult.systemSchemeName);
-				flashLabel('#lblStylesheetName');
-			}
+	//------------------------------ select, apply, order ------------------------
 
-			moveStylesheetToEnd(dictkey);
-			applyStylesheetsTo_gUserColorDict();
-			buildUserColors();
-			buildColorDicts();
-			fullRepaint();
-			displayOptionsChanged();
+	/** Link click.  A built-in sets the built-in level only (user ticks are left alone); a user sheet is ticked.
+	 *  Either way the editor is loaded from it. No reordering: order is changed only with the arrow buttons. */
+	export function chuseStylesheet(dictkey){
+		const song = getSong();
+		if (!song || !hasOwn(song.colorDicts, dictkey)) return;
+		if (isBuiltInName(dictkey)) {
+			setBuiltInLevel(song.colorDicts, dictkey);
+		} else {
+			song.colorDicts[dictkey].checked = true;
 		}
+		editorSelect(editor, song.colorDicts, dictkey);
+		setNameField(isBuiltInName(dictkey) ? freeName(dictkey + '-user', takenNames(song)) : dictkey);
+		showStylesheetMessage('');
+		renderAllEditorCells();
+		refreshAfterUserChange();
+		refreshStylesheetHint();
+		displayOptionsChanged();
 	}
 
 	export function refreshStylesheets(){
@@ -489,93 +356,106 @@ export function chuseStylesheet(dictkey){
 		fullRepaint();
 	}
 
-	export function flashLabel(lblSelector){
-		$(lblSelector).addClass('basicBackground');
-		setTimeout(function() {
-	   		$(lblSelector).removeClass('basicBackground');
-			$(lblSelector).addClass('transBackground');
-			setTimeout(function() {
-		   		$(lblSelector).removeClass('transBackground');
-			}, 1000);
-
-
-		}, 1000);
-	}
-
-	export function deleteUserStylesheet(dictkey){
-		var obj = getSong().colorDicts[dictkey];
-		var context = {"dictkey": dictkey, "which": "UserStylesheet"};
-        getSong().graveyard.bury(GraveType.STYLESHEET, obj, context);
-
-		delete getSong().colorDicts[dictkey];
+	/** Applies a Section's stored value (a Look name, a recipe, or a legacy single sheet name) without touching the editor. */
+	export function applyColorLook(value){
+		const song = getSong();
+		const v = String(value ?? '');
+		if (!song || !song.colorDicts || !v) return { missing: [] };
+		const result = applyRecipe(song.colorDicts, v, songLooks());
+		song.currentColorDict = v;
 		applyStylesheetsTo_gUserColorDict();
 		buildUserColors();
 		buildColorDicts();
 		fullRepaint();
+		return result;
 	}
 
-	export function updateCurrentColorDictStrip(dictLabel, colorScheme){
-		var row = colorDictDisplayRow(dictLabel, colorScheme, false);
-		var newRow = $('<tr>');
-		newRow.html(row.html());
-		['noteTransparent', 'noteAutomatic'].reverse().forEach((noteRole) => {
-			const note = gUserColorDict.dict[noteRole];
-			if (note) {
-				newRow.children('td:first').after(colorDictLinkCell(noteRole, note));
-			}
-		});
-		var tbl = $("<table class='tblColorDictOneRow'>");
-		tbl.append(newRow);
-		$('.colorDictSwatchStrip').empty().append(tbl);
+	export function moveUserStylesheet(dictkey, delta){
+		const song = getSong();
+		const moved = moveUserSheet(song.colorDicts, dictkey, delta);
+		if (!moved) return;
+		song.colorDicts = moved;
+		refreshAfterUserChange();
+		showStylesheetMessage('Moved "' + dictkey + '". Later sheets win where they color the same role.');
 	}
 
+	export function deleteUserStylesheet(dictkey){
+		const song = getSong();
+		if (!isUserSheet(song.colorDicts, dictkey)) return;
+		const usage = findSheetUsage(song, dictkey);
+		var obj = song.colorDicts[dictkey];
+		var context = {"dictkey": dictkey, "which": "UserStylesheet"};
+		song.graveyard.bury(GraveType.STYLESHEET, obj, context);
+
+		delete song.colorDicts[dictkey];
+		if (editor.selectedKey === dictkey) {
+			editorSelect(editor, song.colorDicts, '');
+			setNameField('');
+			renderAllEditorCells();
+		}
+		refreshAfterUserChange();
+		refreshStylesheetHint();
+		displayOptionsChanged();
+		const used = describeUsage(usage);
+		showStylesheetMessage('Deleted "' + dictkey + '" (see the Graveyard).'
+			+ (used ? ' Still referenced by: ' + used + '. Those show the sheet as missing until you re-create it with the same name.' : ''));
+	}
+
+	/** Rebuilds the live dict: start from the OEM defaults, then layer every ticked non-computed sheet in list order. */
 	export function applyStylesheetsTo_gUserColorDict(){
-		for (const [key, scheme] of Object.entries(getSong().colorDicts)) {
-			if (scheme.checked && !scheme.computed){
-				var dict = scheme.dict;
-				Object.assign(gUserColorDict.dict, dict);
+		const live = gUserColorDict.dict;
+		Object.keys(live).forEach((k) => { delete live[k]; });
+		Object.assign(live, gUserColorDictOEM.dict);
+		const song = getSong();
+		if (!song || !song.colorDicts) return;
+		for (const scheme of Object.values(song.colorDicts)) {
+			if (scheme.checked && !scheme.computed && scheme.dict){
+				for (const [noteKey, cell] of Object.entries(scheme.dict)) {
+					if (hasOwn(gUserColorDictOEM.dict, noteKey) && cell && cell.colorClass) {
+						live[noteKey] = cell;
+					}
+				}
 			}
 		}
 	}
 
 	export function calculateActiveStylesheets(){
-		var result = [];
-		for (const [key, scheme] of Object.entries(getSong().colorDicts)) {
-			if (scheme.checked){
-				if (scheme.Default){
-					result = ["Default"]; //reset and ditch the previous things that built gUserColorDictOEM.
-				} else {
-					result.push(key);
-				}
-			}
-		}
-		return result.join("+");
+		return buildRecipe(getSong().colorDicts);
 	}
 
+	//------------------------------ role buttons ---------------------------------
+
     export function buildUserColors() {
-        function buildOneRadio(Role, obj, checkedString){
+		const dest = $("#idRoleButtonsDest");
+		const prior = $('input[name="rbColor"]:checked');
+		const priorInside = prior.closest('#idRoleButtonsDest').length > 0;
+		const priorValue = prior.val();
+		const somethingElseChecked = prior.length > 0 && !priorInside;
+
+        function buildOneRadio(Role, obj){
             var userColorClass = "note"+Role;
             var captionClass = (obj.captionClass) ? obj.captionClass : userColorClass;
-            var radio = $('<input type="radio" id="idR'+Role+'" name="rbColor" value="note'+Role+'"  '+checkedString+'>');
-            var label = $('<label id="chooseRole'+Role+'" title="note'+Role+'" ></label>');
+            var radio = $('<input type="radio" name="rbColor">').attr('id', 'idR'+Role).val(userColorClass);
+            var label = $('<label>').attr({ id: 'chooseRole'+Role, title: 'note'+Role });
             label.append(radio);
-            label.append(""+obj.caption);
+            label.append(document.createTextNode(decodeEntities(obj.caption)));
             label.addClass("userColorRB");
 			label.addClass(lookupUserColorClassByClass(userColorClass));
 			if (captionClass !== userColorClass) {
 				label.addClass(lookupUserColorClassByClass(captionClass));
 			}
-			radio.val(userColorClass);
-            $("#idRoleButtonsDest").append(label);
+            dest.append(label);
         }
-        $("#idRoleButtonsDest").empty();
-        var checkedString = 'checked="checked"';
-		Object.entries(gUserColorDict.dict).forEach(([key, obj], idx) => {
+        dest.empty();
+		Object.entries(gUserColorDict.dict).forEach(([key, obj]) => {
 			var role = key.substring("note".length);  // from noteChord" to "Chord"
-			buildOneRadio(role, obj, checkedString);
-			checkedString = '';//first one done, now the rest should be NOT checked.
+			buildOneRadio(role, obj);
 		});
-    
+		if (!somethingElseChecked) {
+			const same = priorInside ? dest.find('input[type=radio]').filter(function () { return this.value === priorValue; }) : $();
+			(same.length ? same : dest.find('input[type=radio]').first()).prop('checked', true);
+		}
+
         $("#idRootRoleSpan").removeClass().addClass(gUserColorDict.dict["noteRoot"].colorClass);
         $("#idChordRoleSpan").removeClass().addClass(gUserColorDict.dict["noteChord"].colorClass);
         $("#idScaleRoleSpan").removeClass().addClass(gUserColorDict.dict["noteScale"].colorClass);
@@ -592,6 +472,202 @@ export function chuseStylesheet(dictkey){
 
         buildUserColorsEditor();
     }
+
+//================== Editor: New, Save, Copy, Rename, From Section ===============
+
+	function currentPlanInputs() {
+		const song = getSong();
+		return { colorDicts: song.colorDicts, colorLooks: songLooks() };
+	}
+
+	export function refreshStylesheetHint() {
+		const song = getSong();
+		if (!song || !song.colorDicts) return;
+		const rawName = $('#txtColorSchemeName').val();
+		const savePlan = planSave(editor, { rawName, ...currentPlanInputs() });
+		const copyPlan = planCopy(editor, currentPlanInputs());
+		const renamePlan = planRename(editor.selectedKey, rawName, currentPlanInputs());
+		let text = describePlan(savePlan);
+		if (renamePlan.ok) text += ' ' + describePlan(renamePlan);
+		const counts = countChanges(editor);
+		$('#divStylesheetHint')
+			.text(text)
+			.toggleClass('ssHintBlocked', !savePlan.ok)
+			.attr('data-changed', counts.changed)
+			.attr('data-removed', counts.removed);
+		$('#divStylesheetNote').text(editor.note || '');
+		$('#btnRecordUserColors').prop('disabled', !savePlan.ok);
+		$('#btnCopyStylesheet').prop('disabled', !copyPlan.ok);
+		$('#btnRenameStylesheet').prop('disabled', !renamePlan.ok);
+	}
+
+	function commitSheet(plan) {
+		const song = getSong();
+		const previous = hasOwn(song.colorDicts, plan.name) ? song.colorDicts[plan.name] : null;
+		if (plan.action === 'update' && previous) {
+			song.graveyard.bury(GraveType.STYLESHEET, previous, { dictkey: plan.name, which: 'UserStylesheet' });
+		}
+		song.colorDicts[plan.name] = buildSheetEntry(plan, gUserColorDictOEM.dict, true);
+		editorSelect(editor, song.colorDicts, plan.name);
+		setNameField(plan.name);
+		renderAllEditorCells();
+		refreshAfterUserChange();
+		refreshStylesheetHint();
+		displayOptionsChanged();
+	}
+
+	export function saveStylesheet() {
+		const plan = planSave(editor, { rawName: $('#txtColorSchemeName').val(), ...currentPlanInputs() });
+		if (!plan.ok) {
+			showStylesheetMessage(describePlan(plan));
+			return null;
+		}
+		commitSheet(plan);
+		showStylesheetMessage((plan.action === 'update' ? 'Updated "' : 'Saved "') + plan.name + '".');
+		return plan;
+	}
+
+	export function copyStylesheet() {
+		const plan = planCopy(editor, currentPlanInputs());
+		if (!plan.ok) {
+			showStylesheetMessage(describePlan(plan));
+			return null;
+		}
+		commitSheet(plan);
+		showStylesheetMessage('Copied to "' + plan.name + '".');
+		return plan;
+	}
+
+	export function renameStylesheet() {
+		const song = getSong();
+		const plan = planRename(editor.selectedKey, $('#txtColorSchemeName').val(), currentPlanInputs());
+		if (!plan.ok) {
+			showStylesheetMessage(describePlan(plan));
+			return null;
+		}
+		const renamed = {};
+		Object.keys(song.colorDicts).forEach((k) => { renamed[k === plan.from ? plan.name : k] = song.colorDicts[k]; });
+		song.colorDicts = renamed;
+		const count = repointReferences(song, plan.from, plan.name);
+		const pending = editor.edits;
+		editorSelect(editor, song.colorDicts, plan.name);
+		editor.edits = pending;
+		setNameField(plan.name);
+		renderAllEditorCells();
+		refreshAfterUserChange();
+		refreshStylesheetHint();
+		displayOptionsChanged();
+		showStylesheetMessage('Renamed "' + plan.from + '" to "' + plan.name + '"; ' + count + ' stored reference' + (count === 1 ? '' : 's') + ' updated.');
+		return plan;
+	}
+
+	/** New: a blank editor (nothing selected, empty name); stylesheets stay as they are. */
+	export function newStylesheet() {
+		editorSelect(editor, getSong().colorDicts, '');
+		setNameField('');
+		showStylesheetMessage('');
+		renderAllEditorCells();
+		refreshStylesheetHint();
+		$('#txtColorSchemeName').trigger('focus');
+		buildColorDicts();
+	}
+
+	/** From Section: samples the first visible instrument's named notes into the editor (pending edits; nothing is saved). */
+	export function loadEditorFromSection() {
+		const lookupContext = createLookupContext();
+		const section = getCurrentSection();
+		const song = getSong();
+		var rootIndex = toInt(section.rootID, 0);
+		const cells = {};
+		let tunings = song.getVisibleTunings();
+		if (tunings.length > 0) {
+			var notes = section.getSectionNotes(tunings[0]).namedNotes;
+			if (notes) {
+				Object.keys(notes).forEach(noteName => {
+					var noteFnNum = noteNameToNoteID(noteName);
+					var rel = (12 + noteFnNum - rootIndex) % 12;
+					var noteKey = "note" + (rel + 1); // Use 1-based for note1, note2, etc.
+					var note = notes[noteName];
+					if (note.colorClass && hasOwn(gUserColorDictOEM.dict, noteKey)) {
+						var res = lookupUserColor(JSON.parse(JSON.stringify(note)), lookupContext);
+						if (res.colorClass) cells[noteKey] = splitClass(res.colorClass);
+					}
+				});
+			}
+		}
+		if (!Object.keys(cells).length) {
+			showStylesheetMessage('No colored Named Notes were found on the first visible instrument.');
+			return null;
+		}
+		editorLoadEdits(editor, cells);
+		editor.note = doingAutomaticColor()
+			? 'AutoColor is on, so these are the Function colors AutoColor resolved, not the colors you picked.'
+			: '';
+		showStylesheetMessage('Loaded ' + Object.keys(cells).length + ' roles from the first instrument. Review, then Save Stylesheet.');
+		renderAllEditorCells();
+		refreshStylesheetHint();
+		return cells;
+	}
+
+//================== Looks =======================================================
+
+	export function refreshLooksUi() {
+		const song = getSong();
+		const sel = $('#selColorLooks');
+		if (!song || !sel.length) return;
+		const looks = songLooks();
+		sel.empty().append($('<option>').attr('value', '').text('(Looks)'));
+		Object.keys(looks).forEach((name) => {
+			sel.append($('<option>').attr('value', name).text(name + '  =  ' + looks[name]));
+		});
+		sel.val(hasOwn(looks, song.currentColorDict) ? song.currentColorDict : '');
+		$('#btnRemoveColorLook').prop('disabled', !sel.val());
+		refreshLookHint();
+	}
+
+	export function refreshLookHint() {
+		const song = getSong();
+		if (!song || !song.colorDicts) return;
+		const plan = planSaveLook({ rawName: $('#txtColorLookName').val(), ...currentPlanInputs() });
+		$('#divColorLookHint').text(describeLookPlan(plan)).toggleClass('ssHintBlocked', !plan.ok);
+		$('#btnSaveColorLook').prop('disabled', !plan.ok);
+	}
+
+	export function saveColorLook() {
+		const song = getSong();
+		const plan = planSaveLook({ rawName: $('#txtColorLookName').val(), ...currentPlanInputs() });
+		if (!plan.ok) {
+			showStylesheetMessage(describeLookPlan(plan));
+			return null;
+		}
+		song.colorLooks = song.colorLooks || {};
+		song.colorLooks[plan.name] = plan.recipe;
+		song.currentColorDict = plan.name;
+		$('#txtColorLookName').val('');
+		buildColorDicts();
+		displayOptionsChanged();
+		showStylesheetMessage('Look "' + plan.name + '" = ' + plan.recipe + '. Sections can now store the Look name.');
+		return plan;
+	}
+
+	export function chooseColorLook(name) {
+		if (!name) return;
+		applyColorLook(name);
+		displayOptionsChanged();
+	}
+
+	export function removeColorLook(name) {
+		const song = getSong();
+		if (!name || !hasOwn(song.colorLooks, name)) return;
+		const usage = findLookUsage(song, name);
+		delete song.colorLooks[name];
+		if (!Object.keys(song.colorLooks).length) delete song.colorLooks;
+		if (song.currentColorDict === name) song.currentColorDict = '';
+		buildColorDicts();
+		displayOptionsChanged();
+		const used = describeUsage({ ...usage, looks: [] });
+		showStylesheetMessage('Removed Look "' + name + '".' + (used ? ' Still stored by: ' + used + '; the Matrix shows them struck through.' : ''));
+	}
 
 //================== Pickers ===================================================
 	export function buildColorPicker(){
@@ -613,38 +689,54 @@ export function chuseStylesheet(dictkey){
 		return result.join(''); //Return just TRs not TABLE.
 	}
 
-	export function buildUserColorsEditor() {
-		function buildOneColor(role, obj, checkedString){
-			  if (obj.readonly){   // e.g. noteTransparent and noteAutomatic are not user-editable and are marked thusly.
-				  return null;
-			  }
-			  var userColorClass = "note"+role;
-			  var captionClass = (obj.captionClass) ? obj.captionClass : userColorClass;
-			  var lookedup = lookupUserColorClassByClass(captionClass);
-			  var editingBox = "<td id='colorDestRole"+role+"'>&nbsp;</td>"
-			                  +"<td><span class='pickerButton choose-color-picker' data-target='#colorDestRole"+role+"'>color</span>&nbsp;</td>"
-							  +"<td><span class='pickerButton choose-hatch-picker' data-target='#colorDestRole"+role+"'>hatch</span></td>";
+	function renderEditorCell(role) {
+		const td = $('#colorDestRole' + role);
+		if (!td.length) return;
+		const cell = visibleCell(editor, 'note' + role);
+		td.removeClass().addClass('ssCell ssCell-' + cell.status);
+		if (cell.color) td.addClass(cell.color);
+		if (cell.hatch) td.addClass(cell.hatch);
+		const label = cell.status === 'removed' ? '\u00D7' : (cell.status === 'blank' ? '\u00A0' : joinClass(cell));
+		td.text(label).attr('title', cell.status);
+	}
 
-			  var row = $('<tr><td>'+role+'</td>'
-			                 +'<td class="'+captionClass+'">'+captionClass+'</td>'
-							 +'<td class="'+lookedup+'">'+lookedup+'</td>'
-							 +'<td>'+editingBox+'</td>'
-						 +'</tr>');
-			  return row;
-	   }
-	    var table = $('<table>');
-	    Object.entries(gUserColorDict.dict).forEach(([key, obj]) => {
-			var role = key.substring("note".length);  // from noteChord" to "Chord"
-			var row = buildOneColor(role, obj, "");
-			if (row) {
-				table.append(row);
-			}
+	function renderAllEditorCells() {
+		$('#UserColorsEditorDest td[id^="colorDestRole"]').each(function () {
+			renderEditorCell(this.id.substring('colorDestRole'.length));
 		});
-	   $("#UserColorsEditorDest").empty().append(table);
-	   $('#colorPicker').html(buildColorPicker());  //buildColorPicker returns rows, not TABLE.
-	   // #hatchPicker is built manually in index.html
-	 }
+	}
 
+	export function buildUserColorsEditor() {
+		var table = $('<table class="ssEditorTable">').attr('id', 'tblStylesheetEditor');
+		roleKeys().forEach((key) => {
+			const obj = gUserColorDict.dict[key];
+			const role = key.substring("note".length);  // from noteChord" to "Chord"
+			const slug = domId(role);
+			const captionClass = obj.captionClass ? obj.captionClass : key;
+			const lookedup = lookupUserColorClassByClass(captionClass);
+			const target = '#colorDestRole' + slug;
+			const row = $('<tr>').attr('id', 'ssEditRow-' + slug);
+			row.append($('<td>').text(role));
+			row.append($('<td>').addClass(captionClass).text(captionClass));
+			row.append($('<td>').addClass(lookedup).text(lookedup));
+			row.append($('<td>').attr('id', 'colorDestRole' + slug).text('\u00A0'));
+			row.append($('<td>').append($('<span class="pickerButton choose-color-picker">').attr({ id: 'ssPickColor-' + slug, 'data-target': target }).text('color')));
+			row.append($('<td>').append($('<span class="pickerButton choose-hatch-picker">').attr({ id: 'ssPickHatch-' + slug, 'data-target': target }).text('hatch')));
+			row.append($('<td>').append($('<span class="pickerButton clear-role-picker">').attr({ id: 'ssClear-' + slug, 'data-role': slug, title: 'Remove this role from the stylesheet' }).text('clear')));
+			table.append(row);
+		});
+		$("#UserColorsEditorDest").empty().append(table);
+		$('#colorPicker').html(buildColorPicker());  //buildColorPicker returns rows, not TABLE.
+		// #hatchPicker is built manually in palette.html
+		renderAllEditorCells();
+		refreshStylesheetHint();
+	}
+
+	export function clearRolePicker(role) {
+		editorClearRole(editor, 'note' + role);
+		renderEditorCell(role);
+		refreshStylesheetHint();
+	}
 
 	 const COLOR_PICKER_DEST = "colorClassDestSel";
 	 const HATCH_PICKER_DEST = "hatchClassDestSel";
@@ -699,14 +791,12 @@ export function chuseStylesheet(dictkey){
 	 var optionsColorPicker = {
 		 pickerSelector: '#colorPicker',
 		 dest: COLOR_PICKER_DEST,
-		 lastPickedKey: 'colorClassPicked',
-		 otherPickedKey: 'hatchClassPicked'
+		 part: 'color'
 	 }
 	 var optionsHatchPicker = {
 		 pickerSelector: '#hatchPicker',
 		 dest: HATCH_PICKER_DEST,
-		 lastPickedKey: 'hatchClassPicked',
-		 otherPickedKey: 'colorClassPicked'
+		 part: 'hatch'
 	 }
 	 export function colorPickerClicked(t){
 		 genericPickerClicked(t, optionsColorPicker);
@@ -714,27 +804,16 @@ export function chuseStylesheet(dictkey){
 	 export function hatchPickerClicked(t){
 		 genericPickerClicked(t, optionsHatchPicker);
 	 }
+	 /** A pick updates the editor state (never the DOM class list directly); "none" empties that part. */
 	 export function genericPickerClicked(t, options){
-		 var colorClass = $(t).attr("colorClass");
+		 var colorClass = $(t).attr("colorClass") || '';
 		 var picker = $(options.pickerSelector);
-		 var selector = picker.attr(options.dest);
-		 var destCell = $(selector);
-		 destCell.removeClass();
-		 destCell.addClass(colorClass);
-		 destCell.attr(options.lastPickedKey, colorClass);
-		 var html = colorClass;
-
-		 var otherClass = destCell.attr(options.otherPickedKey);
-		 if (otherClass) {
-			 destCell.addClass(otherClass);
-
-			 if (colorClass.length>0){
-			  	 html = colorClass + "+" + otherClass;
-			 } else {
-				 html = otherClass;
-			 }
+		 var destId = String(picker.attr(options.dest) || '').replace(/^#colorDestRole/, '');
+		 if (destId) {
+			 editorSetPart(editor, 'note' + destId, options.part, colorClass);
+			 renderEditorCell(destId);
+			 refreshStylesheetHint();
 		 }
-		 destCell.html(html);
 		 picker.hide();
 		 picker[0].lastCaller = null;
 	 }

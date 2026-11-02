@@ -306,7 +306,7 @@ export class DisplayOptionsMatrixBuilder {
             return;
         }
         const holder = document.createElement('tbody');
-        holder.innerHTML = buildLiveRowHtml(ctx.live);
+        holder.innerHTML = buildLiveRowHtml(ctx.live, { song: ctx.song });
         row.replaceWith(holder.firstElementChild);
     }
 

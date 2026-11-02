@@ -541,7 +541,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         var removeDisabled = sInMemCount && sInMemCount.trim().length > 0 ? ' disabled title="Delete Sections/Notes first"' : '';
         var moveButtonHtml = '<button type="button" class="btnMoveTuningUp" data-baseid="' + tun.baseID + '"' + disableMoveUp + '>&uarr;</button>'
             + '<button type="button" class="btnMoveTuningDown" data-baseid="' + tun.baseID + '"' + disableMoveDown + '>&darr;</button>'
-            + '<button type="button" class="btnRemoveTuning" data-baseid="' + tun.baseID + '"' + removeDisabled + '>X</button>';
+            + '<button type="button" class="btnRemoveTuning" data-baseid="' + tun.baseID + '"' + removeDisabled + '>&#x232B;</button>';
 
         // For myTunings (visibility mode), make ID editable; for allTunings (clone mode), show as text
         var idCellHtml;

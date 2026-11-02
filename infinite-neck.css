@@ -286,6 +286,25 @@ table {
     background-color: #e45724;
     font-size: 120%;
 }
+.btnRemoveTuning:disabled {
+    background-color: #ababab;
+}
+
+/* Sprint 150: the up/down/delete glyph buttons (Tunings in Song and the Palette's Stylesheets table) share one box so
+   the Unicode arrows and the delete glyph (U+232B) do not make some buttons taller than others. */
+.btnMoveTuningUp,
+.btnMoveTuningDown,
+.btnRemoveTuning {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.9em;
+    min-width: 2em;
+    padding: 0 0.4em;
+    line-height: 1;
+    vertical-align: middle;
+}
 
 .moveyButton{
     cursor: pointer;

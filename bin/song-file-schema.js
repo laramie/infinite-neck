@@ -376,6 +376,11 @@ export const songFileV2Schema = {
     type: 'object',
     properties: {
         activeStylesheets: { type: 'string', minLength: 1 },
+        // Sprint 150: Looks are named recipes ("Fingerings+mine"), per Song.
+        colorLooks: {
+            type: 'object',
+            additionalProperties: { type: 'string', minLength: 1 }
+        },
         captionsRowShowing: { type: 'boolean' },
         defaultBPM: stringOrNumberSchema,
         chartOptions: chartOptionsSchema,

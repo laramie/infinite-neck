@@ -10,12 +10,14 @@ import {
 } from './approved-values.js';
 import { parseAppActionFragment } from './app-action-fragment.js';
 import {
-	chuseStylesheet,
+	applyColorLook,
 	applyStylesheetsTo_gUserColorDict,
 	buildColorDicts,
 	buildUserColors,
+	resetStylesheetEditor,
 	setColorFunctionsProviders
 } from './colorFunctions.js';
+import { repointReferences, resetBuiltInFlags, sanitizeColorDicts } from './templates/palette/stylesheetPlan.js';
 import {
 	addCmdResults,
 	hideCmdLine,
@@ -2069,7 +2071,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 
 		Object.entries(incomingColorDicts).forEach(([name, scheme]) => {
-			if (!name || !scheme || typeof scheme !== 'object') {
+			if (!name || name === '__proto__' || !scheme || typeof scheme !== 'object') {
 				return;
 			}
 			if (scheme.readOnly || scheme.computed) {
@@ -2220,6 +2222,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		applyStylesheetsTo_gUserColorDict();
 		buildColorDicts();
+		resetStylesheetEditor();
 		requestReloadTuningsDisplays();
 		refreshFileMenuSongInstrumentBadges();
 		EventBus.trigger('ReinstallAllTuningsTables');
@@ -2348,20 +2351,20 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function installDefaultColorDicts(){
-		const existingColorDicts = getSong().colorDicts && typeof getSong().colorDicts === 'object'
-			? getSong().colorDicts
+		const song = getSong();
+		const existingColorDicts = song.colorDicts && typeof song.colorDicts === 'object'
+			? song.colorDicts
 			: {};
-		const userColorDicts = {};
-		Object.entries(existingColorDicts).forEach(([key, scheme]) => {
-			if (!scheme || typeof scheme !== 'object'){
-				return;
-			}
-			if (scheme.readOnly || scheme.computed){
-				return;
-			}
-			userColorDicts[key] = scheme;
+		const userEntries = Object.entries(existingColorDicts).filter(([, scheme]) => (
+			scheme && typeof scheme === 'object' && !scheme.readOnly && !scheme.computed
+		));
+		// Sprint 150: names are cleaned and made unique, unsafe classes and unknown roles are dropped.
+		const { dicts: userColorDicts, renames } = sanitizeColorDicts(userEntries, {
+			knownRoles: new Set(Object.keys(gUserColorDictOEM.dict))
 		});
-		getSong().colorDicts = {
+		// The built-ins are module singletons: every Song open starts with all of them ticked (no carry-over
+		// of an earlier Song's All-Clear/level); each user sheet keeps its own saved `checked` flag.
+		song.colorDicts = resetBuiltInFlags({
 			"All-Clear": gAllClear,
 			"CycleOfColors": gDefault_CycleOfColors,
 			"Roles": gUserColorDictRolesDefault,
@@ -2369,7 +2372,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			"Highlights": gUserColorDictHighlightsDefault,
 			"Default": gUserColorDictOEM,
 			...userColorDicts
-		};
+		});
+		renames.forEach(({ from, to, reason }) => {
+			if (to) {
+				const count = repointReferences(song, from, to);
+				UserLog.addToUserLog('Stylesheet', `Stylesheet "${escapeHtml(String(from))}" was renamed "${escapeHtml(to)}" (${reason}); ${count} stored reference${count === 1 ? '' : 's'} updated.`);
+			} else {
+				UserLog.addToUserLog('Stylesheet', `Stylesheet "${escapeHtml(String(from))}" was dropped (${reason}).`);
+			}
+		});
 	}
 
 
@@ -3479,8 +3490,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		var currentColorDict = options.currentColorDict;
 		if (currentColorDict){
-			getSong().currentColorDict = currentColorDict;
-			chuseStylesheet(currentColorDict);
+			// Sprint 150: a Section stores a Look name, a recipe ("Fingerings+mine") or a legacy sheet name.
+			// Applying it sets the ticked set absolutely; it does not touch the stylesheet editor or name field.
+			applyColorLook(currentColorDict);
 		}
 
 		// Only force these two checkboxes when the caller's options object actually specifies

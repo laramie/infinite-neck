@@ -194,6 +194,12 @@
     box-shadow: inset 0 0 5px 6px rgb(0, 50, 251);
 }
 
+/* Sprint 150: a Color value naming a stylesheet the Song no longer has (wavy orange strike; the title says which) */
+#divDisplayOptionsMatrix .dmMissingSheet {
+    text-decoration: line-through wavy #ff9900;
+    text-decoration-thickness: 2px;
+}
+
 /* cell gates: always shown */
 #divDisplayOptionsMatrix .dmCellGateR {
     color: rgb(76, 0, 0);

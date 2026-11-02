@@ -1181,10 +1181,11 @@
                             <li><a href="#paletteCustomize">Customize</a></li>
                             <li><a href="#paletteStylesheetTasks">Creating, changing and deleting Stylesheets</a>
                                 <ul class="LinkList">
-                                    <li><a href="#paletteStylesheetRecordRules">How Record decides what to do</a></li>
+                                    <li><a href="#paletteStylesheetRecordRules">How Save decides what to do</a></li>
                                 </ul>
                             </li>
                             <li><a href="#paletteStylesheetSections">Stylesheets in Sections and Songs</a></li>
+                            <li><a href="#paletteLooks">Looks: named combinations of Stylesheets</a></li>
                             <li><a href="#paletteKeys">Palette keyboard shortcuts</a></li>
                         </ul>
 
@@ -4362,7 +4363,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 <h4>Stylesheets</h4>
 <p>A <b>Stylesheet</b> is a named set of colors (and hatch patterns) for the Roles, fingers, Note Functions and highlights. The Palette always uses a <i>stack</i> of Stylesheets: the sheets that are switched on are merged from the top of the list to the bottom, and a later sheet wins for any color it defines. A sheet only has to define the colors it wants to change, so a small sheet can override just the II and the &Delta; and leave everything else to the sheets underneath. The merged answer, shown on the bottom row, is what you see and what the color buttons show.
 </p>
-<p>Press <span class="GUIReferenceInline">Stylesheets</span> to show or hide the list. Press the button again to close it. Above the table, <i>Active Stylesheets:</i> names the sheets in effect, for example <i>Default+mine</i>.
+<p>Press <span class="GUIReferenceInline">Stylesheets</span> to show or hide the list. Press the button again to close it. Above the table, <i>Active Stylesheets:</i> shows the <b>recipe</b> in effect: the highest built-in sheet that is on, then your sheets that are on, in list order, for example <i>Default+mine</i> or <i>Fingerings+mine+other</i>. Under the table are the <a href="#paletteLooks">Looks</a> controls and a <span class="GUIReferenceInline">Legend</span> button that explains every mark on this page.
 </p>
 
 <p><b><i>Reading the table</i></b></p>
@@ -4395,12 +4396,12 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
     <td><i>Default</i> is all the built-in sheets together. &rArr; means it is in effect, and &#x21CF; that it is not.</td>
   </tr>
   <tr>
-    <td>&#x232B;</td>
-    <td>One of <i>your</i> sheets, after the name</td>
-    <td>Deletes the sheet. See <a href="#paletteStylesheetTasks">Deleting</a>.</td>
+    <td>&#x2191; &#x2193; &#x232B;</td>
+    <td>One of <i>your</i> sheets, at the right end of its row</td>
+    <td><b>&#x2191;</b> and <b>&#x2193;</b> move the sheet up or down among <i>your</i> sheets (a sheet lower in the list wins; they are greyed at the ends, and your sheets always stay below the built-in ones). <b>&#x232B;</b> deletes the sheet to the Graveyard. Built-in rows have no buttons. See <a href="#paletteStylesheetTasks">Creating, changing and deleting Stylesheets</a>.</td>
   </tr>
 </table>
-<p>The last row, <b>&rArr; Result</b>, is the merged result of everything switched on. It is what the Instruments use. Click any swatch in any row to choose that color as your paint color.
+<p>The row of the sheet shown in the editor is marked with a gold bar at the left of its name. The last row, <b>&rArr; Result</b>, is the merged result of everything switched on. It is what the Instruments use. Click any swatch in any row to choose that color as your paint color.
 </p>
 
 <p><b><i>The built-in sheets</i></b></p>
@@ -4416,7 +4417,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   <tr><td><b>Highlights</b></td><td>H1, H2 and H3.</td></tr>
   <tr><td><b>Default</b></td><td>All of the above together, as shipped. It is the way to reset the colors.</td></tr>
 </table>
-<p>The built-in sheets are not saved in the Song file: they are always supplied. Your own sheets are saved, with whether each is switched on, and in their order.
+<p>The built-in sheets are not saved in the Song file: they are always supplied, and <b>every Song you open starts with all of them switched on</b> (an All-Clear you clicked in an earlier Song does not carry over). Your own sheets are saved, with whether each is switched on, and in their order. Names are cleaned when a Song is opened: a name with spaces or symbols is renamed (<i>my sheet</i> becomes <i>my-sheet</i>), a name that matches a built-in gets <i>-user</i>, and each rename is reported in the User Log and followed by every Section that used the old name.
 </p>
 
 <p><b><i>What clicking a name does</i></b></p>
@@ -4427,18 +4428,18 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td>The name of <b>one of your sheets</b></td>
-    <td>Switches it on and moves it to the <b>bottom</b> of the list, so it has the highest priority. Other sheets <i>stay as they were</i>: your other sheets that were on are still on and still stacked under it. The sheet's name is copied into the <i>Stylesheet name</i> box in <a href="#paletteCustomize">Customize</a>, ready to update.</td>
+    <td>Switches it on and loads it into the <a href="#paletteCustomize">editor</a> (its name goes in the <i>Stylesheet name</i> box and its colors show in the editor cells). <b>Nothing is reordered</b>: your other sheets that were on are still on, and the order only changes with the &#x2191; &#x2193; buttons.</td>
   </tr>
   <tr>
     <td>The name of a <b>built-in sheet</b> (<i>All-Clear</i>, <i>CycleOfColors</i>, <i>Roles</i>, <i>Fingerings</i>, <i>Highlights</i>)</td>
-    <td>Switches on that sheet <i>and every built-in sheet above it</i>, and switches <b>off</b> every sheet below it, including <b>all of your sheets</b>. They stay in the list. The name of the built-in sheet, with <i>-user</i> on the end, such as <i>Roles-user</i>, is placed in the <i>Stylesheet name</i> box (except for <i>All-Clear</i>), and the sheet becomes the starting copy for the next new sheet you record (see <a href="#paletteStylesheetRecordRules">How Record decides</a>).</td>
+    <td>Sets the <b>built-in level</b>: that sheet and every built-in sheet above it are switched on, and the built-in sheets below it are switched off. <b>Your own sheets are left exactly as they were</b>. The editor shows the built-in sheet's colors as <i>inherited</i>, and the name box is filled with the next free <i>name-user</i>, such as <i>Roles-user</i> or <i>Roles-user2</i>.</td>
   </tr>
   <tr>
     <td><b>Default</b></td>
-    <td>The same, so it switches on all built-in sheets, and switches off all of yours. This is the reset: the factory colors come back, with all of your sheets still in the list, ready to switch on again.</td>
+    <td>The same, at the top level: all built-in sheets come on. Your sheets are not touched, so to reset to the factory colors, uncheck your sheets too.</td>
   </tr>
 </table>
-<p>So there are two ways to use more than one sheet. Switch several of yours on with their checkboxes, and the lower rows win; or switch on one at a time with <i>Default</i> and then clicking the name.
+<p>To use one sheet alone, click <i>Default</i> and then untick the ones you do not want, or tick just the one you want. Several sheets can be on together: the lower rows win.
 </p>
 
 <a name="paletteCustomize"></a>
@@ -4447,56 +4448,79 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 </p>
 
 <p><b><i>The color editor</i></b></p>
-<p>Under the name box is a table with one row for each Role, finger, Note Function and highlight. Each row has:
+<p>Under the buttons is a table with one row for each Role, finger, Note Function and highlight. Each row has:
 </p>
 <ul>
   <li>its name,</li>
   <li>two read-only cells that show the color now in effect,</li>
-  <li>an <b>empty cell where your pick will appear</b>, with a <span class="GUIReferenceInline">color</span> and a <span class="GUIReferenceInline">hatch</span> button.</li>
+  <li>an <b>editor cell</b> that shows the sheet you selected, plus your pending changes,</li>
+  <li>a <span class="GUIReferenceInline">color</span>, a <span class="GUIReferenceInline">hatch</span> and a <span class="GUIReferenceInline">clear</span> button.</li>
 </ul>
-<p>Press <span class="GUIReferenceInline">color</span> and a grid of colors opens beside it. Click a swatch to choose it. Press the same button again to close the grid without choosing. The <i>none</i> entry clears the color part of your pick. <span class="GUIReferenceInline">hatch</span> does the same with the hatch patterns (<i>noteHatched</i> to <i>noteHatched8</i>). You can give a Role a color, a hatch, or both, and your pick shows in its cell as, for example, <i>noteRed3+noteHatched2</i>.
+<p>Press <span class="GUIReferenceInline">color</span> and a grid of colors opens beside it. Click a swatch to choose it. Press the same button again to close the grid without choosing. <span class="GUIReferenceInline">hatch</span> does the same with the hatch patterns (<i>noteHatched</i> to <i>noteHatched8</i>). You can give a Role a color, a hatch, or both, and the cell shows, for example, <i>noteRed3 noteHatched2</i>.
 </p>
-<p><b>Only the rows you touch are recorded.</b> An empty cell means "no change". This is how a sheet stays small, so that it only changes the notes you picked and leaves everything else to the sheets below it. <b>The pick cells always start empty:</b> they are <i>not</i> filled in from the sheet you clicked or from the colors now in effect. The two read-only cells beside them are only there to show you what you would be changing.
+<p>The <i>none</i> entry in either grid empties that part, and <span class="GUIReferenceInline">clear</span> empties both. <b>Emptying every part of a role that the sheet has marks it for removal</b>: the cell shows &#x00D7;, and the role is taken out of the sheet when you Save. (In a built-in sheet's editor there is nothing to remove, so <i>clear</i> simply drops your pick.)
 </p>
-<p>Your picks are discarded, without warning, whenever the editor is rebuilt: when you <b>click a name</b> in the Stylesheets list, <b>delete</b> a sheet, <b>record</b> a sheet, or <b>open a Song</b>. Ticking or unticking a checkbox does not discard them.
+<table class="ExamplesTable">
+  <tr>
+    <th>Editor cell</th>
+    <th>Meaning</th>
+  </tr>
+  <tr><td>plain color</td><td><b>saved</b>: the sheet already has this color.</td></tr>
+  <tr><td>gold outline</td><td><b>edited</b>: your pending change; it is written when you Save.</td></tr>
+  <tr><td>red dashed, &#x00D7;</td><td><b>removed</b> when you Save.</td></tr>
+  <tr><td>faded, dotted outline</td><td><b>inherited</b> from the built-in sheet you selected. Save writes only the cells you changed, not these.</td></tr>
+  <tr><td>blank</td><td>The sheet says nothing for this role.</td></tr>
+</table>
+<p>Your pending changes <b>survive</b> ticking or unticking a checkbox, moving a sheet, applying a Section, and anything else that rebuilds the lists. They are discarded when you click another sheet's name, press <i>New</i>, delete the selected sheet, or open a Song.
 </p>
 
-<p><b><i>The two Record buttons</i></b></p>
+<p><b><i>The buttons</i></b></p>
 <table class="ExamplesTable">
   <tr>
     <th>Control</th>
-    <th>What it records</th>
+    <th>What it does</th>
   </tr>
   <tr>
     <td><b>Stylesheet name:</b> (box)</td>
-    <td>The name of the sheet to create or update. It is cleaned and checked as described in <a href="#paletteStylesheetRecordRules">How Record decides</a>. Pressing <span class="key">ENTER</span> in this box is the same as pressing <i>Record Stylesheet</i>.</td>
+    <td>The name of the sheet to save. It is cleaned when you save (each run of characters other than letters and digits becomes <i>-</i>), and the line under the buttons shows what Save will do <i>before</i> you press it. Pressing <span class="key">ENTER</span> in this box is the same as pressing <i>Save Stylesheet</i>.</td>
   </tr>
   <tr>
-    <td><b>Record Stylesheet</b></td>
-    <td>Records <b>your picks</b> from the color editor. Painted notes on the neck are ignored.</td>
+    <td><b>New</b></td>
+    <td>Empties the editor and the name box, ready for a new sheet. Nothing is deleted or changed.</td>
   </tr>
   <tr>
-    <td><b>FirstInstrument:NamedNotes =&gt; Stylesheet</b></td>
-    <td>Records <b>the NamedNotes painted on the neck</b>, as colors for Note Functions. Your picks in the color editor are ignored. See below.</td>
+    <td><b>Save Stylesheet</b></td>
+    <td>Creates or updates the sheet with the name in the box, from the editor. It is greyed when there is nothing to do, and the line under the buttons says why. See <a href="#paletteStylesheetRecordRules">How Save decides</a>.</td>
+  </tr>
+  <tr>
+    <td><b>Copy</b></td>
+    <td>Writes a <b>full copy</b> of what the editor shows (the selected sheet or built-in, plus your pending changes) to the next free name, such as <i>mine-copy</i> or <i>Roles-user2</i>, and selects it.</td>
+  </tr>
+  <tr>
+    <td><b>Rename</b></td>
+    <td>Renames the selected sheet of yours to the name in the box. Every Section, Look and the Song DEFAULTS that used the old name are updated. Built-in sheets cannot be renamed, and the name must be free.</td>
+  </tr>
+  <tr>
+    <td><b>From Section</b></td>
+    <td>Loads the colors of the NamedNotes painted on the first visible Instrument into the editor as pending changes. Nothing is saved until you press <i>Save Stylesheet</i>. See below.</td>
   </tr>
 </table>
-<p>Both buttons, after recording, switch the sheet on, move it to the bottom of the list (highest priority), refresh the Stylesheets list (open it with <span class="GUIReferenceInline">Stylesheets</span> to see it), and empty the color editor.
+<p>Saving, copying and renaming select the sheet, switch it on, and refresh the Stylesheets list (open it with <span class="GUIReferenceInline">Stylesheets</span> to see it).
 </p>
 
-<p><b><i>Recording from the neck</i></b></p>
+<p><b><i>Loading from the neck (From Section)</i></b></p>
 <p>This is the quickest way to build a Note Function sheet.
 </p>
 <ol>
-  <li>Uncheck <span class="GUIReferenceInline">AutoColor</span>. (With AutoColor on, the button records the colors already in effect, so nothing changes.)</li>
-  <li>Place NamedNotes on the <b>first Instrument</b> in the Song, in the Section you are on, using the colors you want. You can use any color button, including Roles (a Role is recorded as the color it currently has).</li>
-  <li>Type a name and press <span class="GUIReferenceInline">FirstInstrument:NamedNotes =&gt; Stylesheet</span>.</li>
+  <li>Place NamedNotes on the <b>first Instrument</b> in the Song, in the Section you are on, using the colors you want. You can use any color button, including Roles (a Role is loaded as the color it currently has).</li>
+  <li>Press <span class="GUIReferenceInline">From Section</span>. The editor cells show the loaded colors as <i>edited</i>. Change any of them, then type a name and press <span class="GUIReferenceInline">Save Stylesheet</span>.</li>
 </ol>
-<p>Each NamedNote becomes the color for its <i>Note Function</i>, which is worked out from the Section's Key. So in the key of D, painting a D sets the color of function <b>1</b> (I), and in the key of C, painting a D sets function <b>3</b> (II). It only records Note Functions (<b>1</b> to <b>12</b>) for notes you painted, and nothing for the others, so you could override only the II and the &Delta;. With AutoColor on, those colors are what AutoColor uses afterwards.
+<p>Each NamedNote becomes the color for its <i>Note Function</i>, which is worked out from the Section's Key. So in the key of D, painting a D sets the color of function <b>1</b> (I), and in the key of C, painting a D sets function <b>3</b> (II). It only loads Note Functions (<b>1</b> to <b>12</b>) for notes you painted, and nothing for the others, so you could override only the II and the &Delta;. <b>With AutoColor on</b>, the colors loaded are the ones AutoColor works out, not the colors you picked, and a note under the buttons tells you so; uncheck AutoColor first to load your own.
 </p>
 
 <a name="paletteStylesheetTasks"></a>
 <h4>Creating, changing and deleting Stylesheets</h4>
-<p>The Stylesheets controls are small on purpose: the checkboxes, the &#x232B; link, the name links and the two Record buttons. Everything you can do with a sheet is a combination of them. Here are the combinations:
+<p>The Stylesheets controls are small on purpose: the checkboxes, the name links, the &#x2191; &#x2193; &#x232B; buttons, and the five buttons in Customize (<i>New</i>, <i>Save Stylesheet</i>, <i>Copy</i>, <i>Rename</i>, <i>From Section</i>). Everything you can do with a sheet is a combination of them. Here are the combinations:
 </p>
 <table class="ExamplesTable">
   <tr>
@@ -4505,31 +4529,35 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td><b>Create a new sheet that only changes a few colors</b></td>
-    <td>Open <i>Customize</i>. Type a <b>new</b> name. Pick a color or hatch for each Role or Note Function you want to change. Press <i>Record Stylesheet</i>. <i>(If you clicked a built-in sheet's name earlier, the new sheet starts as a copy of that sheet and is not small. See the note below.)</i></td>
+    <td>Open <i>Customize</i> and press <i>New</i>. Type a <b>new</b> name. Pick a color or hatch for each Role or Note Function you want to change. Press <i>Save Stylesheet</i>. The new sheet holds only the colors you picked.</td>
   </tr>
   <tr>
-    <td><b>Create a new sheet from a built-in sheet (a full copy)</b></td>
-    <td>Click the built-in sheet's name in the list, for example <i>CycleOfColors</i>. The name box fills with <i>CycleOfColors-user</i>. Change the name if you like, make any picks you want, and press <i>Record Stylesheet</i>. The new sheet has <b>every</b> color of the built-in sheet, with your picks on top. If you pick nothing you get an exact copy.</td>
+    <td><b>Create a new sheet from a built-in sheet</b></td>
+    <td>Click the built-in sheet's name in the list, for example <i>CycleOfColors</i>. The name box fills with <i>CycleOfColors-user</i>. Press <i>Copy</i> for a <b>full copy</b> of the built-in sheet. Or make a few picks and press <i>Save Stylesheet</i>: the new sheet then holds <b>only the cells you changed</b>, which keeps it small and lets the sheets below it show through.</td>
   </tr>
   <tr>
     <td><b>Create a new sheet from colors on the neck</b></td>
-    <td>Follow <a href="#paletteCustomize">Recording from the neck</a>, using a new name.</td>
+    <td>Follow <a href="#paletteCustomize">Loading from the neck</a>, then give it a new name and press <i>Save Stylesheet</i>.</td>
   </tr>
   <tr>
     <td><b>Change one of my sheets</b></td>
-    <td>Click its name in the list. The name box fills with its name. Open <i>Customize</i>, pick only the colors that change, and press <i>Record Stylesheet</i>. Your picks replace those colors in the sheet; everything else in it is untouched. You can do the same from the neck with <i>FirstInstrument:NamedNotes =&gt; Stylesheet</i>, using the same name.</td>
+    <td>Click its name in the list. The name box fills with its name and the editor shows its colors. Open <i>Customize</i>, pick only the colors that change, and press <i>Save Stylesheet</i>. The previous version is put in the Graveyard, so a change can be undone.</td>
   </tr>
   <tr>
     <td><b>Take a color <i>out</i> of one of my sheets</b></td>
-    <td>Not possible: a recorded color can be replaced but not removed. Either record the color you now want, or delete the sheet and record it again.</td>
+    <td>Click its name, press <i>clear</i> (or choose <i>none</i> for both color and hatch) on that role until its cell shows &#x00D7;, and press <i>Save Stylesheet</i>. A sheet cannot be saved with no colors at all: delete it instead.</td>
   </tr>
   <tr>
     <td><b>Make a variation of one of my sheets, keeping the original</b></td>
-    <td>There is no copy button, and a new sheet can only start as a copy of a <i>built-in</i> sheet. This can be done with the Graveyard: delete the sheet (&#x232B;), then <i>raise</i> it from the Graveyard twice (<span class="GUIReferenceInline">File</span> menu, <i>View Graveyard</i>, or <span class="menuExampleLine"><b><small>/fg</small></b></span>). The first raise puts the original back under its own name, and the second raises a copy named <i>NameR1</i> (then <i>NameR2</i> and so on). Click the copy's name, change its colors as above. See <a href="#graveyard">The Graveyard</a>.</td>
+    <td>Click its name, press <i>Copy</i>, and change the copy (<i>mine-copy</i>) as above.</td>
   </tr>
   <tr>
     <td><b>Rename a sheet</b></td>
-    <td>There is no rename. Record a new sheet with the new name, then delete the old one. (A raised copy keeps the <i>NameR1</i> name, too.)</td>
+    <td>Click its name, type the new name, press <i>Rename</i>. Sections, Looks and Song DEFAULTS that used the old name follow it.</td>
+  </tr>
+  <tr>
+    <td><b>Change which sheet wins</b></td>
+    <td>Use the &#x2191; and &#x2193; buttons: a sheet lower in the list wins where two sheets color the same role.</td>
   </tr>
   <tr>
     <td><b>Switch a sheet off without deleting it</b></td>
@@ -4537,7 +4565,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td><b>Delete a sheet</b></td>
-    <td>Press the &#x232B; after its name. There is no confirmation. The sheet is buried in the Graveyard. The Result row is recalculated at once. If a Section's <i>currentColorDict</i> names the deleted sheet, that Section simply leaves the colors as they are.</td>
+    <td>Press the &#x232B; at the right of its row. There is no confirmation: the sheet is buried in the Graveyard and a message under the list says what, if anything, still refers to it. The Result row is recalculated at once. A Section that still names the deleted sheet leaves the colors as they are, and the <a href="#displayOptionsMatrixTopic">Display Options Matrix</a> shows its <i>currentColorDict</i> cell struck through with a wavy line. Record a sheet with the same name again and it works again.</td>
   </tr>
   <tr>
     <td><b>Undo a delete</b></td>
@@ -4545,11 +4573,11 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td><b>Get the factory colors back</b></td>
-    <td>Click <b>Default</b>. All built-in sheets come on and all of your sheets go off, but stay in the list.</td>
+    <td>Click <b>Default</b> and uncheck your sheets.</td>
   </tr>
   <tr>
     <td><b>Use just one of my sheets</b></td>
-    <td>Click <b>Default</b> (which switches all of yours off), then click the name of the sheet you want.</td>
+    <td>Tick that one and untick the others. Use <i>Default</i> (or another built-in) to choose what is under it.</td>
   </tr>
   <tr>
     <td><b>Copy sheets from another Song</b></td>
@@ -4562,8 +4590,8 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 </table>
 
 <a name="paletteStylesheetRecordRules"></a>
-<p><b><i>How Record decides what to do</i></b></p>
-<p>Both Record buttons use the same rules, and it is the <b>name</b> that decides whether you create or update. The box is rewritten with the cleaned name when you press the button. There is no "New" or "Save As" button.
+<p><b><i>How Save decides what to do</i></b></p>
+<p>It is the <b>name</b> in the name box that decides whether <i>Save Stylesheet</i> creates or updates. The line under the buttons says, <b>before</b> you press anything, what Save would do, and why a button is greyed. <i>Save Stylesheet</i> is greyed when there is nothing to save, and <i>Copy</i> and <i>Rename</i> are greyed when they would do nothing or clash with a name. Pressing Enter in the name box is the same as pressing <i>Save Stylesheet</i>.
 </p>
 <table class="ExamplesTable">
   <tr>
@@ -4572,46 +4600,70 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td>Nothing</td>
-    <td>The name <i>user</i> is used, and the label flashes.</td>
+    <td>The first free name <i>user</i>, <i>user2</i>, ... is used, and the hint says so.</td>
   </tr>
   <tr>
-    <td>Anything other than letters and digits</td>
-    <td>Each run of other characters becomes a single <i>-</i>. <i>my sheet!</i> becomes <i>my-sheet-</i>. (A name of only spaces becomes <i>-</i>.)</td>
+    <td>Anything other than letters, digits and dashes</td>
+    <td>Each run of other characters becomes a single <i>-</i>. The hint shows the cleaned name (<i>Name cleaned to "my-sheet-"</i>) before you save.</td>
   </tr>
   <tr>
     <td>The name of a <b>built-in</b> sheet, such as <i>Roles</i></td>
-    <td>The name becomes <i>Roles-user</i> (the label flashes) and, if <i>Roles-user</i> is new, it starts as a full copy of <i>Roles</i>.</td>
+    <td>A built-in cannot be overwritten, so it saves as <i>Roles-user</i> (or the next free <i>Roles-user2</i>). The new sheet holds only the cells you changed.</td>
   </tr>
   <tr>
     <td>The name of <b>one of your sheets</b></td>
-    <td><b>Update.</b> Your picks (or painted notes) replace the same colors in that sheet, and nothing else changes. The sheet is switched on and moved to the bottom. There is no confirmation and no undo, because only deleting a sheet is buried in the Graveyard.</td>
+    <td><b>Update.</b> Your edits change, add or remove cells of that sheet; the rest is untouched. The sheet is switched on and keeps its place in the list. The previous version is buried in the Graveyard.</td>
+  </tr>
+  <tr>
+    <td>The name of a <b>Look</b></td>
+    <td>Blocked: Looks and Stylesheets share one namespace so a Section's value is never ambiguous.</td>
   </tr>
   <tr>
     <td>A <b>new</b> name</td>
-    <td><b>Create.</b> A new sheet is made, switched on, and put at the bottom. It starts empty, or, if you have clicked a built-in sheet in the list, as a full copy of that built-in sheet (see below). Then your picks are applied on top.</td>
+    <td><b>Create.</b> A new sheet is made, switched on, and put at the bottom (so it wins over the sheets above it). It holds your picks, or the cells you changed against the built-in sheet you clicked.</td>
   </tr>
 </table>
-<p><b>The starting copy.</b> The name box remembers the <b>last built-in sheet you clicked</b>, and uses it as the starting contents of the next <i>new</i> sheet you create, <i>whatever name you then type</i>. Clicking one of your own sheets afterwards does <i>not</i> clear it: your own sheet's name goes in the box, but the built-in sheet is still remembered. The memory is cleared once a new sheet has been created. It is ignored when you update a sheet that already exists.
-  The practical advice is: if you want a small sheet that only changes a few colors, create it <i>before</i> clicking a built-in sheet, or after creating some other new sheet. If you want a full copy of a built-in sheet, click that built-in sheet right before you record.
+<p>Names are also cleaned when a Song is <b>opened</b>: a sheet with an unsafe name is renamed, Sections that used it follow, and a line is written to the <span class="GUIReferenceInline">User Log</span> under <i>Stylesheet</i>.
 </p>
-<p>There is nothing that tells you in advance whether <i>Record</i> will create, update or copy, and nothing that tells you that nothing was picked: with nothing picked, a new name records an empty sheet (or a copy of a built-in sheet), and an existing name is left as it was.
-</p>
-<p>The two Record buttons share the name box, so you can record from the neck and from the color editor into the same sheet: press one, then the other, without changing the name. The second one updates the sheet made by the first.
+<p>The editor remembers what you did to each cell (see the cell-state table in <a href="#paletteCustomize">Customize</a>). Edits are kept while you click between sheets only in the cases listed there, and the line under the buttons counts them: <i>3 changed, 1 removed</i>.
 </p>
 
 <a name="paletteStylesheetSections"></a>
 <h4>Stylesheets in Sections and Songs</h4>
 <p><b>In the file.</b> A Song saves your own Stylesheets, whether each is on, and their order. Open the Song and the stack is put back together, with the built-in sheets underneath.
 </p>
-<p><b>Per Section.</b> The Stylesheet you last clicked (or recorded, or raised) is the Song's <i>currentColorDict</i>. It is a <a href="#displayOptionsTopic">Display Option</a> in the <i>Color</i> group, and the View page lists it below the Save/Clear buttons as <i>currentColorDict: [ name ]</i>. Like <i>autoColor</i> (also in that group), you store it in a Section with <span class="GUIReferenceInline">SAVE Diff</span> on the View page, and it cascades from Section to Section like every Display Option (see <a href="#displayOptionsMatrixTopic">Display Options Matrix</a>). When the Song reaches a Section that stores, or inherits, a name, the Palette does exactly what clicking that name does.
+<p><b>Per Section.</b> A Section stores, in <i>currentColorDict</i>, either a <b>recipe</b> or the name of a <a href="#paletteLooks">Look</a>. It is a <a href="#displayOptionsTopic">Display Option</a> in the <i>Color</i> group, and the View page lists it below the Save/Clear buttons as <i>currentColorDict: [ value ]</i>. Like <i>autoColor</i> (also in that group), you store it in a Section with <span class="GUIReferenceInline">SAVE Diff</span> on the View page, and it cascades from Section to Section like every Display Option (see <a href="#displayOptionsMatrixTopic">Display Options Matrix</a>).
 </p>
-<p><b>Sections add up, they do not replace.</b> Because clicking one of your sheets leaves your other sheets on (see <i>What clicking a name does</i>), a Song that names a small sheet <i>A</i> in Section 1 and a small sheet <i>B</i> in Section 2 shows <i>A</i> alone in Section 1 on the first pass, but on a second pass, going back to Section 1 shows <i>A</i> <b>and</b> whatever <i>B</i> changed, since <i>B</i> is still on underneath. Ways to get a clean switch:
+<p>A recipe is the <b>highest built-in sheet that is on</b>, then <b>+</b> and the names of your ticked sheets in list order, for example <i>Default+user+mine</i>. When the Song reaches a Section, the Palette sets the ticked sheets to <b>exactly</b> that recipe: built-ins up to the named level, and only the listed sheets of yours. So Sections no longer add up: Section 1 can say <i>Default+A</i> and Section 2 <i>Default+B</i>, and each shows only its own sheet, in either direction of travel. An older value such as <i>user</i> or <i>mojo</i> (a plain sheet name) is read as <i>Default+</i> that name.
 </p>
-<ul>
-  <li>Make each sheet a <b>full copy</b> of <i>Default</i> or another built-in sheet, with your changes (click <i>Default</i>, then record). A full sheet defines every color, so it replaces whatever was under it.</li>
-  <li>Or put a small sheet in a Section only where it adds to the sheets before it.</li>
-</ul>
-<p>To check what a Section applies, open the <a href="#displayOptionsMatrixTopic">Display Options Matrix</a> and read the <i>currentColorDict</i> column, then click <span class="GUIReferenceInline">Stylesheets</span> in the Palette and read the Result row.
+<p>The Section value follows the Stylesheets as you change them, so Save on the View page records what you see. A Section that names a sheet that no longer exists leaves the colors as they are; the <a href="#displayOptionsMatrixTopic">Display Options Matrix</a> strikes through such a <i>currentColorDict</i> cell (Section, DEFAULTS or LIVE row), and hovering shows the missing name.
+</p>
+<p>To check what a Section applies, open the Matrix and read the <i>currentColorDict</i> column, then click <span class="GUIReferenceInline">Stylesheets</span> in the Palette and read the Result row.
+</p>
+
+<a name="paletteLooks"></a>
+<h4>Looks: named combinations of Stylesheets</h4>
+<p>A <b>Look</b> is a name for a recipe, kept in the Song (<i>colorLooks</i> in the file). A Look is not a Stylesheet: it holds no colors, only which sheets are on. Use one when you want a Section to say <i>Night</i> instead of <i>Default+dim+big-labels</i>, or when several Sections should change together if you re-define the Look.
+</p>
+<table class="ExamplesTable">
+  <tr>
+    <th>Control (above the Stylesheets list)</th>
+    <th>What it does</th>
+  </tr>
+  <tr>
+    <td>The Looks select</td>
+    <td>Choose a Look to set the ticked sheets to its recipe. The select shows the Look that the Song currently uses, if any.</td>
+  </tr>
+  <tr>
+    <td>Name box and <i>Save Look</i></td>
+    <td>Saves the current ticks and built-in level as a Look, and makes it the Song's current value. An existing Look name is updated. A Stylesheet or built-in name is refused. The hint line below says what will happen, and names are cleaned as for Stylesheets.</td>
+  </tr>
+  <tr>
+    <td>&#x232B; next to the select</td>
+    <td>Removes the selected Look. Sections that stored its name keep the name; the Matrix strikes it through until you re-create it.</td>
+  </tr>
+</table>
+<p>When a Look is applied or a Section stores a recipe that equals a Look's recipe, the Look's name is the value stored, so it is the one the Matrix shows.
 </p>
 
 <a name="paletteKeys"></a>
