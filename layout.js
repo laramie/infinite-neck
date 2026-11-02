@@ -8,6 +8,7 @@ export class Layout {
             CaptionRow: true,
             SongTitle: true,
             SongWidgets: true,
+            PracticeList: false,
             WidgetRow: true,
             InstrumentCaptions: true,
             LeftRails: true,
@@ -19,6 +20,7 @@ export class Layout {
             CaptionRow: true,
             SongTitle: true,
             SongWidgets: true,
+            PracticeList: false,
             WidgetRow: true,
             InstrumentCaptions: true,
             LeftRails: true,
@@ -28,10 +30,21 @@ export class Layout {
         if (jsonObj){
             Object.assign(this, jsonObj);
         }
-        // Older song files have no SongWidgets flag in their persisted screens: default it to shown.
+        // Object.assign above leaves `screen` as a separate copy of its screenList entry.  Re-link them so that a
+        // toggle made on the current screen is the one remembered when leaving and entering fullscreen.  The persisted
+        // `screen` is the latest state, so it wins over the stale screenList entry.
+        const linkedScreen = this.screen && this.screenList ? this.screenList[this.screen.name] : null;
+        if (linkedScreen && linkedScreen !== this.screen) {
+            Object.assign(linkedScreen, this.screen);
+            this.screen = linkedScreen;
+        }
+        // Older song files have no SongWidgets or PracticeList flag in their persisted screens: SongWidgets defaults to shown, PracticeList to hidden.
         [...Object.values(this.screenList || {}), this.screen].forEach((screen) => {
             if (screen && screen.SongWidgets === undefined) {
                 screen.SongWidgets = true;
+            }
+            if (screen && screen.PracticeList === undefined) {
+                screen.PracticeList = false;
             }
         });
     }
@@ -63,6 +76,20 @@ export class Layout {
         jSongWidgets.toggle(songWidgetWillShow);
         const jSongWidgetsBR = $('#lblSongWidgetsBR');
         jSongWidgetsBR.toggle(!songWidgetWillShow);
+    }
+
+    /** Sprint 152: the wizard-mode Practice List.  Persists the User's choice per screen, then applies it.
+     *  Called with no argument, flips the current choice. */
+    togglePracticeList(visible){
+        this.screen.PracticeList = typeof visible === 'boolean' ? visible : this.screen.PracticeList !== true;
+        this.applyPracticeListVisibility();
+    }
+
+    /** #divPracticeList shows only when it has content (it is filled only in wizard mode) AND the current screen's flag is on. */
+    applyPracticeListVisibility(){
+        const jPracticeList = $('#divPracticeList');
+        const hasContent = (jPracticeList.html() || '').trim().length > 0;
+        jPracticeList.toggle(hasContent && this.screen.PracticeList === true);
     }
 
     toggleInstrumentCaptions(visible){
@@ -118,6 +145,7 @@ export class Layout {
         this.toggleCaptionRow(this.screen.CaptionRow);
         this.toggleSongTitle(this.screen.SongTitle);
         this.toggleSongWidgets(this.screen.SongWidgets);
+        this.togglePracticeList(this.screen.PracticeList === true);
         this.toggleWidgetRow(this.screen.WidgetRow);
         this.toggleInstrumentCaptions(this.screen.InstrumentCaptions);
         this.toggleLeftRails(this.screen.LeftRails);

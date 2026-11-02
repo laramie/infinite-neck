@@ -1,6 +1,8 @@
 import {
     buildLessonSectionListModel,
     buildTutorialPromptModel,
+    renderLessonSectionList,
+    renderPracticeList,
     renderTutorialPrompt
 } from '../../templates/tutorial/tutorial.builder.js';
 
@@ -82,5 +84,70 @@ describe('Tutorial Prompt builder', () => {
         const activeHtml = renderTutorialPrompt(activeModel);
         expect(activeHtml).toContain('class="tutorialLOOP classLoopSections ButtonOn" data-action="tutorialLoopSections">RANDOM 2..3<');
         expect(activeHtml).toContain('class="tutorialLoopBeats classLoopBeats ButtonOn" data-action="tutorialLoopBeats">');
+    });
+
+    describe('Practice List (sprint 152, wizard mode)', () => {
+        function wizardSong() {
+            return {
+                tutorial: { level: 'wizard' },
+                sections: [{ caption: 'A major' }, { caption: 'B <b>minor</b>' }, { tutorial: { caption: 'Authored' }, caption: 'ignored' }]
+            };
+        }
+
+        test('wizard renders the bare list on paper, with Include, Done and Bookmark columns and no tutorial chrome', () => {
+            const html = renderPracticeList(buildTutorialPromptModel({
+                song: wizardSong(),
+                currentSectionIndex: 1,
+                progress: { doneSectionIndexes: [0], bookmarkSectionIndex: 1 },
+                includeInLoopingSectionIndexes: [1]
+            }));
+            expect(html).toContain('practiceListPaper');
+            expect(html).toContain('practiceListRendered');
+            expect(html).toContain('lessonSectionList');
+            expect(html).toContain('lessonSectionListCurrentRow');
+            expect(html).toContain('data-action="tutorialToggleIncludeInLooping"');
+            expect(html).toContain('data-action="tutorialToggleDone"');
+            expect(html).toContain('data-action="tutorialToggleBookmark"');
+            expect(html).not.toContain('tutorialPromptWidgetRow');
+            expect(html).not.toContain('tutorialPromptBreadcrumbs');
+        });
+
+        test('strict and none render no Practice List', () => {
+            ['strict', 'none'].forEach((level) => {
+                const song = { ...wizardSong(), tutorial: { level } };
+                expect(renderPracticeList(buildTutorialPromptModel({ song }))).toBe('');
+            });
+        });
+
+        test('blank tutorial captions fall back to the Section caption, HTML-escaped in wizard mode', () => {
+            const rows = buildLessonSectionListModel({ song: wizardSong() });
+            expect(rows.map((row) => row.caption)).toEqual(['A major', 'B <b>minor</b>', 'Authored']);
+            const html = renderPracticeList(buildTutorialPromptModel({ song: wizardSong() }));
+            expect(html).toContain('B &lt;b&gt;minor&lt;/b&gt;');
+            expect(html).not.toContain('B <b>minor</b>');
+        });
+
+        test('strict authored captions stay raw HTML, but the Section caption fallback is escaped', () => {
+            const song = {
+                tutorial: { level: 'strict' },
+                sections: [{ caption: '<i>x</i>', tutorial: { caption: '<b>Authored</b>' } }, { caption: '<i>x</i>' }]
+            };
+            const html = renderLessonSectionList(buildLessonSectionListModel({ song }));
+            expect(html).toContain('<b>Authored</b>');
+            expect(html).toContain('&lt;i&gt;x&lt;/i&gt;');
+        });
+
+        test('progressColumns false removes Done and Bookmark', () => {
+            const html = renderLessonSectionList(buildLessonSectionListModel({ song: wizardSong() }), { progressColumns: false });
+            expect(html).not.toContain('tutorialToggleDone');
+            expect(html).not.toContain('tutorialToggleBookmark');
+            expect(html).not.toContain('<th>Done</th>');
+            expect(html).toContain('tutorialToggleIncludeInLooping');
+        });
+
+        test('the wizard Prompt Area still carries no list', () => {
+            const html = renderTutorialPrompt(buildTutorialPromptModel({ song: wizardSong(), lessonSectionListOpen: true }));
+            expect(html).not.toContain('lessonSectionList');
+        });
     });
 });

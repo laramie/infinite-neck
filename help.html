@@ -1642,7 +1642,7 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 
 <h4>LOOP</h4>
 
-<p>The songs in the <span class="GUIReferenceInline">File > Song Library</span> are all designed for looping.  Make sure the <a href="#transport">Transport</a> is showing with keyboard shortcut <span class="key">t</span> so you can hit the <button class="BtnPunchedOut">LOOP</button> button.  There are several <a href="#SectionStatusWidget">LooperLights</a> (one in the Song Caption, and one in each Instrument Caption Row or LeftRail) and if these are visible, they show a green border when not looping, and a magenta border when looping.  So once you are familiar with these, you don't need the Transport: you can just toggle (start/stop) looping with keyboard shortcut <span class="key">l</span> <small>(see: <a href="#loop">looping shortcuts</a>)</small>.</p>
+<p>The songs in the <span class="GUIReferenceInline">File > Song Library</span> are all designed for looping.  Make sure the <a href="#transport">Transport</a> is showing with keyboard shortcut <span class="key">t</span> so you can hit the <button class="BtnPunchedOut">LOOP</button> button.  There are several <a href="#SectionStatusWidget">LooperLights</a> (one in the Song Caption, and one in each Instrument Caption Row or LeftRail) and if these are visible, they show a green border when not looping, and a magenta border when looping.  In a tutorial Song where only some Sections are chosen for looping (Include in Looping in the Practice List), the borders are dashed instead of solid, except during beat looping.  So once you are familiar with these, you don't need the Transport: you can just toggle (start/stop) looping with keyboard shortcut <span class="key">l</span> <small>(see: <a href="#loop">looping shortcuts</a>)</small>.</p>
 
 <p>You can also use the command-line. <span class="key">ESC</span> followed by <span class="menuExampleLine"><b>/rl</b></span> toggles looping.  <span class="menuExampleLine"><b>/re</b></span> toggles beat looping.</p>
 
@@ -3424,6 +3424,30 @@ by clicking SAVE anyway.  Your choice is shown in whether the Theme appears in n
             </td>
             <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>s</b>ong widgets </span>
                 Hide Song Widgets
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vswp</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>s</b>how | <b>w</b>idget | <b>p</b>ractice list </span>
+                Show the Practice List: a list of the Sections of a wizard-mode Song, with Include in Looping checkboxes to choose which Sections are looped.  Remembered separately for fullscreen and non-fullscreen.  Hidden by default; has no effect on Songs that are not in wizard mode.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vhwp</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>p</b>ractice list </span>
+                Hide the Practice List
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vtwp</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>t</b>oggle | <b>w</b>idget | <b>p</b>ractice list </span>
+                Toggle the Practice List
             </td>
         </tr>
         <tr>

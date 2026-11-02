@@ -1286,6 +1286,11 @@ export var gMenuFile =    {
                     "action": "hideSongWidgets"
                   },
                   {
+                    "caption": "<b>p</b>ractice list",
+                    "trigger": "p",
+                    "action": "hidePracticeList"
+                  },
+                  {
                     "caption": "<b>w</b>idget row",
                     "trigger": "w",
                     "action": "hideWidgetRow"
@@ -1361,6 +1366,11 @@ export var gMenuFile =    {
                     "caption": "<b>s</b>ong widgets",
                     "trigger": "s",
                     "action": "showSongWidgets"
+                  },
+                  {
+                    "caption": "<b>p</b>ractice list",
+                    "trigger": "p",
+                    "action": "showPracticeList"
                   },
                   {
                     "caption": "<b>w</b>idget row",
@@ -1459,6 +1469,11 @@ export var gMenuFile =    {
                     "caption": "<b>s</b>ong widgets",
                     "trigger": "s",
                     "action": "toggleSongWidgets"
+                  },
+                  {
+                    "caption": "<b>p</b>ractice list",
+                    "trigger": "p",
+                    "action": "togglePracticeList"
                   },
                   {
                     "caption": "<b>w</b>idget row",

@@ -1,7 +1,8 @@
 import {
-  filterStrictLoopSectionIndex,
+  filterIncludedLoopSectionIndex,
   getLoopCaptionModel,
   getProgressBadgeModel,
+  isLoopSubsetInEffect,
   normalizeTutorialProgress,
   toggleAllIncludeInLooping,
   toggleBookmarkSection,
@@ -53,22 +54,54 @@ describe('Tutorial IncludeInLooping helpers', () => {
     expect(toggleAllIncludeInLooping([], 3)).toEqual([0, 1, 2]);
   });
 
-  test('empty IncludeInLooping behaves as all included for strict loop filtering', () => {
-    expect(filterStrictLoopSectionIndex(1, {
-      strictTutorial: true,
+  test('empty IncludeInLooping behaves as all included for loop filtering', () => {
+    expect(filterIncludedLoopSectionIndex(1, {
+      tutorialActive: true,
       beatLooping: false,
       sectionCount: 4,
       includeInLoopingSectionIndexes: []
     })).toBe(1);
   });
 
-  test('strict loop filtering skips to next included section', () => {
-    expect(filterStrictLoopSectionIndex(0, {
-      strictTutorial: true,
+  test('loop filtering skips to next included section', () => {
+    expect(filterIncludedLoopSectionIndex(0, {
+      tutorialActive: true,
       beatLooping: false,
       sectionCount: 4,
       includeInLoopingSectionIndexes: [1, 2]
     })).toBe(1);
+  });
+
+  test('loop filtering wraps past the last included section', () => {
+    expect(filterIncludedLoopSectionIndex(3, {
+      tutorialActive: true,
+      sectionCount: 4,
+      includeInLoopingSectionIndexes: [1, 2]
+    })).toBe(1);
+  });
+
+  test('loop filtering is off when no tutorial is active and for beat looping', () => {
+    const options = { sectionCount: 4, includeInLoopingSectionIndexes: [1, 2] };
+    expect(filterIncludedLoopSectionIndex(0, { ...options, tutorialActive: false })).toBe(0);
+    expect(filterIncludedLoopSectionIndex(0, { ...options, tutorialActive: true, beatLooping: true })).toBe(0);
+    expect(filterIncludedLoopSectionIndex(0, options)).toBe(0);
+  });
+
+  test('isLoopSubsetInEffect is true only for a non-empty set smaller than all Sections', () => {
+    expect(isLoopSubsetInEffect(null, 4)).toBe(false);
+    expect(isLoopSubsetInEffect(undefined, 4)).toBe(false);
+    expect(isLoopSubsetInEffect([], 4)).toBe(false);
+    expect(isLoopSubsetInEffect([0, 1, 2, 3], 4)).toBe(false);
+    expect(isLoopSubsetInEffect([1], 4)).toBe(true);
+    expect(isLoopSubsetInEffect([0, 2, 3], 4)).toBe(true);
+    expect(isLoopSubsetInEffect([0], 0)).toBe(false);
+  });
+
+  test('the dashed-border predicate agrees with the loop caption range', () => {
+    [null, [], [0, 1, 2, 3], [1], [1, 2], [0, 3]].forEach((include) => {
+      const caption = getLoopCaptionModel({ looping: true, includeInLoopingSectionIndexes: include, sectionCount: 4 });
+      expect(isLoopSubsetInEffect(include, 4)).toBe(/\d/.test(caption));
+    });
   });
 
   test('loop caption reports first and last included only while looping', () => {

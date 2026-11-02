@@ -30,15 +30,24 @@ export function buildLessonSectionListModel({
 } = {}) {
     const sectionCount = normalizeSectionCount(song);
     const visibleInclude = new Set(normalizeIncludeInLooping(sectionCount, includeInLoopingSectionIndexes));
+    const strict = normalizeTutorialMode(song?.tutorial?.level) === TUTORIAL_MODES.STRICT;
     return Array.from({ length: sectionCount }, (_, index) => {
         const tutorial = getSectionTutorial(song, index);
         let theSectionCaption = song?.tutorial?.useCaptionForSectionCaption 
             ? song.getSections()[index].caption
             : typeof tutorial.caption === 'string' ? tutorial.caption : '';
+        // Authored strict captions are trusted HTML.  A blank caption falls back to the Section's own caption (plain text, escaped when rendered).
+        let captionIsHtml = strict;
+        if (!`${theSectionCaption || ''}`.trim()) {
+            const sectionCaption = song?.sections?.[index]?.caption;
+            theSectionCaption = typeof sectionCaption === 'string' ? sectionCaption : '';
+            captionIsHtml = false;
+        }
         return {
             sectionIndex: index,
             sectionNumber: index + 1,
             caption: theSectionCaption,
+            captionIsHtml,
             current: index === currentSectionIndex,
             done: isSectionDone(progress, index),
             bookmarked: progress?.bookmarkSectionIndex === index,
@@ -47,7 +56,7 @@ export function buildLessonSectionListModel({
     });
 }
 
-export function renderLessonSectionList(model = []) {
+export function renderLessonSectionList(model = [], { progressColumns = true } = {}) {
     const rows = (Array.isArray(model) ? model : []).map((row) => {
         const rowClass = row.current ? ' class="lessonSectionListCurrentRow"' : '';
         const sectionArgs = escapeAttribute(JSON.stringify([row.sectionIndex]));
@@ -55,20 +64,35 @@ export function renderLessonSectionList(model = []) {
         const loopArgs = escapeAttribute(JSON.stringify([row.sectionIndex]));
         const bookmarkArgs = escapeAttribute(JSON.stringify([row.sectionIndex]));
         const bookmark = row.bookmarked ? '<span class="lessonSectionListBookmark" aria-label="Bookmarked">&#x261E;</span> ' : '';
+        const caption = row.captionIsHtml === false ? escapeHtml(row.caption ?? '') : row.caption;
+        const progressCells = progressColumns
+            ? `<td><input type="checkbox" data-action="tutorialToggleDone" data-action-args='${doneArgs}'${row.done ? ' checked' : ''}></td>`
+            + `<td><button type="button" data-action="tutorialToggleBookmark" data-action-args='${bookmarkArgs}'>${row.bookmarked ? '&#x1F5F9;' : '&#x2610;'}</button></td>`
+            : '';
         return `<tr${rowClass}>`
             + `<td>${bookmark}<a href="#app-action:gotoSection:${row.sectionIndex}" class="lessonSectionListSectionLink" data-action="tutorialGotoSection" data-action-args='${sectionArgs}'>&sect;${row.sectionNumber}</a></td>`
-            + `<td class="lessonSectionListCaption">${row.caption}</td>`
-            + `<td><input type="checkbox" data-action="tutorialToggleDone" data-action-args='${doneArgs}'${row.done ? ' checked' : ''}></td>`
-            + `<td><button type="button" data-action="tutorialToggleBookmark" data-action-args='${bookmarkArgs}'>${row.bookmarked ? '&#x1F5F9;' : '&#x2610;'}</button></td>`
+            + `<td class="lessonSectionListCaption">${caption}</td>`
+            + progressCells
             + `<td><input type="checkbox" data-action="tutorialToggleIncludeInLooping" data-action-args='${loopArgs}'${row.includeInLooping ? ' checked' : ''}></td>`
             + '</tr>';
     }).join('');
+    const progressHeaders = progressColumns ? '<th>Done</th><th>Bookmark</th>' : '';
     return '<table class="lessonSectionList">'
         + '<thead><tr>'
-        + '<th>Section</th><th>Caption</th><th>Done</th><th>Bookmark</th><th><button type="button" data-action="tutorialToggleAllIncludeInLooping">Include in Looping</button></th>'
+        + `<th>Section</th><th>Caption</th>${progressHeaders}<th><button type="button" data-action="tutorialToggleAllIncludeInLooping">Include in Looping</button></th>`
         + '</tr></thead>'
         + `<tbody>${rows}</tbody>`
         + '</table>';
+}
+
+/** Wizard mode only: the bare Section list, with no tutorial chrome, for #divPracticeList. */
+export function renderPracticeList(model = {}) {
+    if (!model.wizard) {
+        return '';
+    }
+    return '<div class="practiceListPaper"><div class="practiceListRendered">'
+        + renderLessonSectionList(model.lessonSections)
+        + '</div></div>';
 }
 
 function renderPromptLines(lines = []) {

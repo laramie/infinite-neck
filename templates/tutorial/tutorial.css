@@ -196,3 +196,27 @@
     color: rgb(31, 0, 170);
     font-weight: 700;
 }
+
+/* Sprint 152: wizard mode Practice List (#divPracticeList), a bare Section list on simple paper. */
+.practiceListPaper {
+    background-color: rgb(251, 185, 99);
+    border: 1px solid brown;
+    padding: 0.75em;
+    margin: 0.4em 0;
+}
+
+.practiceListRendered {
+    background-color: rgb(255, 235, 156);
+    border: 1px solid gray;
+    border-radius: 0;
+    -webkit-box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3);
+    box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3);
+    padding: 1em;
+    max-height: 40vh;
+    overflow: auto;
+}
+
+.practiceListRendered .lessonSectionList {
+    width: 100%;
+    margin: 0;
+}

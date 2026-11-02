@@ -123,5 +123,25 @@ Also: items in Notes section after questions are acknowledged.
 
 Please proceed to coding.
 
+## Iteration 3
+
+Let's add a small edit button in the `divTutorialPrompt` so that it floats to the right and lives side-by-side with `tutorialPrompt`.  Caption: "Edit Prompt". When clicked, it opens a textarea, that when it loses focus, sanitizes and writes to `section.tutorial.prompt`.  
+
+This behavior is *only* for wizard mode.
+
+If "use caption for tutorial" is on, no button.  
+
+If `section.tutorial.prompt exists`, then edit that, i.e. populate the textarea.  
+
+Above the textarea, place a div that spans the whole line with a warning label: "WARNING: Running the tutorial builder (npm build:tutorial-prompts) will re-write this prompt."  Use a CSS rule so we can change the look of that warning. Start with `color: red;`. Thus, no change is needed in the tutorial build script or tutorial author process. 
+
+When the textarea goes away after an edit, the prompt is rendered, and the warning label also disappears.
+
+Please proceed to coding.
+
+Add a description of what was implemented in `sprint-152-it3-feature.md` and link from `sprint-152.md`.
+
+We haven't done proper diligence in designing this, so please make reasonable adjustments as necessary and let us know in the feature document.
+
 
 

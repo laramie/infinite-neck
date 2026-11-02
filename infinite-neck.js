@@ -153,10 +153,12 @@ import { getSanitizedSongWidgets } from './html-sanitizer.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
 import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
-import { TutorialPromptBuilder } from './templates/tutorial/tutorial.builder.js';
+import { TutorialPromptBuilder, buildTutorialPromptModel, renderPracticeList } from './templates/tutorial/tutorial.builder.js';
 import {
-	filterStrictLoopSectionIndex,
+	filterIncludedLoopSectionIndex,
 	getLoopCaptionModel,
+	isLoopSubsetInEffect,
+	isTutorialSong,
 	normalizeTutorialMode,
 	readTutorialProgressFromStorage,
 	TUTORIAL_MODES,
@@ -491,6 +493,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		};
 		sectionChanged();
 		resetTutorialChrome();
+		if (sectionsLooping()){
+			applyLoopSectionsUi(true); //the caption depends on the mode
+		}
 		return normalizedMode;
 	}
 
@@ -592,7 +597,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	function renderTutorialPrompt(){
 		const song = getSong();
 		resetTutorialRuntimeForSongIfNeeded(song);
-		return TutorialPromptBuilder.renderToDest({
+		const options = {
 			song,
 			currentSectionIndex: getSectionsCurrentIndex(),
 			progress: getTutorialProgress(),
@@ -601,10 +606,40 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			hamburgerControlsOpen: tutorialRuntimeState.hamburgerControlsOpen,
 			sectionsLoopActive: sectionsLooping(),
 			beatsLoopActive: beatsLooping()
-		});
+		};
+		const html = TutorialPromptBuilder.renderToDest(options);
+		renderPracticeListHost(options);
+		return html;
+	}
+
+	/** Sprint 152: wizard mode's Section list.  Filled only in wizard mode, so strict and none leave #divPracticeList empty (and hidden).
+	 *  Always a full re-render, never patched in place, so that focus does not stay in a checkbox and swallow the keyboard shortcuts. */
+	function renderPracticeListHost(options){
+		const song = options.song;
+		if (!song || song.isHeadless){
+			return;
+		}
+		const isWizard = normalizeTutorialMode(song.tutorial?.level) === TUTORIAL_MODES.WIZARD;
+		$('#divPracticeList').html(isWizard ? renderPracticeList(buildTutorialPromptModel(options)) : '');
+		song.getLayout().applyPracticeListVisibility();
+		updateLoopSubsetIndicator();
+	}
+
+	/** Sprint 152: body.loopSubset makes every Looper Light dashed (section-status.css) while a subset of Sections is
+	 *  in effect for Section looping.  Beat looping ignores IncludeInLooping, so it is solid then. */
+	function updateLoopSubsetIndicator(){
+		const song = getSong();
+		if (!song || song.isHeadless){
+			return;
+		}
+		const sectionCount = Array.isArray(song.sections) ? song.sections.length : 0;
+		const subset = isTutorialSong(song)
+			&& isLoopSubsetInEffect(tutorialRuntimeState.includeInLoopingSectionIndexes, sectionCount);
+		$('body').toggleClass('loopSubset', subset && !beatsLooping());
 	}
 
 	function refreshTutorialLoopCaption(){
+		updateLoopSubsetIndicator();
 		if (!sectionsLooping()){
 			return;
 		}
@@ -3776,11 +3811,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
         const caption = getLoopCaptionModel({
             looping: active,
             random: !!(song && song.randomLoop),
-            includeInLoopingSectionIndexes: tutorialRuntimeState.includeInLoopingSectionIndexes || [],
+            includeInLoopingSectionIndexes: isTutorialSong(song) ? (tutorialRuntimeState.includeInLoopingSectionIndexes || []) : [],
             sectionCount
         });
         $('#btnLoopSections').html(caption).toggleClass('ButtonOn', active);
         $('.classLoopSections').html(caption).toggleClass('ButtonOn', active);
+		updateLoopSubsetIndicator();
 		EventBus.trigger('Widget:SectionStatus:loopChanged', {
 			isLoopActive: active
 		});
@@ -3789,6 +3825,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
     function applyLoopBeatsUi(active){
         $('#btnLoopBeats').toggleClass('ButtonOn', active);
         $('.classLoopBeats').toggleClass('ButtonOn', active);
+		updateLoopSubsetIndicator();
 		EventBus.trigger('Widget:SectionStatus:loopChanged', {
 			isLoopActive: active
 		});
@@ -5013,9 +5050,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divQuick").hide();
 		$("#CmdMenu").hide();
 		SongLibrary.initializeSongLibrary('#divSongList');
-		setLoopSectionFilter((candidateIndex, context = {}) => filterStrictLoopSectionIndex(candidateIndex, {
+		setLoopSectionFilter((candidateIndex, context = {}) => filterIncludedLoopSectionIndex(candidateIndex, {
 			...context,
-			strictTutorial: normalizeTutorialMode(isStrictTutorial()),
+			tutorialActive: isTutorialSong(getSong()),
 			sectionCount: getSong()?.getSections?.().length ?? context.sectionCount,
 			includeInLoopingSectionIndexes: tutorialRuntimeState.includeInLoopingSectionIndexes || []
 		}));

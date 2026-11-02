@@ -12,6 +12,15 @@
 .SectionStatus_loopActive {
     border: 3px solid magenta !important; 
 }
+
+/* Sprint 152: body.loopSubset is set while IncludeInLooping constrains Section looping to a subset of Sections
+   (idle or looping, but not beat looping).  Only the border style changes: green/magenta, width and the rest stay. */
+body.loopSubset .SectionStatus_loopLight {
+    border-style: dashed;
+}
+body.loopSubset .SectionStatus_loopActive {
+    border-style: dashed !important;
+}
 .SectionStatus_beatWrap {
     display: none;
     align-items: baseline;

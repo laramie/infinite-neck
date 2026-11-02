@@ -148,8 +148,16 @@ export function getEffectiveIncludeInLooping(includeIndexes, sectionCount) {
     return normalized.length > 0 ? normalized : normalizeIncludeInLooping(sectionCount);
 }
 
-export function filterStrictLoopSectionIndex(candidateIndex, options = {}) {
-    if (!options.strictTutorial || options.beatLooping) {
+/** True when IncludeInLooping actually constrains Section looping: a non-empty set that is smaller than all Sections.
+ *  Empty or null means all Sections are included, so it is not a subset. */
+export function isLoopSubsetInEffect(includeIndexes, sectionCount) {
+    const all = normalizeIncludeInLooping(sectionCount);
+    const include = normalizeIncludeInLooping(sectionCount, includeIndexes);
+    return include.length > 0 && include.length < all.length;
+}
+
+export function filterIncludedLoopSectionIndex(candidateIndex, options = {}) {
+    if (!options.tutorialActive || options.beatLooping) {
         return candidateIndex;
     }
     const sectionCount = Number.parseInt(options.sectionCount, 10);
@@ -175,11 +183,10 @@ export function getLoopCaptionModel({ looping = false, random = false, includeIn
         return 'LOOP';
     }
     const baseWord = random ? 'RANDOM' : 'LOOPING';
-    const all = normalizeIncludeInLooping(sectionCount);
-    const include = normalizeIncludeInLooping(sectionCount, includeInLoopingSectionIndexes);
-    if (include.length === 0 || include.length === all.length) {
+    if (!isLoopSubsetInEffect(includeInLoopingSectionIndexes, sectionCount)) {
         return `${baseWord}`;
     }
+    const include = normalizeIncludeInLooping(sectionCount, includeInLoopingSectionIndexes);
     return `${baseWord} ${include[0] + 1}..${include[include.length - 1] + 1}`;
 }
 
