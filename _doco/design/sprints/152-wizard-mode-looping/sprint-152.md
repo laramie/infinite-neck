@@ -20,5 +20,5 @@ Purpose of this sprint is to:
 
 ## Iterations
 
-  - "Iteration 1": 
+  - "Iteration 1": Define the design and produce implementation plan.
 

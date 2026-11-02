@@ -20,12 +20,16 @@ This can either be accomplished by turning off all other tutorial chrome under `
 All have trigger `p` and behave as the other siblings: toggle, hide, view.
 These should be remembered in `Song.layout` so that they are presented separately in `fullscreen` and `escaped` like some of the others. 
 
-We think the easiest to see and maintain is to retain the `Done` and `Bookmark` columns.  We have tested this in a song where we simply set presentation mode to strict tutorial, and upon saving and re-loading, the bookmarks and done columns came back as persisted in Browser storage.
+We think the easiest to see and maintain is to retain the `Done` and `Bookmark` columns.  We have tested this in a song where we simply set presentation mode to strict tutorial, and upon saving and re-loading, the bookmarks and done columns came back as persisted in Browser storage.  
+
+What we are really after is the choosing of Sections to loop.  If we get the Done and Bookmarks nearly for free, we would be happy.
 
 
 ## Features we don't want in wizard mode: 
 
 We don't need the other elements of `#divTutorialPrompt` available except for `.lessonSectionList`.  So we don't need breadcrumbs or `#tutorialPromptWidgetRow` for example. 
+
+We don't need the captions or other text found in an authored strict mode tutorial.  Authoring or including the html prompt fragments the way strict mode requires is also out of scope. 
 
 We don't need a fancy display or buttons around the list.  A new container with simple paper background and box-shadow like `#divInfoRendered` inside `.infoTabsPaper` would be ideal.
 
@@ -45,4 +49,4 @@ In the Transport, the hint is already done in strict tutorial mode: the caption 
 
 ## sprint-152 Iteration 1 Request
 
-Please evaluate our design and produce an implementation plan with questions.  We will answer questions then approve coding.
+Please evaluate our design and produce an implementation plan with questions in `152-implementation-plan.md` .  We will answer questions then approve coding.
