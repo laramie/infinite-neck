@@ -118,4 +118,143 @@ Next Steps (adjust order if needed):
 - Then we will do a baseline UA test.
 - Then we will answer questions, settle on CRUD button design, and approve the implementation of the plan.
 
+# Iteration 3
+
+In this section we post test results, some additional discussion, and answer all the questions from Iteration 2 in this section, then approved the recommendations, set code changes to APPROVED, and Request Iteration 3 coding.
+
+
+## Iteration 2 test results from Design Team
+
+The migration to `templates/palette/` shows up in the DevTools of Chrome, breakpoints set in the code pause correctly, showing Chrome agrees that the code is loaded from there.  All in-Browser functionality works as before.
+
+We also confirmed Browser behavior of P3 ("the real B3").  Opening another song after clicking "All Clear" shows the Song retains that Stylesheet setting ("All Clear" but nothing else active).
+
+P4: we are interested in the outcome of fixing this.  We have ideas about the UI for minimal management of the real combined value by the User, detailed below.
+
+UA Checklist A is clean.
+
+UA Checklist B:
+- B3. Customizing a Chord role with only hatch and clicking "Record Stylesheet" saves the hatch-only.  But subsequent editing with either color 'none' or hatch 'none' won't change that Chord role.  Same result on a server with the old code.  Only choosing a new color or a new hatch can get rid of the hatch or the color saved with subsequent "Record Stylesheet" clicks.  
+
+- `B4. Sections accumulate sheets (V11)` and `B5. Stored name vs Result (P4)`
+  - Behave as expected.
+  - Having Section 1: "user" and Section 2: "user2" recorded in `currentColorDict` stops showing "user2" when "user2" is deleted in the Stylesheets.  But re-recording a "user2" and following the automation (the stored ID "user2") in the DisplayOptionsMatrix makes the neck notes follow the "user2" overrides of Role Chord once "user2" is restored in Stylesheets.  This confirms that `currentColorDict` is only storing the ID and fails quietly when "user2" goes missing, and works again when "user2" reappears.  "Active Stylesheets" updates correctly with clicking each one's links.
+
+## Decisions after reading the implementation plan `150-it2-implementation-plan.md`
+
+Definitely the "Looks + Recipe" proposal.  This is `5.2 Options` :: `C. Both (recommended)`.  We accept the "Both" recommendation.  This answers our needs well, and we can tweak the button arrangement later with minor HTML edits and some CSS rules, since the functionality you propose looks good.  Ensure that any DIV elements created in this arrangement of CRUD rows and button areas have id attributes so we can easily target them.
+
+We suspect that we may have changes to the "long name"/recipe presentation, but as long as you feel you can produce a code that is consistent and can provide primitives for presenting and updating the long names and the Looks captions and IDs, we look forward to seeing this Iteration implemented.  We feel that once we see it in play, it will make more sense to us.  It seems your proposal has closed the holes. Keep an eye on this.
+
+Please use "⌫" U+232B `ERASE TO THE LEFT` as the "X" for delete button (the delete glyph).  "Tunings in Song" :: `#btnRemoveTuning` should also get this change.  Please have a look at the CSS so that the `#btnMoveTuningDown` and `#btnMoveTuningUp` buttons and the new buttons for Stylesheets have a consistent height.  We have had to fiddle with this before when using Unicode characters in buttons.  Pasting that character in DevTools looked fine in the Browser except for the height issue.
+
+
+
+
+## Answers to your `7. Final questions`
+
+NOTE: the question list numbers are kinda out of whack.  We have left them as written, and answered them all in the same order presented.  Markdown re-numbers them in Preview mode.  But we copied the lists here from your report text, so the numbers are as you had them.
+
+
+**Table and links**
+
+1. **What does a built-in link click do to the user checkboxes?**  Today it unticks every user sheet (it also ticks the built-ins up to the clicked one).  *Recommend: set the built-in level only; leave user checkboxes alone, since only checkboxes turn user sheets on or off.*  Consequence: "Default" no longer clears your overlays; you untick them.  Do you want a convenience for "all user sheets off"?  (*Recommend no; the checkboxes are the one way.*)
+
+- ANSWER: Accept the recommendation.
+
+
+2. **Clicking a built-in when `<Name>-user` already exists:** put the **next free** name (`Fingerings-user2`) in the name field, or the existing `Fingerings-user`?  *Recommend next free; to edit the existing one, click its own link.*
+
+- ANSWER: Accept the recommendation. 
+
+
+3. **Starting from a built-in: what does Save write?**  *Recommend only the cells you changed (a small overlay; unchanged cells show gray "inherited" and are not written).*  The alternative is every shown cell, a full copy that no longer follows built-in changes.  **Copy** of a built-in is the explicit full-copy path.  OK?
+
+- ANSWER:  Accept the recommendation.
+
+
+7. **Row buttons on built-in rows:** none (recommended), or disabled ones for alignment with the Tunings look?  And do the user sheets sit **only** below the built-ins, with Up disabled on the first user row?  *Recommend yes.*
+
+
+- ANSWER: Accept both the recommendations. 
+
+
+**Editor buttons**
+
+4. **Button set:** New, Save Stylesheet, Copy, Rename, From Section.  Trim or add?  Is Rename wanted?  (*Recommend yes; without it, Copy then Delete leaves Sections pointing at the old name, which Phase 6 repoints only through Rename.*)
+
+- ANSWER: Accept the recommendation. 
+
+
+5. **`FirstInstrument:NamedNotes => Stylesheet` as "load into editor, then Save"** (recommended), under the label `From Section`.  With AutoColor on it currently records the AutoColor result, which can make the sheet change nothing.  Keep that and show a one-line note, or read the painted classes instead?  *Recommend the note.*
+
+- ANSWER:  Accept the recommendation.
+
+
+6. **Delete:** no modal.  The hint names the Sections that use the sheet and says it went to the Graveyard.  OK, or do you want a confirm only when Sections use it?
+
+- ANSWER: OK.
+
+
+15. **Name cleaning:** on Save, with the cleaned name shown in the hint (recommended), or live as you type?
+
+- ANSWER:  Accept the recommendation.
+
+
+**Song open and Sections**
+
+
+14. **Known state for built-in flags on Song open:** all built-ins ticked (today's fresh start, the standard look), then each user sheet's saved flag.  *Recommend this.*  The alternative is All-Clear only.
+
+- ANSWER:  Accept the recommendation.
+
+
+12. **Existing Song files with names that do not survive cleaning:** rename with a numeric suffix and log each rename in the User Log.  Sections that stored the old name are repointed.  OK?
+
+- ANSWER: OK.
+
+
+9. **Interim:** until Phase 6, Section navigation still **accumulates** user sheets (no reorder, but still ticked on apply).  Acceptable for Phases 3 to 5, or pull the recipe work (R1 and R2) forward?  *Recommend pulling R1 and R2 forward right after Phase 4: they are small and they end the confusion you saw in testing.*
+
+- ANSWER:  Accept the recommendation.
+
+**Stored value**
+
+10. **Recipe, Looks, or both (section 5.2)?**  *Recommend C: a canonical recipe first (R1 to R4), with Looks added once you have used it.*  If you want Looks, three decisions: (a) are they per Song (`song.colorLooks`, recommended); (b) does a Section store the Look **name** (live-linked, recommended) or the recipe (a snapshot); (c) where they live in the UI (a row under the Stylesheets table, recommended).
+
+- ANSWER: Both.
+  - (a)  Accept the recommendation.
+  - (b)  Accept the recommendation.
+  - (c)  Accept the recommendation.
+
+
+11. **Reuse the persisted `song.activeStylesheets` as the recipe field?**  It already exists, is in the schema, and nothing reads it.  *Recommend yes; no schema change.*
+
+- ANSWER:  Accept the recommendation.
+
+
+13. **Grammar of the recipe:** `Fingerings+CycleOfColors-user2+Fingerings-user` (the highest ticked built-in, then the ticked user sheets in order).  `Default` means all built-ins.  Acceptable as the visible and stored form?
+
+- ANSWER:  YES
+
+**Process**
+
+16. **Phase order:** 3 (safe fixes), 4 (table), then R1 and R2 pulled forward (Q9), then 5 (editor), then the rest of 6.  Or keep 3, 4, 5, 6 as written?
+
+- ANSWER: as proposed: 3, 4, R1 R2, 5, rest of 6. 
+
+
+17. **Approval of top-level edits:** [colorFunctions.js](../../../../colorFunctions.js) (every phase) and [infinite-neck.js](../../../../infinite-neck.js) (Phase 3: two call sites; Phase 6: Section apply) per the lists above.  Please confirm per phase or all at once.
+
+- ANSWER: All the proposed top-level edits are APPROVED now.
+
+## Iteration 3 Request
+
+Please proceed to implementation/coding.
+
+
+
+
+
+
 
