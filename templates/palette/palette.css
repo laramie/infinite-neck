@@ -339,7 +339,7 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 .pickerButton {
     box-shadow: 2pt 2pt 2pt 0.01pt gray;
     padding: 2pt;
-    margin: 4pt;
+    /* makes the grid to spacey: margin: 4pt; */
     display: inline-block;
     
     border: 2px solid darkolivegreen;
