@@ -12,7 +12,6 @@ Index of all sprints for reference: [sprint planning index](../../../lifecycle/s
 
 Purpose of this sprint is to: 
 - Add `IncludeInLooping` feature to wizard mode.  
-- Do not add Learner Done and Bookmark progress to wizard mode.
 
 ## Sprint document locations
 
