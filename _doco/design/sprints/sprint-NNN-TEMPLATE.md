@@ -1,8 +1,8 @@
-# sprint-NNN-shortname
+# sprint-NNN-shortnamevalue
 
 sprint number: NNN
 
-sprint shortname:
+sprint shortname: shortnamevalue
 
 date: 20260000
 
