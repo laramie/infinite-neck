@@ -1304,8 +1304,8 @@
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <a class="optionLink" href="#helpCmd-fpt-i">
-                                                        <b>i</b>ntervals
+                            <a class="optionLink" href="#helpCmd-fpt-c">
+                                                        <b>c</b>hroma
                             </a>
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1486,12 +1486,14 @@
 <h2>The Plugins</h2>
 <p>The plugins were written to be somewhat independent of the main User Interface in infinite-neck.  So they are entirely driven by the command-line.  You can learn about <a href="help.html#commandline">using the command-line</a> in the main helpfile.</p>
 
-<p>They drive the in-memory version of your song, and have various ways to persist the changes to the songfile. The plugins also store per-plugin values in the songfile, so the next time you open the file, the plugin default values you last chose should be there.  Some of the plugins have various options for clearing their state in the Section or Song.  When there are errors or messages or help messages, they show up in the Show Messages area.</p>
+<p>They drive the in-memory version of your song, and have various ways to persist the changes to the songfile. The plugins also store per-plugin values in the songfile, so the next time you open the file, the plugin default values you last chose should be there.  Some of the plugins have various options for clearing their state in the Section or Song.  </p>
+
+<p>When there are errors or messages or help messages, they show up in the Show Messages area. Also check the User Log ( <b>/vdu</b> ) for messages, and check that <b>/fau</b> is set to <b>verbose</b> if you aren't getting the level of info you need.  The ClipPlugin, for example, posts User Log messages (at <b>verbose</b> level only) when <b>MIDI Paste</b> ( <b>/fpcM</b> ) drops notes.</p>
 
 <p>Some of the plugins respond to song events, so they can listen to the Looper and to DaCapo events which happen at song boundaries such as Section begin/end and Song begin/end.  This way, you can transpose a song on every song loop, for example.</p>
 
 <h3>Clearing Plugin Data</h3>
-<p>To clear plugin data from the song, you need to remove two types of settings:
+<p>To clear plugin data from the song, you need to remove two types of settings:</p>
     <ul>
         <li>Song-level plugin data: Use plugin > graveyard > bury (save+clear) :: <b>/fp > plugin > g > b</b></li>
         <li>Section-level plugin data:
@@ -1501,6 +1503,7 @@
             </ul>
         </li>
     </ul>
+<p>To reset a Song to the state before TransposePlugin has transposed the Song, use <b>/rsR</b> which does a Hard Reset.  Other plugins also respond to this message and clean up their transitory state.  <i>For example, when looping with TransposePlugin on, you could see that the entire Song creeps from its original key of C, to a transposed key of D, and if you save the Song in this state, you'll save the Song in D.  <b>/rsR</b> resets the song to its original state, in the key of C in this example.</i></p>    
 
 
 
@@ -2715,16 +2718,7 @@
 
     <p>TonalPlugin is a command-line approval pass for Tonal suggestions. It uses the same model-based tonal detection data as the HTML TonalPicker flow, but keeps the interaction in stable command-line positions so you can move section-by-section and approve quickly from the keyboard.</p>
 
-    <a name="plugin-tonal-options"></a>
-    <h3>Main Options</h3>
-
-    <ul>
-        <li><b>i</b> instrument chooses the target table whose persisted <b>tonalSourceSet</b> drives detection.</li>
-        <li><b>a</b> auto write chooses whether acceptance updates only the table or both the table and the Section chart values.</li>
-        <li>The chord and mode summary captions can show up to 3 visible suggestions before switching to the <b>N more</b> suffix.</li>
-        <li>A leading <b>&amp;check;</b> marks any visible suggestion that already matches the active auto-write destination.</li>
-    </ul>
-
+    
     <a name="plugin-tonal-actions"></a>
     <h3>Actions</h3>
 
@@ -2739,8 +2733,12 @@
     <p>TonalPlugin intentionally omits clear actions and long-list acceptance in this sprint. Use the HTML TonalPicker when you need richer visual comparison, source changes, or deeper editing.</p>
 
 <h2 id="plugin-transpose">TransposePlugin</h2>    
-    <table  class="helpCmdDetailHelp">
-        <tr id="helpCmd-fpt">
+     id="my-editor" contenteditable="true"
+    
+
+    <!-- BEGIN -->
+     <table class="helpCmdDetailHelp" id="my-editor" contenteditable="true">
+        <tbody><tr id="helpCmd-fpt">
             <td colspan="2" class="cmdLine">/fpt <b>TransposePlugin</b></td>
         </tr>
         <tr class="menu">
@@ -2749,11 +2747,11 @@
             </td>
             <td>
                 <table class="cmdTable">
-                    <tr>
+                    <tbody><tr>
                         <td class="greenCmd" id="helpCmd-fpt-E">
                             <b>E</b>nable
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"><br></td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpt-L">
@@ -2786,22 +2784,20 @@
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd" id="helpCmd-fpt-i">
-                            <b>i</b>ntervals
-                        </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="greenCmd" id="helpCmd-fpt-c"><b>c</b>hroma</td>
+                        <td class="cmdHelp">chroma is a JSON array of target intervals to transpose to, for example:&nbsp;[0,1,2,3,4,5,6,7,8,9,10,11]. You can omit the array brackets and just enter the numbers and commas and the plugin will add the brackets.&nbsp; Each number is a step in the sequence of transpositions from the Song's starting spot, so 0 is the current starting location, say the key of C.&nbsp; Then 1 is Db, 2 is D, 3 is Eb and so on.&nbsp; 0 is added automatically since you have to start where you are now on the first loop.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpt-n">
                             <b>n</b>amed notes
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp">named notes chooses whether named notes move.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpt-s">
                             <b>s</b>ingle notes
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp">single notes chooses whether single notes move with the transposition.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpt-o">
@@ -2813,18 +2809,20 @@
                         <td class="greenCmd" id="helpCmd-fpt-a">
                             <b>a</b>uto sharps/flats
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp">auto sharps/flats applies the same key spelling after transposition as found in the menu /sk (section key). </td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpt-d">
                             <b>d</b>o lead key
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp">do lead key also transposes the Section lead key when keys move. </td>
                     </tr>
-                </table>
+                </tbody></table>
             </td>
         </tr>
-    </table>
+    </tbody></table>
+
+    <!-- END -->
 
 
     <a name="plugin-transpose-what"></a>
@@ -3103,17 +3101,16 @@ sub-menu:
 
 
 
-<!-- The Editable Element -->
-
-  Edit this text!
-  <table border="1">
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    </table>
-
+<!-- 
+   The Editable Element. 
+   Any element can be made contenteditable, so move this attribute and the id the script below uses to edit different tables in reasonable chunks, rather than the whole document at once.
+   Look for the element with the attributes: 
+        id="my-editor" contenteditable="true" 
+   This makes the element (e.g. the TransposePlugin table) editable in the Browser.  
+   Copy and paste and edit there, 
+       then mash on the "Save Changes" button, 
+       then grab the output text from the console.
+-->
 <!-- Save Button -->
 <button onclick="saveContent()">Save Changes</button>
 
