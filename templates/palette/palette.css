@@ -351,6 +351,7 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
    arrangement can be tuned with HTML/CSS alone. */
 #divStylesheetNameRow {
     display: inline-block;
+    padding-left: 2em;
 }   
 #divStylesheetButtons {
     display: inline-block;
@@ -371,9 +372,32 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     color: rgb(163, 163, 2);
 }
 #palette .ssMessage {
-    font-size: 85%;
+    font-size: 110%;
     margin: 0.2em 0;
     color: rgb(0, 51, 103);
+}
+#ssButtonsAndInfo {
+    text-align: left;
+    padding-left: 1em;
+    padding-top: 0.8em;
+}
+#CustomColorEditors {
+    text-align: left;
+}
+#UserColorsEditorDest {
+    text-align: center;
+    margin-left: 2em;
+    margin-bottom: 2em;
+}
+#palette #divHintAndMessageContainer,
+#palette #divStylesheetHint,
+#palette #divStylesheetNote,
+#palette #divStylesheetMessage,
+#palette #divColorLookHint {
+    padding-left: 1em;
+    text-align: left;
+    align-items: left;
+    display: inline-block;
 }
 #palette .ssLegend {
     font-size: 85%;

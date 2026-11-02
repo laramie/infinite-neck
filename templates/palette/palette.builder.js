@@ -70,14 +70,10 @@ export class PaletteBuilder {
             $("#CustomColorEditors").toggle();
             if ($("#CustomColorEditors").is(":visible")){
                 $("#showHideCustomColorEditors")
-                     .html("Customize Less ...")
-                     .removeClass("BtnPunchedOut")
-                     .addClass("BtnPunchedIn");
+                     .html('Customize &#x25BC;');
             } else {
                 $("#showHideCustomColorEditors")
-                     .html("Customize ...")
-                     .removeClass("BtnPunchedIn")
-                     .addClass("BtnPunchedOut");
+                     .html('Customize &#x25B6;');
             }
             event.stopPropagation();
         });
