@@ -3,7 +3,9 @@ import {
     buildTutorialPromptModel,
     renderLessonSectionList,
     renderPracticeList,
-    renderTutorialPrompt
+    renderPromptEditor,
+    renderTutorialPrompt,
+    renderTutorialPromptEditButton
 } from '../../templates/tutorial/tutorial.builder.js';
 
 function tutorialSong(level = 'strict') {
@@ -84,6 +86,71 @@ describe('Tutorial Prompt builder', () => {
         const activeHtml = renderTutorialPrompt(activeModel);
         expect(activeHtml).toContain('class="tutorialLOOP classLoopSections ButtonOn" data-action="tutorialLoopSections">RANDOM 2..3<');
         expect(activeHtml).toContain('class="tutorialLoopBeats classLoopBeats ButtonOn" data-action="tutorialLoopBeats">');
+    });
+
+    describe('Edit Prompt (sprint 152 it3, wizard mode)', () => {
+        function wizardSong(extra = {}) {
+            return {
+                tutorial: { level: 'wizard', ...extra },
+                sections: [{ caption: 'A', tutorial: { prompt: { lines: ['<p>Hello & <b>bye</b></p>', '<p>two</p>'] } } }, { caption: 'B' }],
+                getSections() { return this.sections; },
+                getCurrentSection() { return this.sections[0]; }
+            };
+        }
+
+        test('wizard shows the Edit Prompt button, and no editor, when not editing', () => {
+            const model = buildTutorialPromptModel({ song: wizardSong(), currentSectionIndex: 0 });
+            expect(model.canEditPrompt).toBe(true);
+            expect(model.promptEditing).toBe(false);
+            expect(renderTutorialPromptEditButton(model)).toContain('data-action="tutorialEditPrompt"');
+            expect(renderTutorialPromptEditButton(model)).toContain('Edit Prompt');
+            const html = renderTutorialPrompt(model);
+            expect(html).toContain('tutorialPromptContent');
+            expect(html).not.toContain('tutorialPromptEditor');
+            expect(html).not.toContain('tutorialPromptEditWarning');
+        });
+
+        test('no button for strict, none, or when "use caption for tutorial" is on', () => {
+            ['strict', 'none'].forEach((level) => {
+                const model = buildTutorialPromptModel({ song: { ...wizardSong(), tutorial: { level } }, currentSectionIndex: 0, promptEditing: true });
+                expect(model.canEditPrompt).toBe(false);
+                expect(model.promptEditing).toBe(false);
+                expect(renderTutorialPromptEditButton(model)).toBe('');
+            });
+            const model = buildTutorialPromptModel({ song: wizardSong({ useCaptionForSectionCaption: true }), currentSectionIndex: 0, promptEditing: true });
+            expect(renderTutorialPromptEditButton(model)).toBe('');
+            expect(renderTutorialPrompt(model)).not.toContain('tutorialPromptEditor');
+        });
+
+        test('while editing: the warning and a textarea holding the existing prompt replace the rendered prompt, and the button is hidden', () => {
+            const model = buildTutorialPromptModel({ song: wizardSong(), currentSectionIndex: 0, promptEditing: true });
+            expect(model.promptEditing).toBe(true);
+            expect(renderTutorialPromptEditButton(model)).toBe('');
+            const html = renderTutorialPrompt(model);
+            expect(html).toContain('class="tutorialPromptEditWarning">WARNING: Running the tutorial builder (npm build:tutorial-prompts) will re-write this prompt.</div>');
+            expect(html).toContain('id="tutorialPromptEditor"');
+            expect(html).toContain('&lt;p&gt;Hello &amp; &lt;b&gt;bye&lt;/b&gt;&lt;/p&gt;\n&lt;p&gt;two&lt;/p&gt;</textarea>');
+            expect(html).not.toContain('class="tutorialPromptContent"');
+        });
+
+        test('the editor is empty for a Section with no prompt', () => {
+            const model = buildTutorialPromptModel({ song: wizardSong(), currentSectionIndex: 1, promptEditing: true });
+            expect(renderPromptEditor(model)).toMatch(/<textarea[^>]*>\n<\/textarea>/);
+        });
+
+        test('the editor keeps a leading newline of the prompt text', () => {
+            const html = renderPromptEditor({ promptEditText: '\n<p>x</p>' });
+            expect(html).toContain('>\n\n&lt;p&gt;x&lt;/p&gt;</textarea>');
+        });
+
+        test('after the edit the prompt renders again and the warning is gone', () => {
+            const song = wizardSong();
+            song.sections[0].tutorial = { prompt: { lines: ['<p>New</p>'] } };
+            const html = renderTutorialPrompt(buildTutorialPromptModel({ song, currentSectionIndex: 0, promptEditing: false }));
+            expect(html).toContain('<div class="tutorialPromptContent">');
+            expect(html).not.toContain('tutorialPromptEditWarning');
+            expect(html).not.toContain('<textarea');
+        });
     });
 
     describe('Practice List (sprint 152, wizard mode)', () => {

@@ -1,13 +1,62 @@
 import {
+  applyPromptToSectionTutorial,
+  canEditTutorialPrompt,
   filterIncludedLoopSectionIndex,
   getLoopCaptionModel,
   getProgressBadgeModel,
   isLoopSubsetInEffect,
   normalizeTutorialProgress,
+  promptTextToPrompt,
+  promptToEditText,
   toggleAllIncludeInLooping,
   toggleBookmarkSection,
   toggleDoneSection
 } from '../../Tutorial.js';
+
+describe('Tutorial prompt editing helpers (sprint 152 it3)', () => {
+  test('canEditTutorialPrompt: wizard only, and not with "use caption for tutorial"', () => {
+    expect(canEditTutorialPrompt({ tutorial: { level: 'wizard' } })).toBe(true);
+    expect(canEditTutorialPrompt({ tutorial: { level: 'wizard', useCaptionForSectionCaption: true } })).toBe(false);
+    expect(canEditTutorialPrompt({ tutorial: { level: 'strict' } })).toBe(false);
+    expect(canEditTutorialPrompt({ tutorial: { level: 'none' } })).toBe(false);
+    expect(canEditTutorialPrompt({})).toBe(false);
+  });
+
+  test('promptToEditText joins the existing lines, and is empty without a prompt', () => {
+    expect(promptToEditText({ lines: ['<p>a</p>', '<p>b</p>'] })).toBe('<p>a</p>\n<p>b</p>');
+    expect(promptToEditText(undefined)).toBe('');
+    expect(promptToEditText({})).toBe('');
+  });
+
+  test('promptTextToPrompt sanitizes the whole text and keeps it as one entry', () => {
+    const seen = [];
+    const upper = (text) => { seen.push(text); return text.toUpperCase(); };
+    expect(promptTextToPrompt('<p>a\r\nb</p>', upper)).toEqual({ lines: ['<P>A\nB</P>'] });
+    expect(seen).toEqual(['<p>a\nb</p>']);
+  });
+
+  test('promptTextToPrompt returns null for empty text or text the sanitizer empties', () => {
+    expect(promptTextToPrompt('')).toBeNull();
+    expect(promptTextToPrompt('  \n ')).toBeNull();
+    expect(promptTextToPrompt('<script>x</script>', () => '')).toBeNull();
+    expect(promptTextToPrompt(undefined)).toBeNull();
+  });
+
+  test('applyPromptToSectionTutorial sets and removes the prompt without touching the caption', () => {
+    const prompt = { lines: ['<p>x</p>'] };
+    expect(applyPromptToSectionTutorial({ caption: 'Cap' }, prompt)).toEqual({ caption: 'Cap', prompt });
+    expect(applyPromptToSectionTutorial(undefined, prompt)).toEqual({ prompt });
+    expect(applyPromptToSectionTutorial({ caption: 'Cap', prompt }, null)).toEqual({ caption: 'Cap' });
+    expect(applyPromptToSectionTutorial({ prompt }, null)).toBeUndefined();
+    expect(applyPromptToSectionTutorial(undefined, null)).toBeUndefined();
+  });
+
+  test('applyPromptToSectionTutorial does not mutate its input', () => {
+    const original = { caption: 'Cap', prompt: { lines: ['a'] } };
+    applyPromptToSectionTutorial(original, null);
+    expect(original).toEqual({ caption: 'Cap', prompt: { lines: ['a'] } });
+  });
+});
 
 function progress(overrides = {}) {
   return normalizeTutorialProgress({ storageKey: 'tutorials/demo', ...overrides }, 12);

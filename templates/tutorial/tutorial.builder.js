@@ -1,10 +1,12 @@
 import { escapeHtml } from '../../InstrumentRoleBadges.js';
 import { getSanitizedInfo } from '../../html-sanitizer.js';
 import {
+    canEditTutorialPrompt,
     getLoopCaptionModel,
     isSectionDone,
     normalizeIncludeInLooping,
     normalizeTutorialMode,
+    promptToEditText,
     TUTORIAL_MODES
 } from '../../Tutorial.js';
 
@@ -110,11 +112,13 @@ export function buildTutorialPromptModel({
     lessonSectionListOpen = false,
     hamburgerControlsOpen = true,
     sectionsLoopActive = false,
-    beatsLoopActive = false
+    beatsLoopActive = false,
+    promptEditing = false
 } = {}) {
     const mode = normalizeTutorialMode(song?.tutorial?.level);
     const sectionTutorial = getSectionTutorial(song, currentSectionIndex);
     const sectionCount = normalizeSectionCount(song);
+    const canEditPrompt = canEditTutorialPrompt(song);
     let theSectionCaption = typeof sectionTutorial.caption === 'string' ? sectionTutorial.caption : '';
     if (song?.tutorial?.useCaptionForSectionCaption) {
         theSectionCaption = song?.getCurrentSection().caption;
@@ -123,6 +127,9 @@ export function buildTutorialPromptModel({
         mode,
         strict: mode === TUTORIAL_MODES.STRICT,
         wizard: mode === TUTORIAL_MODES.WIZARD,
+        canEditPrompt,
+        promptEditing: canEditPrompt && !!promptEditing,
+        promptEditText: promptToEditText(sectionTutorial.prompt),
         songCaption: typeof song?.tutorial?.caption === 'string' ? song.tutorial.caption : '',
         sectionCaption: theSectionCaption,
         currentSectionIndex,
@@ -146,6 +153,25 @@ export function buildTutorialPromptModel({
             includeInLoopingSectionIndexes
         })
     };
+}
+
+/** Sprint 152 it3, wizard mode only: the prompt editor, in place of the rendered prompt.  The warning is a plain div so
+ *  its look can be changed in CSS (.tutorialPromptEditWarning).  The newline right after the textarea tag is swallowed by
+ *  the HTML parser, so text that itself starts with a newline is kept. */
+export function renderPromptEditor(model = {}) {
+    return '<div class="tutorialPromptEdit">'
+        + '<div class="tutorialPromptEditWarning">WARNING: Running the tutorial builder (npm build:tutorial-prompts) will re-write this prompt.</div>'
+        + '<div class="tutorialPromptEditHint">Click outside the box, or press Esc, to save and show the prompt.  An empty box removes the prompt.</div>'
+        + `<textarea id="tutorialPromptEditor" class="tutorialPromptEditor" rows="10" spellcheck="false" aria-label="Prompt HTML for this Section">\n${escapeHtml(model.promptEditText ?? '')}</textarea>`
+        + '</div>';
+}
+
+/** Sprint 152 it3, wizard mode only: the small button that floats to the right of the Prompt Area.  Hidden while editing. */
+export function renderTutorialPromptEditButton(model = {}) {
+    if (!model.wizard || !model.canEditPrompt || model.promptEditing) {
+        return '';
+    }
+    return '<button type="button" class="tutorialPromptEditButton" data-action="tutorialEditPrompt">Edit Prompt</button>';
 }
 
 export function renderTutorialPrompt(model = {}) {
@@ -181,9 +207,11 @@ export function renderTutorialPrompt(model = {}) {
     const modeClass = model.strict ? 'tutorialPrompt--strict' : 'tutorialPrompt--wizard';
     const lessonList = model.strict && model.lessonSectionListOpen ? renderLessonSectionList(model.lessonSections) : '';
     
-    const tutorialPromptContentDiv = (model.promptHtml)
-            ?   `<div class="tutorialPromptContent">${model.promptHtml}</div>`
-            :  '';
+    const tutorialPromptContentDiv = model.promptEditing
+            ? renderPromptEditor(model)
+            : (model.promptHtml)
+                ?   `<div class="tutorialPromptContent">${model.promptHtml}</div>`
+                :  '';
     
     const hamburger = model.strict ? '<button type="button" class="tutorialWidgetRowHamburger" data-action="tutorialToggleHamburgerControls">&equiv; &nbsp;'+hamburgerArrow+'</button>' : '';
     const hamburgerControlsStyle = (model.hamburgerControlsOpen === true) 
@@ -228,9 +256,27 @@ export class TutorialPromptBuilder {
         if (!TutorialPromptBuilder.divTutorialPrompt) {
             return '';
         }
-        const html = TutorialPromptBuilder.renderFromSong(options);
+        const model = buildTutorialPromptModel(options);
+        const html = renderTutorialPrompt(model);
         $(TutorialPromptBuilder.divTutorialPrompt).replaceWith(html || '<div id="tutorialPrompt" class="tutorialPrompt tutorialPrompt--none"></div>');
         TutorialPromptBuilder.divTutorialPrompt = document.getElementById('tutorialPrompt');
+        TutorialPromptBuilder.renderEditButton(model);
         return html;
+    }
+
+    /** The Edit Prompt button lives in a sibling host, side by side with #tutorialPrompt (which is replaced on every render).
+     *  The destination only becomes a flex row while the button is showing, so strict and none layouts are untouched. */
+    static renderEditButton(model) {
+        const $dest = $(TutorialPromptBuilder.divTutorialPrompt).parent();
+        if ($dest.length === 0) {
+            return;
+        }
+        let $host = $dest.children('#tutorialPromptEditHost');
+        if ($host.length === 0) {
+            $host = $('<div id="tutorialPromptEditHost" class="tutorialPromptEditHost"></div>').appendTo($dest);
+        }
+        const buttonHtml = renderTutorialPromptEditButton(model);
+        $host.html(buttonHtml);
+        $dest.toggleClass('tutorialPromptHost--sideBySide', buttonHtml !== '');
     }
 }

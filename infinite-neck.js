@@ -149,17 +149,20 @@ import {
 	undoLastDisplayOptionsOp, canUndoDisplayOptionsOp
 } from './templates/display-options/displayOptionsPlan.js';
 import { resolveSet as resolveFunctionSymbolSet, BUILTIN_SETS as FUNCTION_SYMBOL_BUILTIN_SETS } from './templates/function-symbols/functionSymbolSets.js';
-import { getSanitizedSongWidgets } from './html-sanitizer.js';
+import { getSanitizedInfo, getSanitizedSongWidgets } from './html-sanitizer.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
 import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
 import { TutorialPromptBuilder, buildTutorialPromptModel, renderPracticeList } from './templates/tutorial/tutorial.builder.js';
 import {
+	applyPromptToSectionTutorial,
+	canEditTutorialPrompt,
 	filterIncludedLoopSectionIndex,
 	getLoopCaptionModel,
 	isLoopSubsetInEffect,
 	isTutorialSong,
 	normalizeTutorialMode,
+	promptTextToPrompt,
 	readTutorialProgressFromStorage,
 	TUTORIAL_MODES,
 	toggleAllIncludeInLooping,
@@ -529,7 +532,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		progress: null,
 		includeInLoopingSectionIndexes: null,
 		lessonSectionListOpen: false,
-		hamburgerControlsOpen: true
+		hamburgerControlsOpen: true,
+		promptEditSection: null  //Sprint 152 it3: the Section object whose prompt is being edited in the wizard-mode textarea, or null
 	};
 
 	function getTutorialStorageEntry(song = getSong()){
@@ -566,6 +570,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		tutorialRuntimeState.includeInLoopingSectionIndexes = null;
 		tutorialRuntimeState.lessonSectionListOpen = false;
 		tutorialRuntimeState.hamburgerControlsOpen = true;
+		tutorialRuntimeState.promptEditSection = null; //a different Song: the old editor (if any) is simply discarded
 		resetTutorialChrome();
 	}
 
@@ -594,9 +599,52 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return tutorialRuntimeState.progress;
 	}
 
+	/** Sprint 152 it3 (wizard mode): accepts the open prompt editor, if any, by sanitizing the textarea and writing it to
+	 *  `section.tutorial.prompt` of the Section that was being edited (which is not necessarily the current Section any more:
+	 *  looping may have moved on).  Returns true when a prompt edit was written.
+	 *  The edit state is cleared before anything else, so the blur that removing the textarea can fire is ignored. */
+	function commitTutorialPromptEdit(){
+		const section = tutorialRuntimeState.promptEditSection;
+		const editor = document.getElementById('tutorialPromptEditor');
+		if (!section || !editor){
+			return false;
+		}
+		tutorialRuntimeState.promptEditSection = null;
+		const prompt = promptTextToPrompt(editor.value, getSanitizedInfo);
+		const tutorial = applyPromptToSectionTutorial(section.tutorial, prompt);
+		if (tutorial){
+			section.tutorial = tutorial;
+		} else {
+			delete section.tutorial;
+		}
+		return true;
+	}
+
+	/** The Edit Prompt button (wizard mode, and not when "use caption for tutorial" is on). */
+	export function tutorialEditPrompt(){
+		const song = getSong();
+		if (!song || !canEditTutorialPrompt(song)){
+			return;
+		}
+		resetTutorialRuntimeForSongIfNeeded(song);
+		tutorialRuntimeState.promptEditSection = getCurrentSection();
+		renderTutorialPrompt();
+		$('#tutorialPromptEditor').trigger('focus');
+	}
+
+	/** focusout of the prompt textarea: accept the edit, then render the prompt (and the warning goes away with the textarea). */
+	export function tutorialPromptEditorBlurred(){
+		if (commitTutorialPromptEdit()){
+			renderTutorialPrompt();
+		}
+	}
+
 	function renderTutorialPrompt(){
 		const song = getSong();
 		resetTutorialRuntimeForSongIfNeeded(song);
+		// Any re-render (a Section change from looping, a list click, a mode change) accepts an open prompt edit first,
+		// because the render is about to replace the textarea.
+		commitTutorialPromptEdit();
 		const options = {
 			song,
 			currentSectionIndex: getSectionsCurrentIndex(),
@@ -605,9 +653,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			lessonSectionListOpen: tutorialRuntimeState.lessonSectionListOpen,
 			hamburgerControlsOpen: tutorialRuntimeState.hamburgerControlsOpen,
 			sectionsLoopActive: sectionsLooping(),
-			beatsLoopActive: beatsLooping()
+			beatsLoopActive: beatsLooping(),
+			promptEditing: !!tutorialRuntimeState.promptEditSection
 		};
 		const html = TutorialPromptBuilder.renderToDest(options);
+		if (tutorialRuntimeState.promptEditSection && !document.getElementById('tutorialPromptEditor')){
+			tutorialRuntimeState.promptEditSection = null; //the editor could not be shown (mode changed, no Prompt Area yet): do not leave a stale edit pending
+		}
 		renderPracticeListHost(options);
 		return html;
 	}
@@ -4812,6 +4864,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			tutorialToggleSectionList,
 			tutorialGotoSection,
 			tutorialToggleDone,
+			tutorialEditPrompt,
 			tutorialToggleBookmark,
 			tutorialToggleIncludeInLooping,
 			tutorialToggleAllIncludeInLooping,
@@ -4828,6 +4881,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			copyApprovedPattern,
 			copySongLink
 		};
+
+		// Sprint 152 it3: blur does not bubble, focusout does.  Losing focus for any reason (a click elsewhere, Esc, looping) accepts the edit.
+		$(document).off('focusout.tutorialPromptEditor').on('focusout.tutorialPromptEditor', '#tutorialPromptEditor', tutorialPromptEditorBlurred);
 
 		$(document).on('click', '[data-action]', function(e) {
 			e.preventDefault();

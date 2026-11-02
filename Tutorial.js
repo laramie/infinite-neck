@@ -21,6 +21,38 @@ export function isTutorialSong(song = {}) {
     return normalizeTutorialMode(song?.tutorial?.level) !== TUTORIAL_MODES.NONE;
 }
 
+/** Sprint 152 it3: the wizard-mode "Edit Prompt" button exists only in wizard mode, and not when the Section
+ *  caption is used as the tutorial caption (that setting means the Song is not authoring prompts). */
+export function canEditTutorialPrompt(song = {}) {
+    return normalizeTutorialMode(song?.tutorial?.level) === TUTORIAL_MODES.WIZARD
+        && !song?.tutorial?.useCaptionForSectionCaption;
+}
+
+/** Text for the Edit Prompt textarea: the existing prompt lines, one per line. */
+export function promptToEditText(prompt) {
+    return Array.isArray(prompt?.lines) ? prompt.lines.map((line) => `${line ?? ''}`).join('\n') : '';
+}
+
+/** Textarea text to a `section.tutorial.prompt` value, or null when the text is empty (after sanitizing).
+ *  The whole text is sanitized at once, so an element typed across several lines survives, and is stored as one entry
+ *  (render joins entries with a newline anyway, so it displays the same as one entry per line). */
+export function promptTextToPrompt(text, sanitize = (value) => value) {
+    const normalized = `${text ?? ''}`.replace(/\r\n?/g, '\n');
+    const clean = `${sanitize(normalized) ?? ''}`;
+    return clean.trim().length > 0 ? { lines: [clean] } : null;
+}
+
+/** Returns the new `section.tutorial` object with its prompt set (or removed for a null prompt); undefined when nothing is left. */
+export function applyPromptToSectionTutorial(sectionTutorial, prompt) {
+    const tutorial = sectionTutorial && typeof sectionTutorial === 'object' ? { ...sectionTutorial } : {};
+    if (prompt) {
+        tutorial.prompt = prompt;
+    } else {
+        delete tutorial.prompt;
+    }
+    return Object.keys(tutorial).length > 0 ? tutorial : undefined;
+}
+
 export function deriveTutorialStorageKeyFromHref(href = '') {
     return `${href || ''}`.trim().replace(/^songs\//, '').replace(/\.json$/i, '');
 }

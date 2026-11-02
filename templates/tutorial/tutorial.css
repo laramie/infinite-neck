@@ -12,6 +12,48 @@
     display: none;
 }
 
+/* Sprint 152 it3: wizard-mode Edit Prompt button, side by side with #tutorialPrompt at the right.
+   The host div is only a flex row while the button is showing (class set by TutorialPromptBuilder.renderEditButton). */
+.tutorialPromptHost--sideBySide {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5em;
+}
+.tutorialPromptHost--sideBySide > .tutorialPrompt {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.tutorialPromptEditHost {
+    flex: 0 0 auto;
+    margin: 0.4em 0;
+}
+.tutorialPromptEditButton {
+    font-size: 80%;
+    padding: 0.15em 0.6em;
+    white-space: nowrap;
+}
+
+/* The warning above the prompt textarea: change its look here. */
+.tutorialPromptEditWarning {
+    display: block;
+    width: 100%;
+    margin: 0.3em 0;
+    color: red;
+}
+.tutorialPromptEditHint {
+    display: block;
+    width: 100%;
+    margin: 0.2em 0;
+    font-size: 80%;
+}
+.tutorialPromptEditor {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 8em;
+    font-family: monospace;
+}
+
 .tutorialPromptContent {
     font-size: 120%;
     margin-left: 0.6em;
