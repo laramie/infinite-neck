@@ -137,6 +137,8 @@ Above the textarea, place a div that spans the whole line with a warning label: 
 
 When the textarea goes away after an edit, the prompt is rendered, and the warning label also disappears.
 
+In the event focus is lost because looping was left on, accept the edit.
+
 Please proceed to coding.
 
 Add a description of what was implemented in `sprint-152-it3-feature.md` and link from `sprint-152.md`.
