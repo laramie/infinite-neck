@@ -9,6 +9,7 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 }));
 
 const Constants = await import('../../Constants.js');
+const EventBus = (await import('../../event-bus.js')).default;
 const { MovePlugin } = await import('../../plugins/move/MovePlugin.js');
 const { SectionNotes } = await import('../../SectionNotes.js');
 const { Note } = await import('../../Note.js');
@@ -404,6 +405,32 @@ describe('MovePlugin', () => {
     expect(plugin.resolveValue('targetTable', { song })).toBe('S6_1');
   });
 
+  test('/fpmi shows a trigger-less, action-less reminder just before p)layed and r)ecorded', () => {
+    const song = createSong({
+      myTunings: [createTuning({ baseID: 'S6_1', banjoNut: {} })],
+      sections: [createSection()]
+    });
+    mockRuntime.song = song;
+    const plugin = new MovePlugin();
+    plugin.setManager({ song });
+
+    const include = plugin.getVisibleMenuChildren().find((child) => child.name === 'include');
+    const names = include.children.map((child) => child.name);
+    expect(names).toEqual([
+      'includeSingle', 'includeTiny', 'includeHighlights', 'includeFingering',
+      'chooseAtLeastOne', 'includePlayed', 'includeRecorded'
+    ]);
+
+    const dummy = include.children[names.indexOf('chooseAtLeastOne')];
+    expect(dummy.caption).toBe('--- choose at least one of:  ---');
+    expect(dummy.trigger).toBe('');
+    expect(dummy.action).toBe('');
+    expect(dummy.children).toHaveLength(0);
+
+    const triggers = include.children.filter((child) => child.trigger).map((child) => child.trigger);
+    expect(new Set(triggers).size).toBe(triggers.length);
+  });
+
   test('apply with no include toggles logs start entry, backs up section, and returns no-op', () => {
     const tuning = createTuning({ baseID: 'S6_1', banjoNut: {} });
     const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
@@ -516,6 +543,53 @@ describe('MovePlugin', () => {
     expect(result.result).toContain('dropped 1');
     expect(sectionNotes.playedNotes).toHaveLength(0);
     expect(plugin.droppedNotes.some((entry) => entry.reason === 'no fret below legal range')).toBe(true);
+  });
+
+  test('help points at /fau verbose for the dropped-notes summary', () => {
+    const tuning = createTuning();
+    const song = createSong({ myTunings: [tuning], sections: [createSection()] });
+    mockRuntime.song = song;
+    const plugin = new MovePlugin();
+    plugin.setManager({ song });
+
+    expect(plugin.buildHelpMessage(song)).toContain('Tip: /fau then v)erbose writes dropped MIDI Numbers by string to the User Log.');
+  });
+
+  test('a drop adds one verbose User Log row with the reason and MIDI numbers; the result line is unchanged', () => {
+    const tuning = createTuning();
+    const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+    const sectionNotes = createSectionNotes({
+      playedNotes: [
+        { noteName: 'E', styleNum: Note.STYLENUM_BEND, midinum: '70', row: '4', col: '6', colorClass: 'noteTransparent', bendValue: 'semitone1' }
+      ]
+    });
+    const song = createSong({ myTunings: [tuning], sections: [createSection({ [tableID]: sectionNotes })] });
+    mockRuntime.song = song;
+    const rows = [];
+    const handler = (event, data) => rows.push(data);
+    EventBus.on('UserLog', handler);
+
+    try {
+      const plugin = new MovePlugin();
+      plugin.setManager({ song });
+      plugin.getVisibleMenuChildren();
+      plugin.setPropertyValue('includeTiny', true, { song });
+      plugin.setPropertyValue('includePlayed', true, { song });
+      plugin.setPropertyValue('algorithm', 'drop', { song });
+      plugin.setPropertyValue('motion', 'd', { song });
+
+      const result = plugin.invokeAction('apply', { song });
+
+      expect(result.result).toContain('dropped 1');
+      const verbose = rows.filter((row) => row.level === 'v');
+      expect(verbose).toHaveLength(1);
+      expect(verbose[0].subSystem).toBe('MovePlugin');
+      expect(verbose[0].message).toContain('dropped 1 of');
+      expect(verbose[0].message).toContain('no fret below legal range');
+      expect(verbose[0].message).toContain('MIDI Numbers dropped: {s5:[70]}');
+    } finally {
+      EventBus.off('UserLog', handler);
+    }
   });
 
   test('recorded note drops when moved destination is occupied by a played note', () => {

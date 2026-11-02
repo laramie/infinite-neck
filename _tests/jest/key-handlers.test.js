@@ -586,6 +586,21 @@ describe('key-handlers spacebar mapping', () => {
 		expect(clearResult.preserveMenuStack).toBe(true);
 	});
 
+	test('Sprint 151 it3: setUserLogLevel changes the User Log level and keeps the menu open', () => {
+		const verbose = performCmdAction({ action: 'setUserLogLevel', value: 'v' });
+		expect(verbose.result).toBe('user log level: verbose');
+		expect(verbose.preserveMenuStack).toBe(true);
+		expect(getValue('userLogLevel')).toBe('verbose');
+
+		const warnings = performCmdAction({ action: 'setUserLogLevel', value: 'w' });
+		expect(warnings.result).toBe('user log level: warnings');
+		expect(getValue('userLogLevel')).toBe('warnings');
+
+		const info = performCmdAction({ action: 'setUserLogLevel', value: 'i' });
+		expect(info.result).toBe('user log level: info');
+		expect(getValue('userLogLevel')).toBe('info');
+	});
+
 	test('Sprint 148 it4: /vpm Matrix actions split their comma-separated input and pass it to the providers', () => {
 		const menuNode = (action, id, extra = {}) => ({ action, input: { id }, ...extra });
 

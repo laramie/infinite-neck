@@ -1,11 +1,69 @@
 import { Messages } from './Messages.js';
 import { hideCmdLine } from './command-line.js';
+import {
+    DEFAULT_USER_LOG_LEVEL,
+    USER_LOG_LEVEL_CAPTIONS,
+    USER_LOG_LEVEL_WARNING,
+    normalizeUserLogLevel,
+    shouldShowUserLogMessage
+} from './plugins/userLogLevels.js';
 
 
 
 const USER_LOG_MAX_ROWS = 1000;
+const USER_LOG_LEVEL_STORAGE_KEY = 'UserLogLevel';
+
+let currentUserLogLevel = null;
 
 export class UserLog {
+
+        // The level is an app-level preference (browser storage), not part of any Song.
+        static getLevel(){
+            if (currentUserLogLevel === null) {
+                let stored = null;
+                try {
+                    stored = typeof localStorage === 'undefined' ? null : localStorage.getItem(USER_LOG_LEVEL_STORAGE_KEY);
+                } catch (error) {
+                    stored = null;
+                }
+                currentUserLogLevel = normalizeUserLogLevel(stored, DEFAULT_USER_LOG_LEVEL);
+            }
+            return currentUserLogLevel;
+        }
+
+        static getLevelCaption(){
+            return USER_LOG_LEVEL_CAPTIONS[UserLog.getLevel()];
+        }
+
+        // Rows are always written; the level only hides or shows them, so switching to
+        // verbose later brings back what was logged earlier.
+        static setLevel(level){
+            currentUserLogLevel = normalizeUserLogLevel(level, DEFAULT_USER_LOG_LEVEL);
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    localStorage.setItem(USER_LOG_LEVEL_STORAGE_KEY, currentUserLogLevel);
+                }
+            } catch (error) {
+                // storage unavailable: the choice lasts for this page load
+            }
+            UserLog.applyLevelToRows();
+            return currentUserLogLevel;
+        }
+
+        static applyLevelToRows(){
+            if (typeof document === 'undefined') {
+                return;
+            }
+            const table = document.getElementById('tblUserLog');
+            const tbody = table ? table.querySelector('tbody') : null;
+            if (!tbody) {
+                return;
+            }
+            const setting = UserLog.getLevel();
+            Array.from(tbody.rows).forEach((row) => {
+                row.style.display = shouldShowUserLogMessage(row.dataset.level, setting) ? '' : 'none';
+            });
+        }
 
         static getUserLogTableBody(){
             if (typeof document === 'undefined') {
@@ -54,13 +112,16 @@ export class UserLog {
             return text.startsWith('#raise=');
         }
         
-        static addToUserLog(subSystem, message){
+        static addToUserLog(subSystem, message, level){
             const tbody = UserLog.getUserLogTableBody();
             if (!tbody) {
                 return false;
             }
         
+            const messageLevel = normalizeUserLogLevel(level, USER_LOG_LEVEL_WARNING);
             const row = document.createElement('tr');
+            row.dataset.level = messageLevel;
+            row.style.display = shouldShowUserLogMessage(messageLevel, UserLog.getLevel()) ? '' : 'none';
             const timeCell = document.createElement('td');
             const subSystemCell = document.createElement('td');
             const messageCell = document.createElement('td');
@@ -90,6 +151,7 @@ export class UserLog {
         
         static showUserLog(){
             UserLog.getUserLogTableBody();
+            UserLog.applyLevelToRows();
             $("#divMessageAndJsonTree").show();
             Messages.showMessagesTab("UserLog");
             hideCmdLine();

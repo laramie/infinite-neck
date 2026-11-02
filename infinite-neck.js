@@ -5210,7 +5210,7 @@ EventBus.on('ShowMessages', function(event, data) {
 	Messages.showMessages(data && data.html ? data.html : '');
 });
 EventBus.on('UserLog', function(event, data) {
-	UserLog.addToUserLog(data?.subSystem || '', data?.message || '');
+	UserLog.addToUserLog(data?.subSystem || '', data?.message || '', data?.level);
 });
 EventBus.on('PluginManager:ShowResult', function(event, data) {
 	if (data && data.result) {

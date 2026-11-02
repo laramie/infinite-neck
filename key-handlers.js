@@ -1478,6 +1478,12 @@ export function performCmdAction(menuItem, args){
 			UserLog.clearUserLog();
 			actionResult.result = "User Log cleared";
 			break;
+		case "setUserLogLevel": {
+			UserLog.setLevel(menuItem.value || argByInputID);
+			actionResult.result = `user log level: ${UserLog.getLevelCaption()}`;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
 		case "showGraveyard":
 			showGraveyard();
 			break;
@@ -2118,6 +2124,9 @@ export function getValue(what){
 	}
 	if (what === 'macroVerbose') {
 		return `${macroVerbose}`;
+	}
+	if (what === 'userLogLevel') {
+		return UserLog.getLevelCaption();
 	}
 	if (what === 'graveyardClearByTypeCLIP') {
 		return `${!!graveyardClearByTypeState.CLIP}`;

@@ -1,9 +1,11 @@
 import properties from './properties.json' with { type: 'json' };
 import { PluginProperty, buildCaption, buildValueReference } from '../PluginProperty.js';
 import { MenuItemProxy } from '../MenuItemProxy.js';
-import { buildPluginHelpHeader } from '../pluginHelp.js';
+import { buildPluginHelpHeader, buildUserLogVerboseHint } from '../pluginHelp.js';
 import { GraveType } from '../../graveyard.js';
 import { getSong } from '../../infinite-neck.js';
+import { emitUserLog } from '../emitUserLog.js';
+import { USER_LOG_LEVEL_VERBOSE, formatMidiNumbersByString } from '../userLogLevels.js';
 import {
   applyMovePlan,
   buildTargetTableOptions,
@@ -118,9 +120,19 @@ export class MovePlugin {
         this.getProperty('includeTiny').getMenuNodeSpec(this),
         this.getProperty('includeHighlights').getMenuNodeSpec(this),
         this.getProperty('includeFingering').getMenuNodeSpec(this),
+        this.buildChooseAtLeastOneDummyNode(),
         this.getProperty('includePlayed').getMenuNodeSpec(this),
         this.getProperty('includeRecorded').getMenuNodeSpec(this)
       ]
+    });
+  }
+
+  // A dummy menu item: no trigger and no action, so no key selects it.  It only shows the
+  // reminder that p)layed or r)ecorded (below it) must be on for Move to find notes.
+  buildChooseAtLeastOneDummyNode() {
+    return new MenuItemProxy(this, {
+      name: 'chooseAtLeastOne',
+      caption: '--- choose at least one of:  ---'
     });
   }
 
@@ -235,6 +247,7 @@ Moves non-Named notes in the current section and selected table.
 
 clear/backup clears the dropped-notes log and arms a fresh section backup before the next Apply.
 That backup is buried in the graveyard. Revive it from the graveyard if you need to restore the prior section state.
+${buildUserLogVerboseHint('dropped MIDI Numbers by string')}
 </pre>`;
   }
 
@@ -329,6 +342,34 @@ That backup is buried in the graveyard. Revive it from the graveyard if you need
     }
   }
 
+  // One verbose User Log row per apply: the count, the most common reasons, and the MIDI
+  // numbers dropped.  Per-note detail stays in this.droppedNotes (show dropped notes).
+  emitDroppedNotesSummary(plan) {
+    const entries = plan?.droppedEntries || [];
+    if (entries.length === 0) {
+      return;
+    }
+    const reasonCounts = new Map();
+    entries.forEach((entry) => {
+      const reason = `${entry?.reason || 'unknown'}`;
+      reasonCounts.set(reason, (reasonCounts.get(reason) || 0) + 1);
+    });
+    const reasons = [...reasonCounts.entries()]
+      .sort((left, right) => right[1] - left[1])
+      .slice(0, 3)
+      .map(([reason, count]) => `${reason} x${count}`)
+      .join(', ');
+    const midiEntries = entries.map((entry) => {
+      const row = Number.parseInt(entry?.Note?.row, 10);
+      return { string: Number.isInteger(row) && row >= 0 ? row + 1 : null, midi: entry?.Note?.midinum };
+    });
+    emitUserLog(
+      'MovePlugin',
+      `Move apply #${this.applyCounter}: dropped ${entries.length} of ${plan.candidateCount}; reasons: ${reasons}; MIDI Numbers dropped: ${formatMidiNumbersByString(midiEntries)}`,
+      USER_LOG_LEVEL_VERBOSE
+    );
+  }
+
   applyToCurrentSection(song = getSong()) {
     const section = this.getCurrentSection(song);
     const tuning = this.getTargetTuning(song);
@@ -385,6 +426,7 @@ That backup is buried in the graveyard. Revive it from the graveyard if you need
     sectionNotes.playedNotes = plan.playedNotes;
     sectionNotes.recordedNotes = plan.recordedNotes;
     this.droppedNotes.push(...plan.droppedEntries);
+    this.emitDroppedNotesSummary(plan);
 
     if (typeof song?.requestUiFullRepaint === 'function') {
       song.requestUiFullRepaint();

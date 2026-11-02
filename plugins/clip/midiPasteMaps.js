@@ -309,16 +309,22 @@ export function prepareStringPairs(pairs = [], sourceStringCount = 0, targetStri
  * Maps notes through row pairs.  `placeNote(note, targetRow0)` returns the candidate
  * note on that row, or null when the pitch has no cell there.
  *
- * - A note whose source string has no pair is `unmapped`.
- * - A note that no pair could place (illegal pitch / unusable row) is `dropped`.
+ * - A note whose source string has no pair is `unmapped`, and the note itself is returned
+ *   in `unmappedNotes`.
+ * - A note that no pair could place (illegal pitch / unusable row) is `dropped`, and the
+ *   note itself is returned in `droppedNotes`.
  * - One-to-many: one candidate per pair.
  * - Many-to-one: when candidates from different pairs land on the same cell, only the
- *   later pair's survive (`collisions` counts the removed ones).  Candidates from the same
+ *   later pair's survive (`collisions` counts the removed ones, `collisionNotes` has their
+ *   source notes).  Candidates from the same
  *   pair are untouched, so a straight map behaves exactly like a map-less paste.
  * Candidates keep clip order.
  */
 export function applyStringMap({ notes = [], rowPairs = [], placeNote }) {
   const entries = [];
+  const droppedNotes = [];
+  const unmappedNotes = [];
+  const collisionNotes = [];
   let dropped = 0;
   let unmapped = 0;
 
@@ -326,23 +332,26 @@ export function applyStringMap({ notes = [], rowPairs = [], placeNote }) {
     const row = toInt(note?.row);
     if (row === null || row < 0) {
       dropped += 1;
+      droppedNotes.push(note);
       return;
     }
     const matching = rowPairs.filter((pair) => pair.from0 === row);
     if (matching.length === 0) {
       unmapped += 1;
+      unmappedNotes.push(note);
       return;
     }
     let placed = false;
     matching.forEach((pair) => {
       const candidate = placeNote(note, pair.to0);
       if (candidate) {
-        entries.push({ candidate, order: pair.order });
+        entries.push({ candidate, order: pair.order, note });
         placed = true;
       }
     });
     if (!placed) {
       dropped += 1;
+      droppedNotes.push(note);
     }
   });
 
@@ -361,14 +370,15 @@ export function applyStringMap({ notes = [], rowPairs = [], placeNote }) {
 
   let collisions = 0;
   const candidates = [];
-  entries.forEach(({ candidate, order }) => {
+  entries.forEach(({ candidate, order, note }) => {
     const key = `${candidate.styleNum}:${candidate.row}:${candidate.col}`;
     if (order < winningOrder.get(key)) {
       collisions += 1;
+      collisionNotes.push(note);
       return;
     }
     candidates.push(candidate);
   });
 
-  return { candidates, dropped, unmapped, collisions };
+  return { candidates, dropped, droppedNotes, unmapped, unmappedNotes, collisions, collisionNotes };
 }

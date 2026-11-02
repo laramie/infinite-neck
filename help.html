@@ -2837,7 +2837,8 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
         <li>For transposing SingleNotes or TinyNotes, use the MovePlugin.
     </ul>   
 </p>
-    
+<p><span class="menuExampleLine"><b>/fau</b></span> sets the <b>User Log level</b>: <b>v)erbose</b> shows everything, including a summary of any notes that Clip, MIDI Paste or Move dropped, with their MIDI Numbers grouped by string (for example <code>MIDI Numbers dropped: {s7:[34,36],s8:[41]}</code>, up to 40 numbers); <b>i)nfo</b> (the default) hides the verbose rows; <b>w)arnings only</b> shows only warnings.  Rows hidden by the level are kept, so switching back to <b>v)erbose</b> shows them again.  The setting is saved in this browser.</p>
+
 <p>Note: the MovePlugin lets you chose how notes that may be dropped are handled.  NamedNotes can't be dropped because they just show all notes with a letter name, e.g. note 'F'.  But a SingleNote could be dropped if you transpose down and that note goes beyond the Nut. MovePlugin lets you specify whether to drop it, attempt a wrap on the same string by changing the note's octave, or attempt a wrap to a different string by changing the note's octave.
 </p>
 <p>Transposing "<b>u</b>p" moves the notes and the Root Key up the scale one half-step. (<i>Uppercase matters: <b>u</b> goes up, <b>U</b> goes down. <b>d</b> goes down, <b>D</b> goes up.</i>)  Transposing with the "j" key ("<b>j</b>ump") moves the notes

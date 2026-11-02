@@ -27,6 +27,10 @@ export function buildPluginStatusLegend() {
   return `Status marks:\n- ${ENABLED_CHECKMARK} enabled\n- ${PERSISTED_SONG_MARK} persisted in Song.plugins`;
 }
 
+export function buildUserLogVerboseHint(detail = 'more detail') {
+  return `Tip: /fau then v)erbose writes ${detail} to the User Log.`;
+}
+
 export function buildPluginEventsHelpFooter(plugin) {
   const eventNames = typeof plugin?.getEventNames === 'function' ? plugin.getEventNames() : [];
   const legend = buildPluginStatusLegend();

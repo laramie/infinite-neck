@@ -367,6 +367,37 @@ export var gMenuFile =    {
               }
             },
             {
+              "name": "userLogLevel",
+              "caption": "<b>u</b>ser log level [${userLogLevel}]",
+              "trigger": "u",
+              "vars": [
+                "userLogLevel"
+              ],
+              "children": [
+                {
+                  "caption": "<b>v</b>erbose",
+                  "trigger": "v",
+                  "action": "setUserLogLevel",
+                  "value": "v",
+                  "preserveMenuStack": true
+                },
+                {
+                  "caption": "<b>i</b>nfo",
+                  "trigger": "i",
+                  "action": "setUserLogLevel",
+                  "value": "i",
+                  "preserveMenuStack": true
+                },
+                {
+                  "caption": "<b>w</b>arnings only",
+                  "trigger": "w",
+                  "action": "setUserLogLevel",
+                  "value": "w",
+                  "preserveMenuStack": true
+                }
+              ]
+            },
+            {
               "name": "clearGraveyardByType",
               "caption": "<b>c</b>lear graveyard by type",
               "trigger": "c",

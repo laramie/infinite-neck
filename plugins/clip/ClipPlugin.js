@@ -1,11 +1,12 @@
 import properties from './properties.json' with { type: 'json' };
 import { PluginProperty, buildCaption, buildValueReference } from '../PluginProperty.js';
 import { MenuItemProxy } from '../MenuItemProxy.js';
-import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
+import { buildPluginEventsHelpFooter, buildPluginHelpHeader, buildUserLogVerboseHint } from '../pluginHelp.js';
 import { getSong } from '../../infinite-neck.js';
 import { GraveType } from '../../graveyard.js';
 import { Note } from '../../Note.js';
-import EventBus from '../../event-bus.js';
+import { emitUserLog } from '../emitUserLog.js';
+import { USER_LOG_LEVEL_VERBOSE, USER_LOG_LEVEL_WARNING, formatMidiNumbersByString } from '../userLogLevels.js';
 import { allTunings } from '../../tunings.js';
 import {
   MAP_CHOICE_TRIGGERS,
@@ -382,10 +383,12 @@ export class ClipPlugin {
   }
 
   buildMidiPasteMapMenuNode() {
+    const token = `plugin:${this.id}:midiPasteMapSummary`;
     return new MenuItemProxy(this, {
       name: 'midiPasteMap',
-      caption: buildCaption('midi paste map', 'm'),
+      caption: `${buildCaption('midi paste map', 'm')}${buildValueReference(token)}`,
       trigger: 'm',
+      vars: [token],
       children: [
         this.buildMidiPasteMapSelectNode(),
         new MenuItemProxy(this, {
@@ -677,6 +680,10 @@ export class ClipPlugin {
     if (fieldName === 'midiPasteMapId') {
       return escapeHtml(this.getActiveMidiPasteMapId() || 'none');
     }
+    if (fieldName === 'midiPasteMapSummary') {
+      const activeId = this.getActiveMidiPasteMapId();
+      return activeId ? ` [${escapeHtml(activeId)}]` : '';
+    }
     if (fieldName === 'recordedStatus') {
       return this.buildRecordedStatus(song);
     }
@@ -782,6 +789,7 @@ Copies, cuts, and revives clip records for the current section and selected tabl
 - MIDI Paste remaps played notes by MIDI. With no map selected it keeps the same string and works between 6-string guitars; with a midi paste map selected (m) it moves notes between the strings the map names, 1-based, string 1 at the top
 - midi paste map = ${escapeHtml(this.getActiveMidiPasteMapId() || 'none')}; maps look like 1:1, 2:2 (source:dest), strings left out are skipped, and the reverse of A &gt; B is inferred
 - Listener Copy captures listened-to model notes for true Listener tables only, ignores Observers, and projects played notes by row plus MIDI into the selected listener table before clipping
+- ${buildUserLogVerboseHint('dropped and unmapped MIDI Numbers by string')}
 
 ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
@@ -970,7 +978,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return payload;
   }
 
-  collectListenerClipPayload(song = getSong()) {
+  collectListenerClipPayload(song = getSong(), dropReport = null) {
     const section = this.getCurrentSection(song);
     const selection = this.getSelectedListenerSelection(song);
     const targetTuning = this.getSelectedTargetTuning(song);
@@ -1008,6 +1016,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         }
         const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
         if (!candidate) {
+          if (dropReport) {
+            dropReport.dropped += 1;
+            dropReport.midiNumbers.push(...this.midiEntriesOfNotes([note], sourceLayout));
+          }
           return;
         }
         this.addPlayedNoteToPayload(payload, candidate);
@@ -1167,31 +1179,33 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     };
   }
 
-  mapRecordedSourceBeatsForMidiPaste(sourceBeats, sourceTuning, targetTuning, resolvedMap = null) {
+  mapRecordedSourceBeatsForMidiPaste(sourceBeats, sourceTuning, targetTuning, resolvedMap = null, label = '') {
     if (resolvedMap) {
-      const run = this.startStringMapRun(sourceTuning, targetTuning, resolvedMap);
+      const run = this.startStringMapRun(sourceTuning, targetTuning, resolvedMap, label);
       const mappedBeats = sourceBeats.map((sourceBeat) => ({
         ...sourceBeat,
         notes: this.mapNotesInStringMapRun(run, sourceBeat.notes)
       }));
       this.finishStringMapRun(run);
-      return { sourceBeats: mappedBeats, droppedOutOfRange: run.dropped, mapRun: run };
+      return { sourceBeats: mappedBeats, droppedOutOfRange: run.dropped, droppedMidi: run.droppedMidi, mapRun: run };
     }
     const sourceLayout = createTuningLayout(sourceTuning);
     const targetLayout = createTuningLayout(targetTuning);
     let droppedOutOfRange = 0;
+    const droppedMidi = [];
     const mappedSourceBeats = sourceBeats.map((sourceBeat) => ({
       ...sourceBeat,
       notes: sourceBeat.notes.map((note) => {
         const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
         if (!candidate) {
           droppedOutOfRange += 1;
+          droppedMidi.push(...this.midiEntriesOfNotes([note], sourceLayout));
           return null;
         }
         return candidate;
       }).filter(Boolean)
     }));
-    return { sourceBeats: mappedSourceBeats, droppedOutOfRange };
+    return { sourceBeats: mappedSourceBeats, droppedOutOfRange, droppedMidi };
   }
 
   getRecordedPasteContext(song = getSong()) {
@@ -1215,6 +1229,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const exactPitchLayout = `${sourceTuning.nStrings || ''}` === `${targetTuning.nStrings || ''}`
       && arraysEqual(sourceTuning.midiPitches || [], getMidiPitchArray(targetTuning));
     let droppedOutOfRange = 0;
+    let droppedMidi = [];
     let mapRun = null;
     const recordedMidiPaste = this.isRecordedMidiPasteEnabled();
     if (!recordedMidiPaste) {
@@ -1234,9 +1249,16 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         const hint = activeMapId ? ` (map "${escapeHtml(activeMapId)}" does not fit)` : '';
         return { error: `${source.baseID || 'source'} unsupported for MIDI Paste to ${targetTuning.baseID}${hint}` };
       }
-      const mapped = this.mapRecordedSourceBeatsForMidiPaste(sourceBeats, sourceTuning, targetTuning, resolvedMap);
+      const mapped = this.mapRecordedSourceBeatsForMidiPaste(
+        sourceBeats,
+        sourceTuning,
+        targetTuning,
+        resolvedMap,
+        `MIDI Paste recorded ${escapeHtml(this.getClipRecordLabel(selected.record, selected.index))}`
+      );
       sourceBeats = mapped.sourceBeats;
       droppedOutOfRange = mapped.droppedOutOfRange;
+      droppedMidi = mapped.droppedMidi || [];
       mapRun = mapped.mapRun || null;
     }
     return {
@@ -1248,6 +1270,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       sourceBeats,
       recordedMidiPaste,
       droppedOutOfRange,
+      droppedMidi,
       mapRun
     };
   }
@@ -1406,6 +1429,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     }
     context.record.lastRevived = Date.now();
     this.refreshSongUi(song);
+    this.emitDroppedNotesSummary(`MIDI Paste recorded ${escapeHtml(this.getClipRecordLabel(context.record, context.index))}`, {
+      dropped: context.droppedOutOfRange,
+      midiNumbers: context.droppedMidi,
+      unmapped: context.mapRun ? context.mapRun.unmapped : 0,
+      unmappedMidi: context.mapRun ? context.mapRun.unmappedMidi : []
+    });
     const droppedSuffix = context.droppedOutOfRange > 0 ? `; dropped ${context.droppedOutOfRange}` : '';
     const mapSuffix = context.mapRun
       ? `${this.describeStringMapRun(context.mapRun)}; unmapped ${context.mapRun.unmapped}; collisions ${context.mapRun.collisions}`
@@ -1460,11 +1489,37 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return merged;
   }
 
-  emitUserLogMessage(message) {
-    if (!message) {
-      return;
+  emitUserLogMessage(message, level = USER_LOG_LEVEL_WARNING) {
+    emitUserLog('ClipPlugin', message, level);
+  }
+
+  // One verbose User Log row per paste/copy.  Result lines are unchanged; this adds the
+  // MIDI numbers that were dropped or unmapped, grouped by 1-based source string (distinct,
+  // ascending, at most 40 in all), for spelunking the clip in the Graveyard.
+  emitDroppedNotesSummary(label, { dropped = 0, midiNumbers = [], unmapped = 0, unmappedMidi = [] } = {}) {
+    const parts = [];
+    if (dropped > 0) {
+      parts.push(`${label}: dropped ${dropped} notes; MIDI Numbers dropped: ${formatMidiNumbersByString(midiNumbers)}`);
     }
-    EventBus.trigger('UserLog', { subSystem: 'ClipPlugin', message });
+    if (unmapped > 0) {
+      parts.push(`${parts.length === 0 ? `${label}: ` : ''}unmapped ${unmapped} notes (no map pair for their string); MIDI Numbers unmapped: ${formatMidiNumbersByString(unmappedMidi)}`);
+    }
+    if (parts.length > 0) {
+      this.emitUserLogMessage(parts.join('; '), USER_LOG_LEVEL_VERBOSE);
+    }
+  }
+
+  // `{ string, midi }` for each note whose MIDI number is known; string is 1-based like map specs.
+  midiEntriesOfNotes(notes = [], sourceLayout = null) {
+    return notes
+      .map((note) => {
+        const row = toInteger(note?.row, null);
+        return {
+          string: Number.isInteger(row) && row >= 0 ? row + 1 : null,
+          midi: this.resolveClipNoteMidinum(note, sourceLayout)
+        };
+      })
+      .filter((entry) => Number.isInteger(entry.midi));
   }
 
   getUserMidiPasteMaps() {
@@ -1620,7 +1675,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       || canMidiPasteBetweenTunings(sourceTuning, targetTuning);
   }
 
-  startStringMapRun(sourceTuning, targetTuning, resolved) {
+  startStringMapRun(sourceTuning, targetTuning, resolved, label = '') {
     const { rowPairs, skipped } = prepareStringPairs(
       resolved.pairs,
       tuningStringCount(sourceTuning),
@@ -1628,13 +1683,19 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     );
     return {
       resolved,
+      label,
+      sourceTuning,
+      targetTuning,
       sourceLayout: createTuningLayout(sourceTuning),
       targetLayout: createTuningLayout(targetTuning),
       rowPairs,
       skipped,
       dropped: 0,
+      droppedMidi: [],
       unmapped: 0,
-      collisions: 0
+      unmappedMidi: [],
+      collisions: 0,
+      collisionMidi: []
     };
   }
 
@@ -1645,19 +1706,32 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       placeNote: (note, targetRow) => this.buildMidiPasteCandidateForRow(note, run.sourceLayout, run.targetLayout, targetRow)
     });
     run.dropped += result.dropped;
+    run.droppedMidi.push(...this.midiEntriesOfNotes(result.droppedNotes, run.sourceLayout));
+    run.unmappedMidi.push(...this.midiEntriesOfNotes(result.unmappedNotes, run.sourceLayout));
+    run.collisionMidi.push(...this.midiEntriesOfNotes(result.collisionNotes, run.sourceLayout));
     run.unmapped += result.unmapped;
     run.collisions += result.collisions;
     return result.candidates;
   }
 
+  // Warnings stay as they were; each also gets a verbose row naming the clip and the detail.
   finishStringMapRun(run) {
     const label = escapeHtml(run.resolved.id);
+    const where = run.label ? `${run.label}: ` : '';
     if (run.skipped.length > 0) {
       const pairs = run.skipped.map(({ from, to }) => `${from}:${to}`).join(', ');
       this.emitUserLogMessage(`MIDI Paste map "${label}": skipped pairs ${pairs} because an instrument has fewer strings`);
+      this.emitUserLogMessage(
+        `${where}map "${label}" skipped pairs ${pairs}; source has ${tuningStringCount(run.sourceTuning)} strings, target has ${tuningStringCount(run.targetTuning)} strings`,
+        USER_LOG_LEVEL_VERBOSE
+      );
     }
     if (run.collisions > 0) {
       this.emitUserLogMessage(`MIDI Paste map "${label}": ${run.collisions} notes landed on the same cell (many-to-one); the later pair won`);
+      this.emitUserLogMessage(
+        `${where}map "${label}" ${run.collisions} notes lost to the later pair; MIDI Numbers lost: ${formatMidiNumbersByString(run.collisionMidi)}`,
+        USER_LOG_LEVEL_VERBOSE
+      );
     }
   }
 
@@ -1836,7 +1910,8 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   copyListened(song = getSong(), args = {}) {
     const selection = this.getSelectedListenerSelection(song);
-    const payload = this.collectListenerClipPayload(song);
+    const dropReport = { dropped: 0, midiNumbers: [] };
+    const payload = this.collectListenerClipPayload(song, dropReport);
     const tuning = this.getSelectedTargetTuning(song);
     const totalCount = Object.values(payload?.counts || {}).reduce((sum, value) => sum + value, 0);
     if (!selection) {
@@ -1865,6 +1940,11 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     };
 
     song.graveyard.bury(GraveType.CLIP, payload, context);
+
+    this.emitDroppedNotesSummary(`Listener copy ${escapeHtml(userKey)}`, {
+      dropped: dropReport.dropped,
+      midiNumbers: dropReport.midiNumbers
+    });
 
     return {
       result: `Clip copied listened notes ${totalCount} as ${userKey} from ${selection.sourceTableID} to ${selection.targetTableID}.`
@@ -1922,6 +2002,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const collisionMap = new Map(playedNotes.map((note, index) => [playedCollisionKey(note), index]));
     const maxRow = Array.isArray(tuning.rowRange) ? tuning.rowRange.length - 1 : -1;
     const maxFret = Number.parseInt(tuning.frets, 10);
+    const droppedNotes = [];
 
     (payload?.sectionNotes?.playedNotes || []).forEach((note) => {
       const candidate = new Note(stripOwner(note));
@@ -1929,6 +2010,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       const col = toInteger(candidate.col);
       if (row < 0 || col < 0 || row > maxRow || col > maxFret) {
         summary.droppedOutOfRange += 1;
+        droppedNotes.push(candidate);
         return;
       }
       this.applyPlayedCandidate(candidate, playedNotes, collisionMap, overwrite, summary);
@@ -1937,6 +2019,14 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     sectionNotes.playedNotes = playedNotes;
     record.lastRevived = Date.now();
     this.refreshSongUi(song);
+
+    if (droppedNotes.length > 0) {
+      const sourceLayout = createTuningLayout(this.getSourceTuningForRecord(record, song));
+      this.emitDroppedNotesSummary(`Clip revive ${escapeHtml(this.getClipRecordLabel(record, recordIndex))}`, {
+        dropped: droppedNotes.length,
+        midiNumbers: this.midiEntriesOfNotes(droppedNotes, sourceLayout)
+      });
+    }
 
     return {
       result: `Clip revived ${record.context?.userKey || record.context?.caption || `clip ${recordIndex}`}: named +${summary.namedAdded} overwrite ${summary.namedOverwritten} skip ${summary.namedSkipped}; played +${summary.playedAdded} overwrite ${summary.playedOverwritten} skip ${summary.playedSkipped}; dropped ${summary.droppedOutOfRange}`
@@ -1974,18 +2064,22 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const collisionMap = new Map(playedNotes.map((note, index) => [playedCollisionKey(note), index]));
 
     let mapRun = null;
+    let droppedMidi = [];
+    const pasteLabel = `MIDI Paste ${escapeHtml(this.getClipRecordLabel(record, recordIndex))}`;
     if (resolvedMap) {
-      mapRun = this.startStringMapRun(sourceTuning, targetTuning, resolvedMap);
+      mapRun = this.startStringMapRun(sourceTuning, targetTuning, resolvedMap, pasteLabel);
       this.mapNotesInStringMapRun(mapRun, payload?.sectionNotes?.playedNotes || []).forEach((candidate) => {
         this.applyPlayedCandidate(candidate, playedNotes, collisionMap, overwrite, summary);
       });
       summary.droppedOutOfRange += mapRun.dropped;
+      droppedMidi = mapRun.droppedMidi;
       this.finishStringMapRun(mapRun);
     } else {
       (payload?.sectionNotes?.playedNotes || []).forEach((note) => {
         const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
         if (!candidate) {
           summary.droppedOutOfRange += 1;
+          droppedMidi.push(...this.midiEntriesOfNotes([note], sourceLayout));
           return;
         }
         this.applyPlayedCandidate(candidate, playedNotes, collisionMap, overwrite, summary);
@@ -1996,9 +2090,22 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     record.lastRevived = Date.now();
     this.refreshSongUi(song);
 
+    this.emitDroppedNotesSummary(pasteLabel, {
+      dropped: summary.droppedOutOfRange,
+      midiNumbers: droppedMidi,
+      unmapped: mapRun ? mapRun.unmapped : 0,
+      unmappedMidi: mapRun ? mapRun.unmappedMidi : []
+    });
+
     const mapLabel = mapRun ? this.describeStringMapRun(mapRun) : '';
     const mapTotals = mapRun ? `; unmapped ${mapRun.unmapped}; collisions ${mapRun.collisions}` : '';
     const notApplied = !mapRun && activeMapId ? ` [map "${escapeHtml(activeMapId)}" not applied: does not fit]` : '';
+    if (notApplied) {
+      this.emitUserLogMessage(
+        `${pasteLabel}: map "${escapeHtml(activeMapId)}" not applied: does not fit ${escapeHtml(sourceTuning.fromBaseID || sourceTuning.baseID)} to ${escapeHtml(targetTuning.fromBaseID || targetTuning.baseID)}; pasted by same string`,
+        USER_LOG_LEVEL_VERBOSE
+      );
+    }
     return {
       result: `MIDI Paste revived ${this.getClipRecordLabel(record, recordIndex)}${mapLabel}: named +${summary.namedAdded} overwrite ${summary.namedOverwritten} skip ${summary.namedSkipped}; played +${summary.playedAdded} overwrite ${summary.playedOverwritten} skip ${summary.playedSkipped}; dropped ${summary.droppedOutOfRange}${mapTotals}${notApplied}`
     };

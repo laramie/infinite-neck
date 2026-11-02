@@ -118,11 +118,16 @@ function setupPaste({ sourceTuning, targetTuning, notes, extraTunings = [] }) {
 
 describe('ClipPlugin MIDI Paste maps', () => {
   let userLog;
+  let userLogRows;
   let userLogHandler;
 
   beforeEach(() => {
     userLog = [];
-    userLogHandler = (event, data) => userLog.push(data.message);
+    userLogRows = [];
+    userLogHandler = (event, data) => {
+      userLog.push(data.message);
+      userLogRows.push({ message: data.message, level: data.level });
+    };
     EventBus.on('UserLog', userLogHandler);
   });
 
@@ -255,6 +260,16 @@ describe('ClipPlugin MIDI Paste maps', () => {
       expect(plugin.invokeAction('selectMidiPasteMap:', {}).result).toBe('MIDI Paste map: none');
       expect(plugin.getActiveMidiPasteMapId()).toBe('');
       expect(plugin.resolveValue('midiPasteMapId')).toBe('none');
+      expect(plugin.resolveValue('midiPasteMapSummary')).toBe('');
+    });
+
+    test('the summary shown at /fpc is blank when unset and bracketed when a map is active', () => {
+      const { plugin } = fresh();
+      expect(plugin.resolveValue('midiPasteMapSummary')).toBe('');
+      plugin.selectMidiPasteMap('P48 > S6');
+      expect(plugin.resolveValue('midiPasteMapSummary')).toBe(' [P48 &gt; S6]');
+      plugin.selectMidiPasteMap('');
+      expect(plugin.resolveValue('midiPasteMapSummary')).toBe('');
     });
 
     test('delete removes only user maps and clears the active id when it was deleted', () => {
@@ -302,7 +317,8 @@ describe('ClipPlugin MIDI Paste maps', () => {
       const index = children.findIndex((child) => child.name === 'midiPasteMap');
       expect(children[index - 1].name).toBe('copyListenedToGraveyard');
       const node = children[index];
-      expect(node.caption).toBe('<b>m</b>idi paste map');
+      expect(node.caption).toBe('<b>m</b>idi paste map${plugin:clip:midiPasteMapSummary}');
+      expect(node.vars).toEqual(['plugin:clip:midiPasteMapSummary']);
       expect(node.trigger).toBe('m');
       expect(node.children.map((child) => child.trigger)).toEqual(['m', 'a', 'd', 'l']);
       expect(node.children[0].caption).toBe('<b>m</b>ap [${plugin:clip:midiPasteMapId}]');
@@ -612,6 +628,9 @@ describe('ClipPlugin MIDI Paste maps', () => {
       expect(result.result).toContain('[map "P48 &gt; P46" forward]; unmapped 1; collisions 0');
       const notes = destSection.getSectionNotes(targetID).recordedNotes['1'];
       expect(notes.map((note) => `${note.marker}@${Number(note.row) + 1}:${note.col}`)).toEqual(['A@1:2']);
+      expect(userLogRows).toHaveLength(1);
+      expect(userLogRows[0].level).toBe('v');
+      expect(userLogRows[0].message).toBe('MIDI Paste recorded recorded-1b-2n-0402: unmapped 1 notes (no map pair for their string); MIDI Numbers unmapped: {s7:[38]}');
     });
 
     test('a non-fitting active map is named in the unsupported message', () => {
@@ -619,6 +638,111 @@ describe('ClipPlugin MIDI Paste maps', () => {
       plugin.setPropertyValue('midiPasteMapId', 'Bass6 > Bass4', { song });
       expect(plugin.invokeAction('pasteRecordedPlayIntoCurrent', { song, args: {} }).result)
         .toBe('P48_1 unsupported for MIDI Paste to P46_1 (map "Bass6 &gt; Bass4" does not fit)');
+    });
+  });
+
+  describe('verbose Dropped Notes summaries in the User Log', () => {
+    test('/fpch help points at /fau verbose for the detailed rows', () => {
+      const { plugin, song } = setupPaste({
+        sourceTuning: tuning('LuteA', 'LuteA', 'Lute', [60, 55]),
+        targetTuning: tuning('LuteB', 'LuteB', 'Lute', [60, 55]),
+        notes: [played(0, 0, 'a')]
+      });
+
+      expect(plugin.buildHelpMessage(song)).toContain('Tip: /fau then v)erbose writes dropped and unmapped MIDI Numbers by string to the User Log.');
+    });
+
+    const verboseRows = () => userLogRows.filter((row) => row.level === 'v');
+
+    test('a map paste with unmapped strings adds one verbose row and leaves the result line alone', () => {
+      const { plugin, song } = setupPaste({
+        sourceTuning: tuning('P48_1', 'P48', 'Guitar', P48_ROWS, { frets: 24 }),
+        targetTuning: tuning('P46_1', 'P46', 'Guitar', P46_ROWS, { frets: 24 }),
+        notes: [played(0, 2, 'a'), played(6, 3, 'c'), played(7, 0, 'd')]
+      });
+      plugin.setPropertyValue('midiPasteMapId', 'P48 > P46', { song });
+
+      const result = plugin.invokeAction('midiPasteClipChoice', { song, args: { value: '1' } });
+
+      expect(result.result).toContain('dropped 0; unmapped 2; collisions 0');
+      expect(verboseRows()).toHaveLength(1);
+      expect(verboseRows()[0].message).toContain('unmapped 2 notes (no map pair for their string)');
+      expect(verboseRows()[0].message).toMatch(/^MIDI Paste clip1: unmapped 2 notes .*; MIDI Numbers unmapped: \{s7:\[\d+\],s8:\[\d+\]\}$/);
+    });
+
+    test('a collision writes a verbose detail row naming the clip and the MIDI numbers lost', () => {
+      const { plugin, song } = setupPaste({
+        sourceTuning: tuning('LuteA', 'LuteA', 'Lute', [60, 60]),
+        targetTuning: tuning('LuteB', 'LuteB', 'Lute', [60, 55]),
+        notes: [played(0, 0, 'first'), played(1, 0, 'second')]
+      });
+      plugin.addMidiPasteMap('"collide" 1:1, 2:1');
+      plugin.selectMidiPasteMap('collide');
+      userLogRows.length = 0;
+
+      plugin.invokeAction('midiPasteClipChoice', { song, args: { value: '1' } });
+
+      expect(userLogRows.filter((row) => row.level === 'w')).toHaveLength(1);
+      expect(verboseRows()).toHaveLength(1);
+      expect(verboseRows()[0].message).toBe('MIDI Paste clip1: map "collide" 1 notes lost to the later pair; MIDI Numbers lost: {s1:[60]}');
+    });
+
+    test('skipped pairs write a verbose detail row with the string counts', () => {
+      const { plugin, song } = setupPaste({
+        sourceTuning: tuning('LuteA', 'LuteA', 'Lute', [60, 55]),
+        targetTuning: tuning('LuteB', 'LuteB', 'Lute', [60, 55]),
+        notes: [played(0, 0, 'a')]
+      });
+      plugin.addMidiPasteMap('"wide" 1:1, 3:3');
+      plugin.selectMidiPasteMap('wide');
+      userLogRows.length = 0;
+
+      plugin.invokeAction('midiPasteClipChoice', { song, args: { value: '1' } });
+
+      expect(verboseRows().map((row) => row.message)).toEqual([
+        'MIDI Paste clip1: map "wide" skipped pairs 3:3; source has 2 strings, target has 2 strings'
+      ]);
+    });
+
+    test('an out-of-range drop lists its MIDI number, distinct and ascending, at verbose level', () => {
+      const { plugin, song, section, targetID } = setupPaste({
+        sourceTuning: tuning('S6_1', 'S6', 'Guitar', [64, 59, 55, 50, 45, 40], { frets: 24 }),
+        targetTuning: tuning('S6_2', 'S6', 'Guitar', [64, 59, 55, 50, 45, 40], { frets: 12 }),
+        notes: [played(0, 20, 'a'), played(0, 18, 'b'), played(0, 18, 'c'), played(1, 3, 'd')]
+      });
+
+      const result = plugin.invokeAction('midiPasteClipChoice', { song, args: { value: '1' } });
+
+      expect(result.result).toContain('dropped 3');
+      expect(playedSummary(section, targetID)).toEqual(['d@2:3']);
+      expect(verboseRows()).toHaveLength(1);
+      expect(verboseRows()[0].message).toContain('dropped 3 notes; MIDI Numbers dropped: {s1:[82,84]}');
+      expect(verboseRows()[0].message).not.toContain('unmapped');
+    });
+
+    test('nothing dropped means no verbose row', () => {
+      const { plugin, song } = setupPaste({
+        sourceTuning: tuning('S6_1', 'S6', 'Guitar', [64, 59, 55, 50, 45, 40], { frets: 24 }),
+        targetTuning: tuning('S6_2', 'S6', 'Guitar', [64, 59, 55, 50, 45, 40], { frets: 24 }),
+        notes: [played(0, 2, 'a')]
+      });
+
+      plugin.invokeAction('midiPasteClipChoice', { song, args: { value: '1' } });
+
+      expect(verboseRows()).toHaveLength(0);
+    });
+
+    test('map warnings stay untagged, which the User Log treats as warnings', () => {
+      const { plugin } = setupPaste({
+        sourceTuning: tuning('P48_1', 'P48', 'Guitar', P48_ROWS, { frets: 24 }),
+        targetTuning: tuning('P46_1', 'P46', 'Guitar', P46_ROWS, { frets: 24 }),
+        notes: [played(0, 2, 'a')]
+      });
+      userLogRows.length = 0;
+      plugin.invokeAction('addMidiPasteMap', { args: { value: '"Foo>Bar" 1:2,  3:2' } });
+
+      expect(userLogRows.length).toBeGreaterThan(0);
+      userLogRows.forEach((row) => expect(row.level).toBe('w'));
     });
   });
 
