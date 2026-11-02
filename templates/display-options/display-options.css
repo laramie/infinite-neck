@@ -112,7 +112,7 @@
 }
 #divDisplayOptionsMatrix .dmTable :where(td) {
     min-width: 3.2em;
-    max-width: 9em;
+    max-width: 18em;
     overflow: hidden;
     text-overflow: ellipsis;
     height: 1.7em;

@@ -35,7 +35,7 @@ export const BUILTIN_SETS = Object.freeze([
     freezeSet('extensions', 'Extensions',
         ['I', 'τ<small> ♭9</small>', 'II<small> 9</small>', 'm', 'III', 'IV<small> 11</small>', 'Θ<small> #11</small>', 'V', 'σ<small> ♭13</small>', '6<small> 13</small>', 'δ', 'Δ']),
     freezeSet('extensions-only', 'Extensions (only)',
-        ['I', '<small>♭9</small>', '<small>9</small>', 'm', 'III', 'IV<small>11</small>', '<small>#11</small>', 'V', '<small>♭13</small>', '<small>13</small>', 'δ', 'Δ']),
+        ['I', '<small>♭9</small>', '<small>9</small>', 'm', 'III', '<small>11</small>', '<small>#11</small>', 'V', '<small>♭13</small>', '<small>13</small>', 'δ', 'Δ']),
     freezeSet('jazz', 'Jazz',
         ['1', '<em>♭</em>2', '2', '<em>♭</em>3', '3', '4', '<em>♭</em>5', '5', '<em>♭</em>6', '6', '<em>♭</em>7', '7']),
     freezeSet('jazz-extensions', 'Jazz Extensions',

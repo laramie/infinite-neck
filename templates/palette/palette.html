@@ -369,8 +369,7 @@
                             </span from="manualColors">
                             <button id="showHideCustomColorLinks" type="button"
                                 class="MenuButton BtnPunchedOut">Stylesheets</button>
-                            <button id="showHideCustomColorEditors" type="button"
-                                class="MenuButton BtnPunchedOut">Customize ...</button>
+                            
 
 
                         </td>
@@ -380,6 +379,8 @@
                     <div id="divColorDictsDest"></div>
                     <div class="ActiveStylesheets"></div>
                     <div id="divStylesheetLooks" class="ssRow">
+                        <button id="showHideCustomColorEditors" type="button"
+                                class="MenuButton BtnPunchedOut">Customize ...</button>&nbsp;&nbsp;&nbsp;
                         <label for="selColorLooks">Look:</label>
                         <select id="selColorLooks" title="Apply a saved Look (a named recipe)"></select>
                         <input type="text" id="txtColorLookName" size="14" placeholder="look-name">
@@ -387,10 +388,10 @@
                             title="Save the current selection as a Look">Save Look</button>
                         <button id="btnRemoveColorLook" type="button" tabindex="-1" class="MenuButton BtnPunchedOut btnRemoveTuning"
                             title="Remove the selected Look">&#x232B;</button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="btnLegend_Stylesheets" class="safeButton">Legend <span id="spanStylesheetLegendArrow">&#x25B6;</span></button>
                         <div id="divColorLookHint" class="ssHint"></div>
                     </div>
                     <div id="divStylesheetLegendRow" class="ssRow">
-                        <button type="button" id="btnLegend_Stylesheets" class="safeButton">Legend <span id="spanStylesheetLegendArrow">&#x25B6;</span></button>
                         <div id="divStylesheetLegend" class="ssLegend" style="display:none;">
                             <div id="divStylesheetLegendBuiltIns"><b>Built-ins</b> (no buttons): click one to set the built-in level, which ticks every built-in down to it. Your own sheets keep their checkboxes.</div>
                             <div id="divStylesheetLegendUser"><b>Your sheets</b>: tick to include; click the name to select and edit it. <span class="ssKeyGlyph">&#x2191;</span> <span class="ssKeyGlyph">&#x2193;</span> change the order (later sheets win); <span class="ssKeyGlyph">&#x232B;</span> deletes to the Graveyard.</div>

@@ -316,6 +316,10 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     border: 2px solid black;
 }
 
+#showHideCustomColorLinks {
+    padding: 0.8em;
+}
+
 
 /*****************************  More Palette and Color Picker Colors *****************************/
 
@@ -345,25 +349,31 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 
 /* Rows of controls: every DIV has an id (divStylesheetNameRow, divStylesheetButtons, divStylesheetLooks, ...) so the
    arrangement can be tuned with HTML/CSS alone. */
+#divStylesheetNameRow {
+    display: inline-block;
+}   
+#divStylesheetButtons {
+    display: inline-block;
+}
 #palette .ssRow {
     margin: 0.3em 0;
 }
 #palette .ssHint {
-    font-size: 85%;
+    font-size: 110%;
     min-height: 1.2em;
     margin: 0.2em 0;
-    color: #cfc;
+    color: rgb(50, 123, 50);
 }
 #palette .ssHint.ssHintBlocked {
-    color: #fc9;
+    color: rgb(181, 91, 1);
 }
 #palette .ssNote {
-    color: #ff9;
+    color: rgb(163, 163, 2);
 }
 #palette .ssMessage {
     font-size: 85%;
     margin: 0.2em 0;
-    color: #9cf;
+    color: rgb(0, 51, 103);
 }
 #palette .ssLegend {
     font-size: 85%;
@@ -381,6 +391,9 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 }
 #palette .ssLegendCell {
     padding: 0 0.4em;
+}
+#palette #divStylesheetLooks label {
+    border: none;
 }
 
 /* Stylesheets table */
