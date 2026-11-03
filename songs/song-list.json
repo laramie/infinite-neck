@@ -128,6 +128,42 @@
       ]
     },
     {
+      "href": "demo/superchart.json",
+      "description": "Shows a demo of how you can print 6 Sections on one page using floating Observers",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Observer",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Observer",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Observer",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Observer",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Observer",
+          "visible": true
+        }
+      ]
+    },
+    {
       "href": "practice/All-Chords.json",
       "description": "<b>All-Chords</b>: All the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar.",
       "instruments": [
@@ -482,6 +518,11 @@
         {
           "fromBaseID": "P46",
           "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
           "visible": true
         }
       ]
