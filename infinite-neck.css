@@ -1073,6 +1073,7 @@ table.viewControls th {
     font-weight: 200;
     font-size:  200%;
     text-wrap: auto;
+    margin-left: 0.5em;
 }
 .lblSectionChartChord {
     display: inline-block;

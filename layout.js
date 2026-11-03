@@ -6,6 +6,7 @@ export class Layout {
         this.screenList.fullscreen = {
             name: "fullscreen",
             CaptionRow: true,
+            Caption: true,
             SongTitle: true,
             SongWidgets: true,
             PracticeList: false,
@@ -18,6 +19,7 @@ export class Layout {
         this.screenList.escaped = {
             name: "escaped",
             CaptionRow: true,
+            Caption: true,
             SongTitle: true,
             SongWidgets: true,
             PracticeList: false,
@@ -51,6 +53,10 @@ export class Layout {
 
     toggleCaptionRow(visible){
         this.screen.CaptionRow = $('#topControlsCaptions').toggle(visible).css('display') !== 'none';
+    }
+    
+    toggleCaption(visible){
+        this.screen.Caption = $('.lblSectionCaption').toggle(visible).css('display') !== 'none';
     }
 
     toggleSongTitle(visible){
@@ -143,6 +149,7 @@ export class Layout {
     doToggles(){  
         console.log("Layout:\n"+JSON.stringify(this.screen, null, 4));  
         this.toggleCaptionRow(this.screen.CaptionRow);
+        this.toggleCaption(this.screen.Caption);
         this.toggleSongTitle(this.screen.SongTitle);
         this.toggleSongWidgets(this.screen.SongWidgets);
         this.togglePracticeList(this.screen.PracticeList === true);

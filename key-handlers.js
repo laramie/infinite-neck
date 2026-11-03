@@ -1662,6 +1662,21 @@ export function performCmdAction(menuItem, args){
 		case "showCaptionRow":
 			getSong().getLayout().toggleCaptionRow(true);
 			break;	
+		case "toggleCaptionRow":
+			getSong().getLayout().toggleCaptionRow();
+			break;
+		case "showCaption":
+			getSong().getLayout().toggleCaption(true);
+			break;	
+		case "hideCaption":
+			getSong().getLayout().toggleCaption(false);
+			break;	
+		case "toggleCaption":
+			getSong().getLayout().toggleCaption();
+			break;	
+		case "showCaption":
+			getSong().getLayout().toggleCaption(true);
+			break;	
 		case "hideSongTitle":
 			getSong().getLayout().toggleSongTitle(false);
 			break;
@@ -1694,9 +1709,6 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "showWidgetRow":
 			getSong().getLayout().toggleWidgetRow(true);
-			break;
-		case "toggleCaptionRow":
-			getSong().getLayout().toggleCaptionRow();
 			break;
 		case "toggleSongTitle":
 			getSong().getLayout().toggleSongTitle();

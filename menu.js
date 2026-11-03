@@ -1270,10 +1270,15 @@ export var gMenuFile =    {
               "caption": "<b>w</b>idgets",
               "trigger": "w",
               "children": [
-                  {
-                    "caption": "<b>c</b>aption row",
-                    "trigger": "c",
+                 {
+                    "caption": "<b>m</b>aster row",
+                    "trigger": "m",
                     "action": "hideCaptionRow"
+                  },
+                  {
+                    "caption": "<b>c</b>aption",
+                    "trigger": "c",
+                    "action": "hideCaption"
                   },
                   {
                     "caption": "<b>t</b>itle",
@@ -1353,9 +1358,14 @@ export var gMenuFile =    {
               "trigger": "w",
               "children": [
                   {
-                    "caption": "<b>c</b>aption row",
-                    "trigger": "c",
+                    "caption": "<b>m</b>aster row",
+                    "trigger": "m",
                     "action": "showCaptionRow"
+                  },
+                  {
+                    "caption": "<b>c</b>aption",
+                    "trigger": "c",
+                    "action": "showCaption"
                   },
                   {
                     "caption": "<b>t</b>itle",
@@ -1456,9 +1466,14 @@ export var gMenuFile =    {
               "trigger": "w",
               "children": [
                   {
-                    "caption": "<b>c</b>aption row",
-                    "trigger": "c",
+                    "caption": "<b>m</b>aster row",
+                    "trigger": "m",
                     "action": "toggleCaptionRow"
+                  },
+                  {
+                    "caption": "<b>c</b>aption",
+                    "trigger": "c",
+                    "action": "toggleCaption"
                   },
                   {
                     "caption": "<b>t</b>itle",
