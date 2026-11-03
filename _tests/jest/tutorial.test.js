@@ -1,17 +1,70 @@
 import {
+  applyCaptionToSongTutorial,
   applyPromptToSectionTutorial,
   canEditTutorialPrompt,
   filterIncludedLoopSectionIndex,
   getLoopCaptionModel,
   getProgressBadgeModel,
   isLoopSubsetInEffect,
+  isSongTutorialPersistable,
   normalizeTutorialProgress,
   promptTextToPrompt,
   promptToEditText,
   toggleAllIncludeInLooping,
   toggleBookmarkSection,
-  toggleDoneSection
+  toggleDoneSection,
+  tutorialCaptionFromInput
 } from '../../Tutorial.js';
+import { SongPersistence } from '../../SongPersistence.js';
+
+const savedSongFile = (song) => JSON.parse(JSON.stringify(song, SongPersistence.persistentSongFileReplacer));
+
+describe('Tutorial caption and "use caption for tutorial" authoring (sprint 152 it5)', () => {
+  test('tutorialCaptionFromInput unescapes \\" and passes the text through the plain-text converter', () => {
+    const seen = [];
+    const spy = (text) => { seen.push(text); return `  ${text}  `; };
+    expect(tutorialCaptionFromInput('Say \\"hi\\"\r\nthere', spy)).toBe('Say "hi"\nthere');
+    expect(seen).toEqual(['Say "hi"\nthere']);
+    expect(tutorialCaptionFromInput(undefined)).toBe('');
+    expect(tutorialCaptionFromInput('   ')).toBe('');
+  });
+
+  test('applyCaptionToSongTutorial sets or removes the caption, keeps the other fields, and always has a level', () => {
+    expect(applyCaptionToSongTutorial(undefined, 'Cap')).toEqual({ level: 'none', caption: 'Cap' });
+    expect(applyCaptionToSongTutorial({ level: 'wizard', useCaptionForSectionCaption: true }, 'Cap'))
+      .toEqual({ level: 'wizard', useCaptionForSectionCaption: true, caption: 'Cap' });
+    expect(applyCaptionToSongTutorial({ useCaptionForSectionCaption: true }, 'Cap').level).toBe('none');
+    expect(applyCaptionToSongTutorial({ level: 'strict', caption: 'Old' }, '')).toEqual({ level: 'strict' });
+  });
+
+  test('isSongTutorialPersistable: level none is dropped unless it carries authoring fields', () => {
+    expect(isSongTutorialPersistable(undefined)).toBe(false);
+    expect(isSongTutorialPersistable({ level: 'none' })).toBe(false);
+    expect(isSongTutorialPersistable({ level: 'none', useCaptionForSectionCaption: false })).toBe(false);
+    expect(isSongTutorialPersistable({ level: 'none', useCaptionForSectionCaption: true })).toBe(true);
+    expect(isSongTutorialPersistable({ level: 'none', caption: 'Cap' })).toBe(true);
+    expect(isSongTutorialPersistable({ level: 'wizard' })).toBe(true);
+  });
+
+  test('a Song file keeps "use caption for tutorial" and the caption at every level, with a level', () => {
+    const sections = [{ tutorial: { prompt: { lines: ['<p>x</p>'] } } }, { tutorial: { caption: 'Sec' } }];
+    expect(savedSongFile({ sections, tutorial: { level: 'none' } }).tutorial).toBeUndefined();
+    expect(savedSongFile({ sections, tutorial: { level: 'none', useCaptionForSectionCaption: true } }).tutorial)
+      .toEqual({ level: 'none', useCaptionForSectionCaption: true });
+    expect(savedSongFile({ sections, tutorial: { level: 'wizard', caption: 'Cap', useCaptionForSectionCaption: true } }).tutorial)
+      .toEqual({ level: 'wizard', caption: 'Cap', useCaptionForSectionCaption: true });
+    //the action creates `{}` when the Song has no tutorial: the file still gets a level
+    expect(savedSongFile({ sections, tutorial: { useCaptionForSectionCaption: true } }).tutorial)
+      .toEqual({ level: 'none', useCaptionForSectionCaption: true });
+  });
+
+  test('Section tutorials (no level) are written untouched', () => {
+    const sections = [{ tutorial: { prompt: { lines: ['<p>x</p>'] } } }, { tutorial: { caption: 'Sec' } }];
+    const file = savedSongFile({ sections, tutorial: { level: 'none' } });
+    expect(file.sections[0].tutorial).toEqual({ prompt: { lines: ['<p>x</p>'] } });
+    expect(file.sections[1].tutorial).toEqual({ caption: 'Sec' });
+  });
+});
 
 describe('Tutorial prompt editing helpers (sprint 152 it3)', () => {
   test('canEditTutorialPrompt: wizard only, and not with "use caption for tutorial"', () => {

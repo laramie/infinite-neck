@@ -228,6 +228,25 @@ export function getSanitizedSongWidgets(rawHtml = '') {
 	return getSanitizedInfo(rawHtml);
 }
 
+const PLAIN_TEXT_ENTITIES = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&nbsp;': ' ' };
+
+/** Sanitizes like getSanitizedInfo, then keeps only the text: tags are gone and HTML entities are decoded
+ *  (`Tom &amp; Jerry` and `Tom & Jerry` both give `Tom & Jerry`).  Line breaks and runs of whitespace become one space.
+ *  The result is plain text: escape it when it is rendered as HTML.
+ *  Without a DOM (Node), tags are stripped by pattern and only the common entities are decoded. */
+export function getSanitizedPlainText(rawText = '') {
+	const clean = sanitizeHtmlFragment(rawText);
+	let text;
+	if (typeof document === 'undefined') {
+		text = clean.replace(/<[^>]*>/g, '').replace(/&(?:amp|lt|gt|quot|#39|nbsp);/g, (entity) => PLAIN_TEXT_ENTITIES[entity]);
+	} else {
+		const holder = document.createElement('div');
+		holder.innerHTML = clean;
+		text = holder.textContent;
+	}
+	return text.replace(/[\s\u00a0]+/g, ' ').trim();
+}
+
 export function isAllowedSanitizerTag(tagName) {
 	return ALLOWED_TAGS.has(String(tagName || '').toLowerCase());
 }

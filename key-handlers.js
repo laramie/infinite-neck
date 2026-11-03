@@ -83,8 +83,11 @@ import {
 } from './MacroMenu.js';
 import {
 	TUTORIAL_MODES,
-	normalizeTutorialMode
+	applyCaptionToSongTutorial,
+	normalizeTutorialMode,
+	tutorialCaptionFromInput
 } from './Tutorial.js';
+import { getSanitizedPlainText } from './html-sanitizer.js';
 import * as Calculators from './calculators.js';
 import {
 	hasAnyFloatingDockables
@@ -1370,6 +1373,18 @@ export function performCmdAction(menuItem, args){
 			actionResult.preserveMenuStack = true;
 			break;
 		}
+		case "setTutorialCaption": {
+			const tutorialSong = getSong();
+			const caption = tutorialCaptionFromInput(argByInputID, getSanitizedPlainText);
+			if (!tutorialSong || !caption) {
+				actionResult.result = 'tutorial caption: nothing to set';
+				break;
+			}
+			tutorialSong.tutorial = applyCaptionToSongTutorial(tutorialSong.tutorial, caption);
+			sectionChanged(); //re-renders the Prompt Area, which shows the caption
+			actionResult.result = `tutorial caption set (${caption.length} characters)`; //results are shown as HTML, so the plain-text caption is not echoed
+			break;
+		}
 		case "useCaptionForSectionCaptionAction":
 			const song = getSong();
 			if (!song.tutorial){
@@ -2122,6 +2137,9 @@ export function getValue(what){
 	}
 	if (what === 'useCaptionForTutorialState'){
 		return `${!!getSong()?.tutorial?.useCaptionForSectionCaption}`;
+	}
+	if (what === 'tutorialCaptionInput'){
+		return getSong()?.tutorial?.caption ?? '';
 	}
 	if (what === 'displayOptionsShowMessagesState'){
 		return !!isDisplayOptionsShowMessages();

@@ -5,6 +5,7 @@ import { Layout } from './layout.js';
 import { normalizeUserSets } from './templates/function-symbols/functionSymbolSets.js';
 import { normalizeSongGates } from './templates/display-options/displayOptionsGates.js';
 import { normalizeSongDisplayOptionsDefault } from './templates/display-options/displayOptionsMeta.js';
+import { isSongTutorialPersistable } from './Tutorial.js';
 
 const DEFAULT_CHART_HEAD_NAMES = [
     Constants.SECTION_CHART_POSITION.HEAD,
@@ -387,8 +388,13 @@ export class SongPersistence {
         if (key === 'songWidgets') {
             return persistSongWidgets(value);
         }
-        if (key === 'tutorial' && (!value || value.level === 'none')) {
-            return undefined;
+        if (key === 'tutorial') {
+            //`this` is the object holding the key: the Song (has sections) or a Section (whose tutorial is {caption, prompt}, with no level).
+            const isSongTutorial = Array.isArray(this?.sections) || (value && typeof value === 'object' && 'level' in value);
+            if (isSongTutorial) {
+                //Sprint 152 it5: level 'none' alone is dropped, but a caption or "use caption for tutorial" the author set is kept.
+                return isSongTutorialPersistable(value) ? normalizeSongTutorial(value) : undefined;
+            }
         }
         if (key === 'functionSymbolSets' && Array.isArray(value) && value.length === 0) {
             return undefined;

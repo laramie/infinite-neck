@@ -88,6 +88,17 @@ describe('Tutorial Prompt builder', () => {
         expect(activeHtml).toContain('class="tutorialLoopBeats classLoopBeats ButtonOn" data-action="tutorialLoopBeats">');
     });
 
+    test('the Song tutorial caption in the header is escaped (it is plain text)', () => {
+        const song = {
+            tutorial: { level: 'wizard', caption: 'A & <b>B</b>' },
+            sections: [{ caption: '' }],
+            getCurrentSection() { return this.sections[0]; },
+            getSections() { return this.sections; }
+        };
+        const html = renderTutorialPrompt(buildTutorialPromptModel({ song, currentSectionIndex: 0 }));
+        expect(html).toContain('<span class="tutorialPromptCaption">A &amp; &lt;b&gt;B&lt;/b&gt;</span>');
+    });
+
     describe('Edit Prompt (sprint 152 it3, wizard mode)', () => {
         function wizardSong(extra = {}) {
             return {

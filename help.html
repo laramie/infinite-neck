@@ -1979,6 +1979,8 @@ not used.  The Menu buttons are hidden, as is the command-line.  Authoring Menu 
     <li>After you have edited prompts for each Section you want, toggle "use caption for tutorial" to true: <b>/vpu</b> 
     <li>Now use the Section Drawer to add a Caption to the Sections you want to have Captions. <b></b></li>
     <li>Now when you navigate, you'll have prompts and Captions.</li>
+    <li>To set the main tutorial caption (<code>Song.tutorial.caption</code>), which shows in the prompt area when a Section has no caption of its own, use <b>/vpe</b> (<b>e</b>dit tutorial main caption).  The box holds the current caption.  It is plain text: tags are removed, HTML entities such as <code>&amp;amp;</code> are turned into the character, and <code>\"</code> means a quote mark.  It works in every tutorial mode.  Press ENTER twice to leave the box without changing it.</li>
+    <li>"use caption for tutorial" is saved with the Song, so it is still on when you load the file later.</li>
     <li>If you are a tutorial author, and are using the build process tools, be aware that running <b>npm run build:tutorial-prompts</b> will overwrite the prompts you have saved in the above way.  The build process stores tutorial Captions in a separate location from Section Captions, however.</li>
 </ul> 
 <p>Note that doing it this way, and then using the next steps, you can create a "strict" mode tutorial songfile you can save and share.  The Tutorial Captions come from the Section Captions, and the Tutorial Prompts come from the prompts you just entered.  As long as you don't use the build process from the system shell and the "npm" Node tool as a developer, these Prompts will persist. Steps to save your song as a "strict" tutorial:</p>

@@ -1722,6 +1722,19 @@ export var gMenuFile =    {
               ]
             },
             {
+              "name": "tutorialCaption",
+              "caption": "<b>e</b>dit tutorial main caption",
+              "trigger": "e",
+              "action": "setTutorialCaption",
+              "input": {
+                "type": "input",
+                "caption": "(string)",
+                "default": "tutorialCaptionInput",
+                "datatype": "string",
+                "id": "caption"
+              }
+            },
+            {
               "caption": "<b>s</b>ave Diff Display Options [${displayOptionsSaveState}]",
               "trigger": "s",
               "action": "saveViewDisplayOptions",
@@ -2604,7 +2617,8 @@ export function printMenuStack(){
     var doLargeItem = false;
     if (gMenuPointer.type && gMenuPointer.type == "input"){
         doLargeItem = true;
-      defaultValue = "["+resolveMenuValue(gMenuPointer.default)+"]";
+      //the default is data (a Section caption, a tutorial caption) shown inside HTML, so escape it.
+      defaultValue = "["+resolveMenuValue(gMenuPointer.default).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"]";
     }
     var menuCaption = expandCaption(gMenuPointer);
     result = "<div class='cmdPrompt'>"+menuCaption+defaultValue+":</div>";

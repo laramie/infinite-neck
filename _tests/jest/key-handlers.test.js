@@ -555,6 +555,27 @@ describe('key-handlers spacebar mapping', () => {
 		expect(mockSetCmdLineMenuMode).toHaveBeenNthCalledWith(3, 'tall');
 	});
 
+	test('setTutorialCaption writes Song.tutorial.caption (plain text), and the input box is populated from it', () => {
+		const item = { action: 'setTutorialCaption', input: { id: 'caption' } };
+		song.tutorial = { level: 'wizard' };
+		expect(getValue('tutorialCaptionInput')).toBe('');
+
+		const result = performCmdAction(item, { caption: '  <b>Tom</b> &amp; Jerry says \\"hi\\"  ' });
+		expect(song.tutorial).toEqual({ level: 'wizard', caption: 'Tom & Jerry says "hi"' });
+		expect(result.result).not.toContain('Tom');
+		expect(getValue('tutorialCaptionInput')).toBe('Tom & Jerry says "hi"');
+
+		//a Song with no tutorial object gets one, with a level
+		delete song.tutorial;
+		performCmdAction(item, { caption: 'Cap' });
+		expect(song.tutorial).toEqual({ level: 'none', caption: 'Cap' });
+
+		//nothing to set: the caption is left alone
+		const empty = performCmdAction(item, { caption: '   ' });
+		expect(empty.result).toBe('tutorial caption: nothing to set');
+		expect(song.tutorial.caption).toBe('Cap');
+	});
+
 	test('presentation submenu actions toggle mode and invoke Display Options save/clear without popping', () => {
 		song.presentationMode = false;
 		song.displayOptionsSaveState = 'unsaved';

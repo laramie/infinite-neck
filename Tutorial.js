@@ -53,6 +53,41 @@ export function applyPromptToSectionTutorial(sectionTutorial, prompt) {
     return Object.keys(tutorial).length > 0 ? tutorial : undefined;
 }
 
+/** Sprint 152 it5: the text typed for `Song.tutorial.caption` (command line `/vpe`) to the plain-text caption to store.
+ *  Typed `\"` means `"`.  `toPlainText` (html-sanitizer's getSanitizedPlainText) removes tags and decodes entities, so the
+ *  stored caption is plain text, which is escaped wherever it is rendered.  Returns '' when nothing is left. */
+export function tutorialCaptionFromInput(text, toPlainText = (value) => value) {
+    const unescaped = `${text ?? ''}`.replace(/\r\n?/g, '\n').replaceAll('\\"', '"');
+    return `${toPlainText(unescaped) ?? ''}`.trim();
+}
+
+/** Returns the new `Song.tutorial` object with its caption set (or removed for an empty caption).  Keeps the other fields,
+ *  and always has a `level`. */
+export function applyCaptionToSongTutorial(songTutorial, caption) {
+    const tutorial = songTutorial && typeof songTutorial === 'object' ? { ...songTutorial } : {};
+    tutorial.level = normalizeTutorialMode(tutorial.level);
+    if (caption) {
+        tutorial.caption = caption;
+    } else {
+        delete tutorial.caption;
+    }
+    return tutorial;
+}
+
+/** Sprint 152 it5: whether `Song.tutorial` is worth writing to a Song file.  A tutorial at level `none` is dropped,
+ *  unless the author set something that only matters to authoring (a caption, a storage key, or "use caption for tutorial"). */
+export function isSongTutorialPersistable(songTutorial) {
+    if (!songTutorial || typeof songTutorial !== 'object') {
+        return false;
+    }
+    if (normalizeTutorialMode(songTutorial.level) !== TUTORIAL_MODES.NONE) {
+        return true;
+    }
+    return `${songTutorial.caption ?? ''}`.length > 0
+        || `${songTutorial.storageKey ?? ''}`.length > 0
+        || songTutorial.useCaptionForSectionCaption === true;
+}
+
 export function deriveTutorialStorageKeyFromHref(href = '') {
     return `${href || ''}`.trim().replace(/^songs\//, '').replace(/\.json$/i, '');
 }

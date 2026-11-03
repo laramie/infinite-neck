@@ -226,7 +226,7 @@ export function renderTutorialPrompt(model = {}) {
             + '</span>'
             + '<span class="tutorialPromptHeader">'
             +   hamburger
-            +   sectionCurr+`<span class="tutorialPromptCaption">${model.sectionCaption || model.songCaption}</span>`
+            +   sectionCurr+`<span class="tutorialPromptCaption">${model.sectionCaption || escapeHtml(model.songCaption)}</span>`
             + '</span>'
             + tutorialPromptContentDiv
          + '</div>';
