@@ -1954,7 +1954,39 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
 <p><i>Here is a snapshot of a part of the neck showing all the Active I's and III's with NamedNotes, and one Active &tau; with a SingleNote.</i>
     <br /><img style="border: 20px solid green;" src="img/help/single-note-v-named-note.png"></p>
 
+<hr>
+<a name="TutorialMode"></a>
+<h3>Tutorial Mode</h3> 
+<p>Songs in <b>Song Library &gt; Tutorials</b> are tutorials that hide much of the advanced interface of infinite-neck, and focus on guiding you through a lesson.  They contain Sections as steps in the lesson, and 
+so a simple navigator with looping controls is presented at the top of the page for navigating the lesson topics, and the Transport is
+not used.  The Menu buttons are hidden, as is the command-line. Each Section has a Caption, a Prompt, and usually an Instrument.  If you look you'll see there is a hamburger menu that gives you access to the navigator that takes the place of the Transport.  Once this is opened, you'll see another drop down button that gives you acces to "Tutorial Sections".  This lets you see your progress, set a bookmark for your location in the lesson that will be saved for when you come back later into the tutorial in another session in the same Browser, and checkboxes for showing which Sections you have completed.  There is also a column called "Include in Looping" that when clicked, selects all the Sections, but if you click on the checkboxes in this column, you can turn off Sections from being included in looping so you can just loop the Sections you want to focus on. To prevent confusion, these selections are not saved between sessions, so if you load this tutorial later in the same Browser, all Sections will be checked for inclusion in looping once more.</p>
 
+<p>If the Song loaded from the Library or local disk is not saved in tutorial "strict" mode, the app won't behave this way. This is because tutorial mode is actually a setting that can be "strict", "wizard", or "none", as selected in the command-line <b>/vpt</b> which you can get to if you are <i><b>not</b></i> in tutorial "strict" mode. This enables you to enter tutorial mode if the song is not saved in tutorial mode.</p>
+
+<p>There is also tutorial "wizard" mode accessible from <b>/vpt</b>.  In this mode, you can run many of the tutorial features, but also still have access to advanced features for editing, authoring, changing View, Theme, and Stylesheet settings, and so on.  In fact, from "strict" tutorial mode you can escape to the command-line with the Easter-egg command <span class="key">CTRL-SHIFT-M</span>.  From the command-line, you can set the tutorial mode to something else, like "none" which gets you the full features of infinite-neck, or "wizard" which gives you features of tutorial mode such as "Include in Looping" (selective inclusion of Sections in looping, known as the "practice list" in wizard mode) and tutorial prompts, which are editable in wizard mode.  In "none" mode, you have full access to features, except for the tutorial features.  Wizard mode was designed for authoring tutorials, and for tutorials that teach Users about advanced features.  But it is also the only way you can run with full features and still use "Include in Looping", which is considered too disruptive for normal use such as practicing full songs or giving presentations, since it may be confusing to have the Sections be skipped during looping.  So it is a double opt-in: you must enter wizard mode with <b>/vptw</b>  , and you must use one of the command-line commands to open the "practice list": <b>/vswp</b> or <b>/vtwp</b>.  Attempting to show the "practice list" in "none" or "strict" via <b>/vtwp</b> simply won't show it.  However, in "strict" you automatically get it as part of the prompt area.</p>
+
+<p>In wizard mode when the "practice list" excludes some Sections from looping, the Looper Lights will show with a dashed border, and the LOOP button will show something like "LOOPING 1..3" for example when you have unchecked Sections 4 and later, rather than the normal "LOOPING" caption.  This caption is also visible in "strict" tutorial mode, but the dashed border doesn't appear since "strict" tutorials don't show Looper Lights or Section Status widgets.</p>
+
+<p>Another feature in wizard mode is that you can edit the tutorial prompts, and can use Section Caption as the tutorial captions.  Both of these are work-arounds because the way "strict" tutorials are created for our Library is there is an authoring build process where text files on the server are edited to contain the lesson plan, the prompts, the captions, and the other settings, and then the tutorial songfile is generated.  But in "wizard" mode, you can turn any song into a tutorial without this build process and simply save the file to your local disk.  This gives you the ability to make tutorials, or to annotate prompts for any songs in the style of "strict" tutorials but with the power-user features of wizard mode.
+</p>
+<p>In wizard mode, you create captions and prompts by:</p>
+<ul>
+    <li>Enter wizard mode: <b>/vptw</b></li>
+    <li>Toggle "use caption for tutorial" to false: <b>/vpu</b></li>
+    <li>In a Section, look for the button in the prompt area called "Edit Prompt" on the right.</li>
+    <li>When you click this button, you can edit the prompt with text or HTML. Leave the edit area to save it (click elsewhere, or TAB out).</li>
+    <li>After you have edited prompts for each Section you want, toggle "use caption for tutorial" to true: <b>/vpu</b> 
+    <li>Now use the Section Drawer to add a Caption to the Sections you want to have Captions. <b></b></li>
+    <li>Now when you navigate, you'll have prompts and Captions.</li>
+    <li>If you are a tutorial author, and are using the build process tools, be aware that running <b>npm run build:tutorial-prompts</b> will overwrite the prompts you have saved in the above way.  The build process stores tutorial Captions in a separate location from Section Captions, however.</li>
+</ul> 
+<p>Note that doing it this way, and then using the next steps, you can create a "strict" mode tutorial songfile you can save and share.  The Tutorial Captions come from the Section Captions, and the Tutorial Prompts come from the prompts you just entered.  As long as you don't use the build process from the system shell and the "npm" Node tool as a developer, these Prompts will persist. Steps to save your song as a "strict" tutorial:</p>
+<ul>
+<li>From the command-line, ensure that you have "use caption for tutorial [true]" from <b>/vpu</b></li>
+<li>From the command-line, set "strict" mode: <b>/vpts</b></li>
+<li>Now you can't get to the File menu button to download the file, so download the file from the command-line before you close it: <b>/fd</b></li>
+<li>If you do exit the command-line, you can sneak back in with command <span class="key">CTRL-SHIFT-M</span></li>
+</ul>    
 <hr>
 <a name="contextHelp"></a>
 <h2>Context Help Topics</h2>
