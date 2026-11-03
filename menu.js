@@ -1683,15 +1683,20 @@ export var gMenuFile =    {
               "preserveMenuStack": true
             },
             {
-              "caption": "<b>u</b>se caption for tutorial",
+              "caption": "<b>u</b>se caption for tutorial [${useCaptionForTutorialState}]",
               "trigger": "u",
               "action": "useCaptionForSectionCaptionAction",
+              "vars": [
+                "useCaptionForTutorialState"
+              ],
               "preserveMenuStack": true
-              
             },
             {
-              "caption": "<b>t</b>utorial mode",
+              "caption": "<b>t</b>utorial mode [${tutorialModeState}]",
               "trigger": "t",
+              "vars": [
+                "tutorialModeState"
+              ],
               "children": [
                 {
                   "caption": "<b>n</b>one",

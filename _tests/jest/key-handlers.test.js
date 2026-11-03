@@ -570,6 +570,13 @@ describe('key-handlers spacebar mapping', () => {
 		expect(tutorialResult.result).toBe('tutorial mode: strict');
 		expect(tutorialResult.preserveMenuStack).toBe(true);
 		expect(song.tutorial).toEqual({ level: 'strict' });
+		expect(getValue('tutorialModeState')).toBe('strict');
+
+		expect(getValue('useCaptionForTutorialState')).toBe('false');
+		performCmdAction({ action: 'useCaptionForSectionCaptionAction' });
+		expect(getValue('useCaptionForTutorialState')).toBe('true');
+		performCmdAction({ action: 'useCaptionForSectionCaptionAction' });
+		expect(getValue('useCaptionForTutorialState')).toBe('false');
 
 		expect(getValue('displayOptionsSaveState')).toBe('unsaved');
 		const saveResult = performCmdAction({ action: 'saveViewDisplayOptions' });

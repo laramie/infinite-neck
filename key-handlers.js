@@ -82,7 +82,8 @@ import {
 	getMacroMoveNumberOptions
 } from './MacroMenu.js';
 import {
-	TUTORIAL_MODES
+	TUTORIAL_MODES,
+	normalizeTutorialMode
 } from './Tutorial.js';
 import * as Calculators from './calculators.js';
 import {
@@ -2115,6 +2116,12 @@ export function getValue(what){
 	}
 	if (what === 'presentationModeState'){
 		return !!getSong()?.presentationMode;
+	}
+	if (what === 'tutorialModeState'){
+		return normalizeTutorialMode(getSong()?.tutorial?.level);
+	}
+	if (what === 'useCaptionForTutorialState'){
+		return `${!!getSong()?.tutorial?.useCaptionForSectionCaption}`;
 	}
 	if (what === 'displayOptionsShowMessagesState'){
 		return !!isDisplayOptionsShowMessages();
