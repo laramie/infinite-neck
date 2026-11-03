@@ -171,7 +171,7 @@ export function renderTutorialPromptEditButton(model = {}) {
     if (!model.wizard || !model.canEditPrompt || model.promptEditing) {
         return '';
     }
-    return '<button type="button" class="tutorialPromptEditButton" data-action="tutorialEditPrompt">Edit Prompt</button>';
+    return '<button type="button" class="BtnPunchedOut tutorialPromptEditButton" data-action="tutorialEditPrompt">Edit Prompt</button>';
 }
 
 export function renderTutorialPrompt(model = {}) {

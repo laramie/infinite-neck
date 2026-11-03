@@ -28,9 +28,9 @@
     margin: 0.4em 0;
 }
 .tutorialPromptEditButton {
-    font-size: 80%;
-    padding: 0.15em 0.6em;
-    white-space: nowrap;
+    margin-right: 2em;
+    padding: 1em;
+    border: none;
 }
 
 /* The warning above the prompt textarea: change its look here. */
