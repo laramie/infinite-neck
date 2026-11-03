@@ -149,5 +149,35 @@ We haven't done proper diligence in designing this, so please make reasonable ad
 
 Testing results submitted, and a few features in the menu Requested: [152-it4-testing-results.md](152-it4-testing-results.md)
 
+# Iteration 5
+
+## Feature: allow ad hoc writing of Song.tutorial.caption
+
+Please add the following menu item.  
+
+`/vp` :: `e)dit tutorial main caption`
+
+That is, at the `/vp` menu level, you type trigger `e` and you get an INPUT menu item which lets you enter the caption string without the surrounding JSON quotes.  I don't think we need to support any HTML, although supporting HTML entities may be needed, and escaped quotes would be good, if both of these can be sanitized correctly.
+
+It writes to the current song: 
+`Song.tutorial.caption`
+
+If `Song.tutorial.caption` exists, it should populate the command-line INPUT edit box, which is done, for example, in `/fptc` where the chroma are inserted into the edit box for editing.
+
+It works in all tutorial modes, but will get overwritten by a manual build process using `npm run build:tutorial-prompts`.  We accept that scenario.
+
+
+## Feature: allow saving of option "use caption for tutorial"
+
+`/vpu` which is `u)se caption for tutorial [true]` should be persisted if true.
+
+So if an author sets this value to true, then downloads the Song, and loads it later, this option should be true again.  In strict tutorial mode, that means Section Caption wins per Section if present, as it does today.  We accept that logic.  
+
+## Summary
+
+These changes means that songs written in wizard mode can have Tutorial Caption (Song.tutorial.caption), Tutorial Section Captions (Song.Section.tutorial.caption), and Tutorial Prompts (Song.Section.tutorial.prompt) without the `npm run build:tutorial-prompts` build process.
+
+We'll run the full Jest test suite on our end.
+
 
 
