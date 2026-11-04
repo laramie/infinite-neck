@@ -24,4 +24,7 @@ Purpose of this sprint is to:
   - "Iteration 1": 
     - Define Wishlist
     - Copilot produced analysis of Wishlist: [153-it1-analysis.md](153-it1-analysis.md)
+  - "Iteration 2":
+    - Decisions captured in the design document
+    - Copilot produced implementation plan: [153-it2-implementation-plan.md](153-it2-implementation-plan.md)
 
