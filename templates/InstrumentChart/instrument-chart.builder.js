@@ -9,13 +9,20 @@
  *     InstrumentChartBuilder.setMode({ top: true, left: true });
  *     InstrumentChartBuilder.setMode({ top: false });   // merges: left is untouched
  *     InstrumentChartBuilder.getMode();
+ * Sprint 154 adds the spacing (CSS variables on <body>; see instrument-chart-core.js):
+ *     InstrumentChartBuilder.setMetrics({ leftWidthEm: 5, leftPaddingTopEm: 0.5, topPaddingLeftEm: 'align' });
+ *     InstrumentChartBuilder.getMetrics();  InstrumentChartBuilder.resetMetrics();
  */
 import EventBus from '../../event-bus.js';
 import {
+	CHART_WIDGET_METRIC_DEFAULTS,
+	CHART_WIDGET_METRIC_VARS,
 	CHART_WIDGET_PLACEMENTS,
 	expandChartWidgetTemplate,
 	getChartWidgetTemplate,
-	normalizeChartWidgetMode
+	normalizeChartWidgetMetrics,
+	normalizeChartWidgetMode,
+	resolveChartWidgetMetricVars
 } from './instrument-chart-core.js';
 
 const BODY_CLASS_BY_PLACEMENT = Object.freeze({ top: 'icwTop', left: 'icwLeft' });
@@ -28,6 +35,8 @@ let providers = {
 export class InstrumentChartBuilder {
 	static registry = new Map();   // ownerID -> InstrumentChartWidget[]
 	static mode = { top: false, left: false };
+	static metrics = { ...CHART_WIDGET_METRIC_DEFAULTS };
+	static metricsApplied = false;   // false: no variables on <body>, the CSS fallbacks (the accepted look) apply
 
 	static setProviders(next = {}) {
 		providers = { ...providers, ...next };
@@ -68,8 +77,40 @@ export class InstrumentChartBuilder {
 	static setMode(raw) {
 		InstrumentChartBuilder.mode = normalizeChartWidgetMode(raw, InstrumentChartBuilder.mode);
 		InstrumentChartBuilder.applyBodyClasses();
+		InstrumentChartBuilder.applyMetricVars();   // 'align' depends on whether the left widget is on
 		InstrumentChartBuilder.refreshAll();
 		return InstrumentChartBuilder.getMode();
+	}
+
+	/** Merges the valid numbers in `raw` ({leftWidthEm?, leftPaddingTopEm?, topPaddingLeftEm? or 'align'}) and applies them. */
+	static setMetrics(raw) {
+		InstrumentChartBuilder.metrics = normalizeChartWidgetMetrics(raw, InstrumentChartBuilder.metrics);
+		InstrumentChartBuilder.metricsApplied = true;
+		InstrumentChartBuilder.applyMetricVars();
+		return InstrumentChartBuilder.getMetrics();
+	}
+
+	static getMetrics() {
+		return { ...InstrumentChartBuilder.metrics };
+	}
+
+	/** Back to the CSS fallbacks: removes the variables from <body>. */
+	static resetMetrics() {
+		InstrumentChartBuilder.metrics = { ...CHART_WIDGET_METRIC_DEFAULTS };
+		InstrumentChartBuilder.metricsApplied = false;
+		if (typeof document !== 'undefined' && document.body) {
+			Object.values(CHART_WIDGET_METRIC_VARS).forEach((name) => document.body.style.removeProperty(name));
+		}
+	}
+
+	static applyMetricVars() {
+		if (!InstrumentChartBuilder.metricsApplied || typeof document === 'undefined' || !document.body) {
+			return;
+		}
+		const vars = resolveChartWidgetMetricVars(InstrumentChartBuilder.metrics, { leftOn: InstrumentChartBuilder.isPlacementOn('left') });
+		for (const [name, value] of Object.entries(vars)) {
+			document.body.style.setProperty(name, value);
+		}
 	}
 
 	static getMode() {

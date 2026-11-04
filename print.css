@@ -1,0 +1,89 @@
+/* Sprint 154: the print Layout.  Everything is under body.printScreen (set by PrintLayoutController), so nothing here
+ * affects the app outside print.  The SAME rules draw the screen preview and the paper: only the page size
+ * (--print-page-width, set from the Paper choice) matters, never the window size, so what you see is what prints.
+ *
+ * Spike result (154-spike-results.md): tiles were cropped (Nut + 4 frets, blank space at the right) because each
+ * Instrument was sized as a percentage of the VIEWPORT (instrument.css: 100vw, flex 1 1 0, overflow-x: auto), and the
+ * print dialog uses another width than the window.  Here a tile is its natural width (max-content), is scaled with
+ * `zoom: var(--print-scale)`, and the scale is chosen so the natural width fits the grid track.
+ *
+ * Variables set on <body> by the controller:
+ *   --print-page-width   printable width of the paper, px
+ *   --print-cols         grid columns
+ *   --print-scale        zoom of every tile (a number: 0.62)
+ */
+
+body.printScreen {
+    background: white;
+}
+
+body.printScreen #tabledest {
+    display: grid;
+    box-sizing: border-box;
+    width: var(--print-page-width, 739px);
+    max-width: none;
+    margin: 0 auto;
+    grid-template-columns: repeat(var(--print-cols, 3), minmax(0, 1fr));
+    gap: var(--print-gap, 8px);
+    align-items: start;
+}
+
+/* A tile: natural width, scaled.  The id selector beats instrument.css's :has() padding rule. */
+body.printScreen #tabledest > .instrumentBackgroundOuter {
+    width: max-content;
+    max-width: none;
+    min-width: 0;
+    justify-self: start;
+    overflow: visible;
+    padding: var(--print-tile-padding, 4px);
+    zoom: var(--print-scale, 1);
+    break-inside: avoid;
+}
+body.printScreen #tabledest > .instrumentBackgroundOuter .instrumentBackground,
+body.printScreen #tabledest > .instrumentBackgroundOuter .wiringAndFretTable {
+    width: auto;
+    max-width: none;
+}
+body.printScreen #tabledest > .instrumentBackgroundOuter .fretTableWrapper {
+    flex: 0 0 auto;
+    max-width: none;
+    overflow: visible;
+}
+/* A long Section caption in the top widget must wrap inside the table's width, not widen the whole tile. */
+body.printScreen .instrumentChartTop {
+    contain: inline-size;
+}
+
+/* Every table that is not the Main or a tile (including hidden ones: an empty grid item still takes a cell). */
+body.printScreen #tabledest > .printExcluded {
+    display: none !important;
+}
+/* A tile past the last Section: keep the cell so the page keeps its shape. */
+body.printScreen #tabledest > .printBlank {
+    visibility: hidden;
+}
+
+body.printScreen .dockable-handle,
+body.printScreen .floatDockableButton {
+    display: none;
+}
+
+@media print {
+    html, body.printScreen {
+        background: white;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    body.printScreen {
+        margin: 0;
+    }
+    /* The menus, and the Transport (spike: it printed half a second page). */
+    body.printScreen .container,
+    body.printScreen #transport,
+    body.printScreen #divQuick,
+    body.printScreen #CmdMenu,
+    body.printScreen #divMessageAndJsonTree,
+    body.printScreen #divESCAPE {
+        display: none !important;
+    }
+}

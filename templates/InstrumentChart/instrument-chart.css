@@ -2,7 +2,11 @@
  * InstrumentChartBuilder.setMode().  Turning a widget on hides the WHOLE container it replaces
  * (.captionRow / .leftRailStack); the replaced elements stay in the DOM and keep updating.
  * The !important beats the inline `display` the Layout (layout.js) sets on those containers, and leaves
- * the Layout's choice untouched for when the widget is turned off. */
+ * the Layout's choice untouched for when the widget is turned off.
+ *
+ * Sprint 154: the spacing comes from three <body> variables set by InstrumentChartBuilder.setMetrics()
+ * (instrument-chart-core.js).  The fallbacks below are the accepted sprint-153 look, so with no variable set
+ * nothing changes. */
 
 .instrumentChartTop,
 .leftRailChartHost {
@@ -14,19 +18,23 @@ body.icwTop .instrumentChartTop {
     display: block;
     width: 100%;
     box-sizing: border-box;
-    padding: 0.15em 0.4em;
+    padding: 0.15em 0.4em 0.15em var(--icw-top-padding-left, 0.4em);
     overflow-wrap: anywhere;
 }
 body.icwTop .instrumentBackground > .captionRow {
     display: none !important;
 }
 
-/* Left: replaces the whole Left Rail stack (caption + Section status + whatever is added later). */
+/* Left: replaces the whole Left Rail stack (caption + Section status + whatever is added later).
+ * The width is FIXED (width = min-width = max-width) so every tile has the same rail whatever its chord. */
 body.icwLeft .leftRailChartHost {
     display: block;
-    min-width: 4em;
+    box-sizing: border-box;
+    width: var(--icw-left-width, 4.8em);
+    min-width: var(--icw-left-width, 4.8em);
+    max-width: var(--icw-left-width, 4.8em);
     overflow-wrap: anywhere;
-    padding: 0.15em 0.4em;
+    padding: var(--icw-left-padding-top, 0.15em) 0.4em 0.15em;
 }
 body.icwLeft .tdLeftRailStack > .leftRailStack {
     display: none !important;

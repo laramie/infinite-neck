@@ -309,6 +309,27 @@ export const gThemes = {
         "noteBlackKeyFontColor": "black",
         "borderImageWhiteKey": "none"
     },
+    "Print" : {
+        "id": "Print",
+        "caption":"Print",
+        "noteRadius": "12%",
+        "namedNoteRadius": "10%",
+        "notePadding": "12pt",
+        "cellSpacing": "0.5pt",
+        "instrumentBackground": "white",
+        "instrumentBorderThickness": "0",
+        "nutColor": "black",
+        "noteWhiteShadowColor": "black",
+        "noteBlackShadowColor": "black",
+        "noteWhiteKeyShadowColor": "0 0 2pt 1pt black",
+        "noteBlackKeyShadowColor": "0 0 2pt 1pt black",
+        "noteWhiteKeyColor": "white",
+        "noteBlackKeyColor": "white",
+        "noteWhiteKeyFontColor": "black",
+        "noteBlackKeyFontColor": "black",
+        "borderImageWhiteKey": "none",
+        "borderImageBlackKey": "none"
+    },
     "WiteOut" : {
         "id": "WiteOut",
         "caption":"Wite-Out",

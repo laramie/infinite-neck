@@ -36,6 +36,62 @@ export function normalizeChartWidgetMode(raw, current = { top: false, left: fals
 	return next;
 }
 
+/* Sprint 154: spacing of the two widgets.  Every value is in em of the host, so it scales with the Instrument.
+ *   leftWidthEm       fixed width of the left host (width = min-width = max-width), the same in every tile
+ *   leftPaddingTopEm  space above the left widget's text
+ *   topPaddingLeftEm  space left of the top widget's text; 'align' = the left host's width, so the text starts over the
+ *                     first fret column */
+export const CHART_WIDGET_ALIGN = 'align';
+export const CHART_WIDGET_METRIC_DEFAULTS = Object.freeze({ leftWidthEm: 4.8, leftPaddingTopEm: 0.15, topPaddingLeftEm: CHART_WIDGET_ALIGN });
+export const CHART_WIDGET_METRIC_RANGES = Object.freeze({ leftWidthEm: [2, 12], leftPaddingTopEm: [0, 10], topPaddingLeftEm: [0, 20] });
+export const CHART_WIDGET_METRIC_VARS = Object.freeze({
+	leftWidthEm: '--icw-left-width',
+	leftPaddingTopEm: '--icw-left-padding-top',
+	topPaddingLeftEm: '--icw-top-padding-left'
+});
+/** What the CSS uses for the top padding when there is nothing to align with (the left widget is off). */
+export const CHART_WIDGET_TOP_PADDING_FALLBACK = '0.4em';
+
+function normalizeOneMetric(name, value) {
+	if (name === 'topPaddingLeftEm' && value === CHART_WIDGET_ALIGN) {
+		return CHART_WIDGET_ALIGN;
+	}
+	if (typeof value !== 'number' || !Number.isFinite(value) || !CHART_WIDGET_METRIC_RANGES[name]) {
+		return undefined;
+	}
+	const [min, max] = CHART_WIDGET_METRIC_RANGES[name];
+	return Math.round(Math.min(max, Math.max(min, value)) * 100) / 100;
+}
+
+/** Merges the valid entries of `raw` over `current` (defaults when omitted).  Numbers are clamped to their range;
+ *  anything that is not a number (or 'align' for topPaddingLeftEm) is ignored. */
+export function normalizeChartWidgetMetrics(raw, current = CHART_WIDGET_METRIC_DEFAULTS) {
+	const next = { ...CHART_WIDGET_METRIC_DEFAULTS };
+	for (const name of Object.keys(CHART_WIDGET_METRIC_DEFAULTS)) {
+		for (const source of [current, raw]) {
+			const value = source && typeof source === 'object' ? normalizeOneMetric(name, source[name]) : undefined;
+			if (value !== undefined) {
+				next[name] = value;
+			}
+		}
+	}
+	return next;
+}
+
+/** { '--icw-left-width': '4.8em', ... } for <body>.  'align' becomes the left width plus --icw-align-nudge (a console
+ *  knob, default 0px) when the left widget is on, and the CSS default when it is off. */
+export function resolveChartWidgetMetricVars(metrics, { leftOn = true } = {}) {
+	const m = normalizeChartWidgetMetrics(metrics);
+	const top = m.topPaddingLeftEm === CHART_WIDGET_ALIGN
+		? (leftOn ? `calc(${m.leftWidthEm}em + var(--icw-align-nudge, 0px))` : CHART_WIDGET_TOP_PADDING_FALLBACK)
+		: `${m.topPaddingLeftEm}em`;
+	return {
+		[CHART_WIDGET_METRIC_VARS.leftWidthEm]: `${m.leftWidthEm}em`,
+		[CHART_WIDGET_METRIC_VARS.leftPaddingTopEm]: `${m.leftPaddingTopEm}em`,
+		[CHART_WIDGET_METRIC_VARS.topPaddingLeftEm]: top
+	};
+}
+
 /** The ${tokens} used by a template, in order of appearance (with repeats removed). */
 export function extractTemplateTokens(template) {
 	const names = [];

@@ -36,6 +36,7 @@ import {
 } from './drag.js';
 import {
 	disposeAllDockables,
+	dockAllDockables,
 	makeDivDockable,
 	isDivFloating,
 	setDockCaptureHook,
@@ -154,6 +155,8 @@ import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
 import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
 import { InstrumentChartBuilder } from './templates/InstrumentChart/instrument-chart.builder.js';
+import { PrintLayoutController } from './templates/printlayout/printlayout.controller.js';
+import { PrintLayoutBuilder } from './templates/printlayout/printlayout.builder.js';
 import { TutorialPromptBuilder, buildTutorialPromptModel, renderPracticeList } from './templates/tutorial/tutorial.builder.js';
 import {
 	applyPromptToSectionTutorial,
@@ -291,6 +294,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	function installModuleProviders(){
 		InstrumentChartBuilder.setProviders({
 			getSection: (sectionIndex) => getSong().sections[sectionIndex]
+		});
+		PrintLayoutController.setProviders({
+			getSong,
+			reinstallTables: () => EventBus.trigger('ReinstallAllTuningsTables'),
+			getThemeId: () => $('#selThemes').val(),
+			setThemeId: (themeId) => { $('#selThemes').val(themeId).trigger('change'); },
+			isFullscreen: isFullscreenActive,
+			leaveFullscreen: () => leaveFullscreen(),
+			dockAll: () => dockAllDockables(),
+			gotoSection: (sectionIndex) => getSong().gotoSection(sectionIndex),
+			printPage: () => window.print()
 		});
 		setDisplayOptionsProviders({
 			getSong,
@@ -1763,12 +1777,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return !$('.container').is(':visible');
 	}
 
+	/** Sprint 154: the Print Layout (templates/printlayout) is on. */
+	function isPrintLayoutActive(){
+		return PrintLayoutController.isActive();
+	}
+
+	/** The Chart / LeadSheetLine hosts (outside .container) are used in fullscreen, in a strict tutorial, and in print. */
+	function isChartHostAllowed(){
+		return isFullscreenActive() || isStrictTutorial() || isPrintLayoutActive();
+	}
+
 	function updateFullscreenLeadSheetLineHost(){
 		const jHost = $("#divFullscreenLeadSheetLineHost");
 		if (jHost.length === 0) {
 			return;
 		}
-		if (gFullscreenLeadSheetLineVisible && (isFullscreenActive() || isStrictTutorial()) && getSong()) {
+		if (gFullscreenLeadSheetLineVisible && isChartHostAllowed() && getSong()) {
 			jHost
 				.html(SectionPrinter.printLeadSheetLine(getSong(), getSections(), { rootId: 'sectionPrinterChartLineFullscreen' }))
 				.show();
@@ -1782,7 +1806,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (jHost.length === 0) {
 			return;
 		}
-		if (gFullscreenChartVisible && (isFullscreenActive() || isStrictTutorial()) && getSong()) {
+		if (gFullscreenChartVisible && isChartHostAllowed() && getSong()) {
 			jHost
 				.html(SectionPrinter.printChart(getSong(), getSections()))
 				.show();
@@ -1808,7 +1832,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function hideFullscreenLeadSheetLine(){
-		if (!(isFullscreenActive() || isStrictTutorial())) {
+		if (!isChartHostAllowed()) {
 			const wasChartVisible = $("#divChart").is(":visible");
 			if (wasChartVisible) {
 				hideAllMenuDivs();
@@ -1821,7 +1845,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 	
 	export function hideFullscreenChart(){
-		if (!(isFullscreenActive() || isStrictTutorial())) {
+		if (!isChartHostAllowed()) {
 			const wasChartVisible = $("#divChart").is(":visible");
 			if (wasChartVisible) {
 				hideAllMenuDivs();
@@ -1834,7 +1858,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function hideFullscreenAllCharts(){
-		if (!(isFullscreenActive() || isStrictTutorial())) {
+		if (!isChartHostAllowed()) {
 			const wasChartVisible = $("#divChart").is(":visible");
 			if (wasChartVisible) {
 				hideAllMenuDivs();
@@ -2064,7 +2088,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    if (Number.isNaN(bpm) || bpm == 0) { bpm = DEFAULT_BPM; }
 	    getSong().prepareForSave({
 	        songName: $("#txtFilename").val(),
-	        theme: $('#selThemes').val(),
+	        theme: PrintLayoutController.getThemeToSave() ?? $('#selThemes').val(),   //Sprint 154: not the live Print theme
 	        bpm,
 	        userColors: gUserColorDict.dict,
 	        plugins: pluginManager.exportSongPluginState()
@@ -2296,6 +2320,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		// sprint-141 Iteration 1 analysis.
 		DisplayOptionsMatrixBuilder.dockBeforeDispose();  //disposeAllDockables() would delete a floating Matrix.
 		disposeAllDockables();
+		PrintLayoutController.reset();   //Sprint 154: a Song never opens in print; the old Song's tiles are gone with it
 		getSong().resetRecording?.();
 		syncRecordingViews();
 		getSong().fixupCurrentIndexForLoadedSong();
@@ -2542,7 +2567,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			// Sprint 146 Phase 5: resolve this table's per-instrument Theme override (if any,
 			// walking back through earlier Sections) so buildNoteTable() can apply it as an
 			// inline-style override, letting two instruments render two different Themes at once.
-			const themeInEffect = getSong().getStoredTableThemeInEffect(getCurrentSection(), tableID);
+			const themeInEffect = tableThemeInEffect(tableID);
 			var outerDiv = TableBuilder.buildNoteTable({ ...tuning, visible: true, themeInEffect });
 			if (outerDiv){
 				if (isDivFloating(divID)) {
@@ -3150,7 +3175,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function printSectionsChart(){
 		updatePrintSections();
 		showChartTab("Chart");
-		if (isFullscreenActive() || isStrictTutorial()) {
+		if (isChartHostAllowed()) {
 			setFullscreenChartVisible(true);
 			return "Chart shown";
 		}
@@ -3161,7 +3186,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function printSectionsLine(){
 		updatePrintSections();
 		showChartTab("Line");
-		if (isFullscreenActive() || isStrictTutorial()) {
+		if (isChartHostAllowed()) {
 			setFullscreenLeadSheetLineVisible(true);
 			return "LeadSheetLine shown";
 		}
@@ -3504,7 +3529,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		const sizesObj = options.NoteDisplaySizes || {};
 		const naturalFontScaling = options.naturalFontScaling;
 
-		if (getSong().allowThemeAutomation){
+		if (getSong().allowThemeAutomation && !isPrintLayoutActive()){
 			let sectionTheme = options.sectionTheme;
 			if (sectionTheme){
 				$('#selThemes').val(sectionTheme).trigger('change');
@@ -3710,7 +3735,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		
 		//This is for storing theme, but only if allowThemeAutomation is in effect:
 		if (getSong().allowThemeAutomation){
-			options.sectionTheme = $('#selThemes').val();
+			options.sectionTheme = PrintLayoutController.getThemeToSave() ?? $('#selThemes').val();
 		}
 
 		//Ignore #cbPresentationMode because it really is Song-scope and not per Section.
@@ -4125,8 +4150,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (!instrumentBackgroundEl) {
 			return;
 		}
-		const themeInEffect = getSong().getStoredTableThemeInEffect(getCurrentSection(), tableID);
+		const themeInEffect = tableThemeInEffect(tableID);
 		applyThemeToTableElement(instrumentBackgroundEl, themeInEffect);
+	}
+
+	/** The stored per-table Theme for the current Section; none in print, where the Print Layout's Theme covers every tile. */
+	function tableThemeInEffect(tableID) {
+		return isPrintLayoutActive() ? null : getSong().getStoredTableThemeInEffect(getCurrentSection(), tableID);
 	}
 
 	/** Sprint 146 Iteration 2 (146-it2-design.md point 5): re-applies every known table's
@@ -4231,33 +4261,30 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			.toggleClass('BtnPunchedOut', !showLineTab);	
 	}
 
+	/** The Desktop tabs: one row per tab.  Keyboard is the default when `which` matches no row. */
+	const DESKTOP_TABS = [
+		{ which: 'Keyboard', button: '#btnDesktopTabKeyboard', panel: '#divMobileKeyboard' },
+		{ which: 'Buttons', button: '#btnDesktopTabButtons', panel: '#divDesktopButtons' },
+		{ which: 'SongWidgets', button: '#btnDesktopTabSongWidgets', panel: '#divSongWidgetsTab', onLeave: () => SongWidgetsBuilder.persistSongWidgets() },
+		{ which: 'MIDI', button: '#btnDesktopTabMIDI', panel: '#divMidiTab' },
+		{ which: 'PrintLayout', button: '#btnDesktopTabPrintLayout', panel: '#divPrintLayoutTab', onEnter: () => PrintLayoutBuilder.refresh() }
+	];
+
 	function showDesktopTab(which) {
-		var showKeyboardTab = which !== "Buttons" && which !== "SongWidgets" && which !== "MIDI";
-		var showButtonsTab = which === "Buttons";
-		var showSongWidgetsTab = which === "SongWidgets";
-		var showMidiTab = which === "MIDI";
-
-		if (!showSongWidgetsTab && $('#divSongWidgetsTab').is(':visible')) {
-			SongWidgetsBuilder.persistSongWidgets();
-		}
-
-		$('#divMobileKeyboard').toggle(showKeyboardTab);
-		$('#divDesktopButtons').toggle(showButtonsTab);
-		$('#divSongWidgetsTab').toggle(showSongWidgetsTab);
-		$('#divMidiTab').toggle(showMidiTab);
-
-		$('#btnDesktopTabKeyboard')
-			.toggleClass('BtnPunchedIn', showKeyboardTab)
-			.toggleClass('BtnPunchedOut', !showKeyboardTab);
-		$('#btnDesktopTabButtons')
-			.toggleClass('BtnPunchedIn', showButtonsTab)
-			.toggleClass('BtnPunchedOut', !showButtonsTab);
-		$('#btnDesktopTabSongWidgets')
-			.toggleClass('BtnPunchedIn', showSongWidgetsTab)
-			.toggleClass('BtnPunchedOut', !showSongWidgetsTab);
-		$('#btnDesktopTabMIDI')
-			.toggleClass('BtnPunchedIn', showMidiTab)
-			.toggleClass('BtnPunchedOut', !showMidiTab);
+		const chosen = DESKTOP_TABS.some((tab) => tab.which === which) ? which : DESKTOP_TABS[0].which;
+		DESKTOP_TABS.forEach((tab) => {
+			const show = tab.which === chosen;
+			if (!show && tab.onLeave && $(tab.panel).is(':visible')) {
+				tab.onLeave();
+			}
+			$(tab.panel).toggle(show);
+			$(tab.button)
+				.toggleClass('BtnPunchedIn', show)
+				.toggleClass('BtnPunchedOut', !show);
+			if (show && tab.onEnter) {
+				tab.onEnter();
+			}
+		});
 	}
 
 	export function bindDesktopEvents(){
@@ -4503,6 +4530,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnDesktopTabMIDI', function() {
 			showDesktopTab("MIDI");
+		});
+		bindEvent('click', '#btnDesktopTabPrintLayout', function() {
+			showDesktopTab("PrintLayout");
 		});
 		//=========================================
 		bindEvent('click', '#btnHelp', function() {
@@ -5208,6 +5238,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 			loadTemplates('templates/macros/macros.html').then(() => {
 				MacroBuilder.addToDest('#divMacros');
+			}),
+
+			Promise.resolve().then(() => {
+				PrintLayoutBuilder.addToDest('#divPrintLayoutTab');
 			}),
 
 			loadTemplates('templates/songwidgets/songwidgets.html').then(() => {

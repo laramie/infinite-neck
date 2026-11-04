@@ -123,3 +123,45 @@ describe('InstrumentChartBuilder', () => {
     expect(hostB.innerHTML).toBe('');
   });
 });
+
+describe('InstrumentChartBuilder metrics (sprint 154)', () => {
+  const props = new Map();
+  const classes = new Set();
+  beforeEach(() => {
+    props.clear();
+    globalThis.document = {
+      body: {
+        style: { setProperty: (n, v) => props.set(n, v), removeProperty: (n) => props.delete(n) },
+        classList: { toggle: (c, on) => (on ? classes.add(c) : classes.delete(c)) }
+      }
+    };
+    InstrumentChartBuilder.resetMetrics();
+    InstrumentChartBuilder.setMode({ top: false, left: false });
+  });
+  afterEach(() => {
+    InstrumentChartBuilder.resetMetrics();
+    delete globalThis.document;
+  });
+
+  test('nothing is written to <body> until setMetrics is called (the CSS fallbacks are the accepted look)', () => {
+    InstrumentChartBuilder.setMode({ left: true });
+    expect(props.size).toBe(0);
+  });
+
+  test('setMetrics writes the variables; align tracks the left widget', () => {
+    InstrumentChartBuilder.setMetrics({ leftWidthEm: 6 });
+    expect(props.get('--icw-left-width')).toBe('6em');
+    expect(props.get('--icw-top-padding-left')).toBe('0.4em');     // left widget off
+    InstrumentChartBuilder.setMode({ left: true });
+    expect(props.get('--icw-top-padding-left')).toBe('calc(6em + var(--icw-align-nudge, 0px))');
+    expect(InstrumentChartBuilder.getMetrics().leftWidthEm).toBe(6);
+  });
+
+  test('resetMetrics removes the variables and restores the defaults', () => {
+    InstrumentChartBuilder.setMetrics({ leftWidthEm: 6, topPaddingLeftEm: 3 });
+    expect(props.get('--icw-top-padding-left')).toBe('3em');
+    InstrumentChartBuilder.resetMetrics();
+    expect(props.size).toBe(0);
+    expect(InstrumentChartBuilder.getMetrics()).toEqual({ leftWidthEm: 4.8, leftPaddingTopEm: 0.15, topPaddingLeftEm: 'align' });
+  });
+});

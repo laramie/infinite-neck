@@ -6,6 +6,7 @@ import { normalizeUserSets } from './templates/function-symbols/functionSymbolSe
 import { normalizeSongGates } from './templates/display-options/displayOptionsGates.js';
 import { normalizeSongDisplayOptionsDefault } from './templates/display-options/displayOptionsMeta.js';
 import { isSongTutorialPersistable } from './Tutorial.js';
+import { isPrintTileID } from './printlayout.js';
 
 const DEFAULT_CHART_HEAD_NAMES = [
     Constants.SECTION_CHART_POSITION.HEAD,
@@ -301,6 +302,9 @@ const songDefaults = {
     fretLengths: Constants.calcFretLengths()    
 };
 
+// Sprint 154: Song array -> the property that holds the table id of each entry.
+const PRINT_TILE_ARRAY_KEYS = { myTunings: 'baseID', wirings: 'tablename', noteTablesLayout: 'tableID' };
+
 export class SongPersistence {
     //TODO: add arg gSongPreferences so that colorDicts, and others can be set from preferences/template song.
     //SEE: chat conversation about what is safe/unsafe to access here: 
@@ -398,6 +402,16 @@ export class SongPersistence {
         }
         if (key === 'functionSymbolSets' && Array.isArray(value) && value.length === 0) {
             return undefined;
+        }
+        // Sprint 154: the print Layout's transient tiles (ids like tblP46_1__pt3) are never saved.
+        if (Array.isArray(value) && PRINT_TILE_ARRAY_KEYS[key]) {
+            const idKey = PRINT_TILE_ARRAY_KEYS[key];
+            return value.some((entry) => isPrintTileID(entry?.[idKey]))
+                ? value.filter((entry) => !isPrintTileID(entry?.[idKey]))
+                : value;
+        }
+        if (key === 'sectionNotesByTable' && value && typeof value === 'object' && Object.keys(value).some(isPrintTileID)) {
+            return Object.fromEntries(Object.entries(value).filter(([tableID]) => !isPrintTileID(tableID)));
         }
         if (   key === 'userColors' 
             || key === 'fretLengths' 

@@ -1,4 +1,7 @@
 import { jest } from '@jest/globals';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const approvedValues = await import('../../approved-values.js');
 const { CHART_WIDGET_TEMPLATES } = await import('../../templates/InstrumentChart/instrument-chart-templates.js');
@@ -89,5 +92,39 @@ describe('expandChartWidgetTemplate', () => {
   test('a missing Section expands to empty, and unknown names are removed', () => {
     expect(core.expandChartWidgetTemplate({ template: CHART_WIDGET_TEMPLATES.top, section: undefined })).toBe('');
     expect(core.expandChartWidgetTemplate({ template: 'a${nope}b', section: sections[0], sectionIndex: 0 })).toBe('ab');
+  });
+});
+
+describe('chart widget metrics (sprint 154)', () => {
+  const cssPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../templates/InstrumentChart/instrument-chart.css');
+
+  test('defaults are the accepted look: 4.8em, 0.15em, aligned with the rail', () => {
+    expect(core.CHART_WIDGET_METRIC_DEFAULTS).toEqual({ leftWidthEm: 4.8, leftPaddingTopEm: 0.15, topPaddingLeftEm: 'align' });
+    expect(core.normalizeChartWidgetMetrics()).toEqual(core.CHART_WIDGET_METRIC_DEFAULTS);
+  });
+
+  test('numbers are clamped and rounded, junk is ignored, and values merge over current', () => {
+    const m = core.normalizeChartWidgetMetrics({ leftWidthEm: 99, leftPaddingTopEm: -1, topPaddingLeftEm: 1.234 });
+    expect(m).toEqual({ leftWidthEm: 12, leftPaddingTopEm: 0, topPaddingLeftEm: 1.23 });
+    expect(core.normalizeChartWidgetMetrics({ leftWidthEm: 'wide', topPaddingLeftEm: NaN }, m)).toEqual(m);
+    expect(core.normalizeChartWidgetMetrics({ topPaddingLeftEm: 'align' }, m).topPaddingLeftEm).toBe('align');
+    expect(core.normalizeChartWidgetMetrics({ leftWidthEm: 'align' }).leftWidthEm).toBe(4.8);
+  });
+
+  test("'align' follows the left width while the left widget is on, else the CSS default", () => {
+    const on = core.resolveChartWidgetMetricVars({ leftWidthEm: 5 }, { leftOn: true });
+    expect(on['--icw-left-width']).toBe('5em');
+    expect(on['--icw-top-padding-left']).toBe('calc(5em + var(--icw-align-nudge, 0px))');
+    const off = core.resolveChartWidgetMetricVars({ leftWidthEm: 5 }, { leftOn: false });
+    expect(off['--icw-top-padding-left']).toBe('0.4em');
+    expect(core.resolveChartWidgetMetricVars({ topPaddingLeftEm: 2 })['--icw-top-padding-left']).toBe('2em');
+  });
+
+  test('the CSS uses exactly these variables with the default values as fallbacks', () => {
+    const css = fs.readFileSync(cssPath, 'utf8');
+    Object.values(core.CHART_WIDGET_METRIC_VARS).forEach((name) => expect(css).toContain(`var(${name},`));
+    expect(css).toContain('var(--icw-left-width, 4.8em)');
+    expect(css).toContain('var(--icw-left-padding-top, 0.15em)');
+    expect(css).toContain('var(--icw-top-padding-left, 0.4em)');
   });
 });

@@ -1,4 +1,14 @@
 /*  Copyright (c) 2026 Laramie Crocker http://LaramieCrocker.com  */
+import { PRINT_SCREEN_FLAG_DEFAULTS, normalizePrintOptions } from './printlayout.js';
+
+/** Sprint 154: the `print` screen = the usual flags + `grid` and `chart` (the PrintLayout panel's options).
+ *  The Main is validated later, by the panel (it needs the Song), so a persisted mainTableID is kept as is. */
+function buildPrintScreen(persisted) {
+    const normalized = normalizePrintOptions(persisted, [persisted?.grid?.mainTableID || '']);
+    return { ...PRINT_SCREEN_FLAG_DEFAULTS, ...(persisted || {}), name: 'print', grid: normalized.grid, chart: normalized.chart };
+}
+
+const DEFAULT_PRINT_SCREEN_JSON = JSON.stringify(buildPrintScreen(null));
 
 export class Layout {
     constructor(jsonObj){
@@ -32,6 +42,14 @@ export class Layout {
         if (jsonObj){
             Object.assign(this, jsonObj);
         }
+        // Sprint 154: `print` is a third screen.  Songs saved before it have none; a Song is never reopened IN print
+        // (its tiles are transient), so a persisted `screen` named print falls back to escaped.
+        this.screenList.print = buildPrintScreen(this.screenList.print);
+        if (this.screen && this.screen.name === 'print') {
+            this.screen = this.screenList.escaped;
+        }
+        /** Runtime only (never saved, see toJSON): true while PrintLayoutController has print entered. */
+        this.printActive = false;
         // Object.assign above leaves `screen` as a separate copy of its screenList entry.  Re-link them so that a
         // toggle made on the current screen is the one remembered when leaving and entering fullscreen.  The persisted
         // `screen` is the latest state, so it wins over the stale screenList entry.
@@ -99,11 +117,11 @@ export class Layout {
     }
 
     toggleInstrumentCaptions(visible){
-        this.screen.InstrumentCaptions = $('.captionRow').toggle(visible).css('display') !== 'none';
+        this.screen.InstrumentCaptions = Layout.isInlineShown($('.captionRow').toggle(visible));
     }
 
     toggleLeftRails(visible){
-        this.screen.LeftRails = $('.leftRailStack').toggle(visible).css('display') !== 'none'; 
+        this.screen.LeftRails = Layout.isInlineShown($('.leftRailStack').toggle(visible));
         if (this.screen.LeftRails){
             $(".LeftRailLayoutButtons button").removeClass("grayed-out-button").prop("disabled", false);
         } else {
@@ -137,13 +155,52 @@ export class Layout {
     }
     
     enterFullscreen(){
-        this.screen = this.screenList.fullscreen;
+        this.screen = this.printActive ? this.screenList.print : this.screenList.fullscreen;
         this.doToggles();
     }
 
     leaveFullscreen(){
+        this.screen = this.printActive ? this.screenList.print : this.screenList.escaped;
+        this.doToggles();
+    }
+
+    /** Sprint 154.  Print is a Layout screen of its own that survives entering and leaving fullscreen. */
+    isPrint(){
+        return this.printActive === true;
+    }
+
+    enterPrint(){
+        this.printActive = true;
+        this.screen = this.screenList.print;
+        this.doToggles();
+    }
+
+    leavePrint(){
+        this.printActive = false;
         this.screen = this.screenList.escaped;
         this.doToggles();
+    }
+
+    /** Sprint 154.  Reads the INLINE display the toggle just set, not the computed one: while an Instrument chart
+     *  widget is on, CSS (`display: none !important`, instrument-chart.css) hides .captionRow / .leftRailStack, and
+     *  the computed value would record "hidden" into the Layout, which is saved with the Song.
+     *  No element = true, as before. */
+    static isInlineShown($elements){
+        return $elements.length === 0 ? true : $elements.get(0).style.display !== 'none';
+    }
+
+    /** Not saved: the runtime flag, and print itself as the current screen (a Song never reopens in print).
+     *  The `print` screen is left out while it is still the defaults, so most Song files do not change. */
+    toJSON(){
+        const { printActive, ...saved } = this;
+        if (saved.screen && saved.screen.name === 'print') {
+            saved.screen = saved.screenList.escaped;
+        }
+        if (saved.screenList && JSON.stringify(saved.screenList.print) === DEFAULT_PRINT_SCREEN_JSON) {
+            const { print, ...others } = saved.screenList;
+            saved.screenList = others;
+        }
+        return saved;
     }
 
     doToggles(){  

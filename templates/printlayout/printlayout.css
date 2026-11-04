@@ -1,0 +1,29 @@
+/* Sprint 154: the Print Desktop tab panel. */
+.printLayoutPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    padding: 0.5em;
+}
+.printLayoutPanel .plRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5em 1em;
+}
+.printLayoutPanel .plField {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+}
+.printLayoutPanel input[type="number"] {
+    width: 4.5em;
+}
+.printLayoutPanel .plStatus {
+    font-style: italic;
+}
+.printLayoutPanel .plHint {
+    font-size: 0.85em;
+    opacity: 0.75;
+    max-width: 60em;
+}
