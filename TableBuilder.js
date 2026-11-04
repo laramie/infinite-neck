@@ -5,6 +5,7 @@ import * as Constants from './Constants.js';
 import { setOneCssVar, applyThemeToTableElement } from './themeFunctions.js';
 import { decoratePianoSkeuomorphicTable } from './templates/piano/piano-skeuomorphic.builder.js';
 import { getDiamondMarkerFret, getDisplayedCellcol } from './table-column-helpers.js';
+import { InstrumentChartBuilder } from './templates/InstrumentChart/instrument-chart.builder.js';
 
 
 
@@ -216,6 +217,13 @@ export function buildNoteTable(options) {
 	applyThemeToTableElement(instrumentBackground.get(0), options.themeInEffect || null);
 
 	let captionRow = buildCaptionRow(options, tableID);
+	if (options.Tool !== true) {
+		// Sprint 153 (print only): a hidden sibling BEFORE .captionRow; CSS (instrument-chart.css) swaps the two.
+		const chartTopHost = $('<div class="instrumentChartTop">');
+		chartTopHost.attr('id', tableID + '_chartTopHost');
+		instrumentBackground.append(chartTopHost);
+		InstrumentChartBuilder.createWidget(chartTopHost, tableID, 'top', { instrumentCaption: options.baseID });
+	}
 	instrumentBackground.append(captionRow);
 
 	let wiringAndFretTable = $("<div>");
@@ -259,6 +267,13 @@ export function buildNoteTable(options) {
 			leftRailStack.append(leftRailCaptionHost);
 			leftRailStack.append(widgetDest);
 			td1.append(leftRailStack);
+			if (options.Tool !== true) {
+				// Sprint 153 (print only): a hidden sibling AFTER .leftRailStack; CSS swaps the two.
+				const chartLeftHost = $('<div class="leftRailChartHost">');
+				chartLeftHost.attr('id', tableID + '_chartLeftHost');
+				td1.append(chartLeftHost);
+				InstrumentChartBuilder.createWidget(chartLeftHost, tableID, 'left', { instrumentCaption: options.baseID });
+			}
 			row.append(td1);
 		var td3 = $("<td>");
 			td3.append(table);

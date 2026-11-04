@@ -77,7 +77,8 @@ jest.unstable_mockModule('../../menu.js', () => ({
 
 jest.unstable_mockModule('../../approved-values.js', () => ({
 	renderApprovedValuesReferenceHtml: jest.fn(() => ''),
-	resolveApprovedValue: jest.fn(() => '')
+	resolveApprovedValue: jest.fn(() => ''),
+	expandApprovedTemplate: jest.fn(() => '')
 }));
 
 jest.unstable_mockModule('../../userColors.js', () => ({

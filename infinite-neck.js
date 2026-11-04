@@ -153,6 +153,7 @@ import { getSanitizedInfo, getSanitizedSongWidgets } from './html-sanitizer.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
 import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
+import { InstrumentChartBuilder } from './templates/InstrumentChart/instrument-chart.builder.js';
 import { TutorialPromptBuilder, buildTutorialPromptModel, renderPracticeList } from './templates/tutorial/tutorial.builder.js';
 import {
 	applyPromptToSectionTutorial,
@@ -288,6 +289,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	function installModuleProviders(){
+		InstrumentChartBuilder.setProviders({
+			getSection: (sectionIndex) => getSong().sections[sectionIndex]
+		});
 		setDisplayOptionsProviders({
 			getSong,
 			controlsToDisplayOptions
@@ -299,6 +303,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong,
 			getRootKey: () => getCurrentSection().getRootKey(),
 			getRootKeyLead: () => getCurrentSection().getRootKeyLead(),
+			getChartDisplayForSection: (kind, section) => SectionPrinter.getChartDisplayValue(
+				kind === 'chord' ? section.chartChord : section.chartMode,
+				kind,
+				getSong().chartOptions || {},
+				{ section, escapeHtml: true }
+			),
 			getTransposeCaptionValue: (tokenName) => {
 				const plugin = pluginManager.getPluginById('transpose');
 				if (!plugin || typeof plugin.getApprovedCaptionValue !== 'function') {
@@ -329,14 +339,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					section: getCurrentSection()
 				});
 			},
-			getTonalCaptionValue: (tokenName) => {
+			getTonalCaptionValue: (tokenName, section) => {
 				const plugin = pluginManager.getPluginById('tonal');
 				if (!plugin || typeof plugin.getApprovedCaptionValue !== 'function') {
 					return '';
 				}
+				// Sprint 153: an Instrument widget passes the Section that Instrument shows; otherwise the current Section.
 				return plugin.getApprovedCaptionValue(tokenName, {
 					song: getSong(),
-					section: getCurrentSection()
+					section: section || getCurrentSection()
 				});
 			}
 		});
@@ -999,6 +1010,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		const displayChartMode = SectionPrinter.getChartDisplayValue(currentSection.chartMode, 'mode', chartOptions, { section: currentSection });
 	    $(".lblSectionChartChord").html(displayChartChord);
 	    $(".lblSectionMode").html(displayChartMode);
+		// Sprint 153: Instrument chart widgets show each Instrument's own Section; re-expand after a chart edit or Section change.
+		InstrumentChartBuilder.refreshAll();
 
 		var currentFilename = getSong().songName;
 		if (currentFilename === undefined || currentFilename === null || currentFilename === '') {
@@ -2337,6 +2350,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			// Preserve loaded no-visible state; UI already provides warning and recovery flows.
 		}
 
+		// Sprint 153: the print-only chart widgets start off for every Song (154's panel re-applies its choices).
+		InstrumentChartBuilder.setMode({ top: false, left: false });
 		leaveFullscreen();
 		hideCmdLine();
 		hideAllMenuDivs(true);
@@ -2564,6 +2579,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function reinstallAllTuningsTables(){
 			var target = $("#tabledest");
+			// Sprint 153: tear down the widgets of the tables about to be replaced (they stay subscribed to the EventBus
+			// otherwise).  Only table-owned SectionStatus widgets: the lead-sheet one ('leadsheet') is not rebuilt here.
+			InstrumentChartBuilder.removeAll();
+			for (const ownerID of [...SectionStatusBuilder.registry.keys()]) {
+				if (ownerID.startsWith(Constants.TABLE_ID_PREFIX)) {
+					SectionStatusBuilder.removeByOwnerID(ownerID);
+				}
+			}
 			target.empty();
 			installAllTuningsTables();
 			installTDNoteClick();

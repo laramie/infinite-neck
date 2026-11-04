@@ -36,14 +36,15 @@ function sanitizeClassList(classList) {
  *  - Function symbols come from the Song's current `View > Function Symbols`.
  *  - Notes remaining with a sharp or flat (after TonalNote.simplify) are blackKey, otherwise whiteKey.
  *  - If relativeToLeadKey is true, the notes are unchanged but their functions and colors are computed
- *    relative to the Section's LeadKey (the same way a TinyNote is), falling back to the Key if no LeadKey is set. */
-export function formatTransposedChordNotesFunctions(noteArray, relativeToLeadKey=false){
+ *    relative to the Section's LeadKey (the same way a TinyNote is), falling back to the Key if no LeadKey is set.
+ *  - `section` (optional, Sprint 153) is the Section to root the functions on; default the current Section. */
+export function formatTransposedChordNotesFunctions(noteArray, relativeToLeadKey=false, section=undefined){
     const notes = (Array.isArray(noteArray) ? noteArray : []).filter((noteName) => noteNameToChroma(noteName) >= 0);
     if (notes.length === 0) {
         return '';
     }
 
-    const lookupContext = createLookupContext({ autoColor: true });
+    const lookupContext = createLookupContext({ autoColor: true, section });
     // lookupClassForNote() roots STYLENUM_TINY notes on rootIDLead (falling back to rootID) and the others on rootID.
     const lookupStyleNum = relativeToLeadKey ? Note.STYLENUM_TINY : Note.STYLENUM_NAMED;
     const songSymbols = getSong()?.noteNamesFuncArr;

@@ -30,4 +30,11 @@ Purpose of this sprint is to:
   - "Iteration 3":
     - Simplifications captured in the design document (widgets are print-only)
     - Copilot produced simplified implementation plan: [153-it3-implementation-plan.md](153-it3-implementation-plan.md)
+  - "Iteration 4":
+    - Decisions captured in the design document (`*Caption` tokens in templates, Tonal tokens scoped to a Section, flat `{top, left}` templates); CORE-APPROVED coding done.
+    - Templates: [templates/InstrumentChart/instrument-chart-templates.js](../../../../templates/InstrumentChart/instrument-chart-templates.js)
+    - Developer switch (DevTools console, not persisted, reset on song load): `InstrumentChartBuilder.setMode({ top: true, left: true })`; `setMode({ top: false })` merges; `InstrumentChartBuilder.getMode()`.
+    - Teardown: on table rebuild the widgets are removed, and only the SectionStatus owners whose ids start with `tbl` (the `leadsheet` owner shares that registry and is kept).
+    - New Jest: `approved-values-scoped`, `instrument-chart-core`, `instrument-chart-builder`.
+    - Manual UI acceptance (not run by Copilot): load `songs/demo/superchart.json`, switch both modes on, check each Instrument shows its own Section's chord/mode/key and that `${getSectionCaption}` with HTML in a caption is shown escaped.
 

@@ -587,29 +587,30 @@ export class TonalPlugin {
     };
   }
 
+  /** Sprint 153: context.section (when given) is the Section to describe, e.g. the Section an Instrument widget shows;
+   *  otherwise the Song's current Section, as before. */
   getApprovedCaptionValue(tokenName, context = {}) {
     const state = this.getApprovedCaptionState(context);
+    const section = context.section || this.getCurrentSection(context.song || getSong());
     if (tokenName === 'enharmonicTransposedModeNotes') {
-      return this.formatEnharmonicTransposedModeNotes();
+      return this.formatEnharmonicTransposedModeNotes(section);
     } else if (tokenName === 'transposedModeNotesFunctions') {
-      return this.formatTransposedModeNotes();
+      return this.formatTransposedModeNotes(section);
     } else if (tokenName === 'enharmonicTransposedChordNotes') {
-      return this.formatTransposedChordNotes(true);
+      return this.formatTransposedChordNotes(true, section);
     } else if (tokenName === 'transposedChordNotes') {
-      return this.formatTransposedChordNotes();
+      return this.formatTransposedChordNotes(false, section);
     } else if (tokenName === 'transposedChordNotesFunctions') {
-      return this.formatTransposedChordNotesFunctions();
+      return this.formatTransposedChordNotesFunctions(false, section);
     } else if (tokenName === 'transposedChordNotesLeadKeyFunctions') {
-      return this.formatTransposedChordNotesFunctions(true);
+      return this.formatTransposedChordNotesFunctions(true, section);
     } else if (tokenName === 'keySignatureCount') {
-      return this.buildKeySignatureCount(false);
+      return this.buildKeySignatureCount(false, section);
     } else if (tokenName === 'keySignatureCountHand') {
-      return this.buildKeySignatureCount(true);
+      return this.buildKeySignatureCount(true, section);
     } else if (tokenName === 'keySignatureSimplified') {
-      return this.buildKeySignatureSimplified();
+      return this.buildKeySignatureSimplified(section);
     } else if (tokenName === 'enharmonicChartModeNotes') {
-      const song = getSong();
-      const section = this .getCurrentSection(song);
       const mode = getMode(section.chartMode); //from TonalFunctions
       const body = mode.notes.join(', ').replaceAll('b','<small>&flat;</small>');
       return body;
@@ -617,20 +618,18 @@ export class TonalPlugin {
     return '';
   }
 
-  formatEnharmonicTransposedModeNotes(){
-    const notes = this.buildTransposedModeNotes();
+  formatEnharmonicTransposedModeNotes(section = this.getCurrentSection(getSong())){
+    const notes = this.buildTransposedModeNotes(section);
     const body = notes.join(', ').replaceAll('b','<small>&flat;</small>');
     return body;
   }
-  formatTransposedModeNotes(){
-    const notes = this.buildTransposedModeNotes().map(TonalNote.simplify);
-    const body = SongWidgets.formatTransposedChordNotesFunctions(notes, false); 
+  formatTransposedModeNotes(section = this.getCurrentSection(getSong())){
+    const notes = this.buildTransposedModeNotes(section).map(TonalNote.simplify);
+    const body = SongWidgets.formatTransposedChordNotesFunctions(notes, false, section); 
     return body;
       
   }
-  buildTransposedModeNotes(){
-      const song = getSong();
-      const section = this .getCurrentSection(song);
+  buildTransposedModeNotes(section = this.getCurrentSection(getSong())){
       const theMode = parseScaleBestEffort(section.chartMode);
       const type = theMode?.type || 'no-type';
       const transposedKey = Constants.getPreferredRootName(section.rootID);
@@ -645,17 +644,15 @@ export class TonalPlugin {
       //return body;
   }
 
-  formatTransposedChordNotes(enharmonic=false){
-    return this.buildTransposedChordNotes(enharmonic).join(', ').replaceAll('b','<small>&flat;</small>');
+  formatTransposedChordNotes(enharmonic=false, section = this.getCurrentSection(getSong())){
+    return this.buildTransposedChordNotes(enharmonic, section).join(', ').replaceAll('b','<small>&flat;</small>');
   }
-  formatTransposedChordNotesFunctions(relativeToLeadKey=false){
-    const noteArray = this.buildTransposedChordNotes(false);
-    return SongWidgets.formatTransposedChordNotesFunctions(noteArray, relativeToLeadKey); 
+  formatTransposedChordNotesFunctions(relativeToLeadKey=false, section = this.getCurrentSection(getSong())){
+    const noteArray = this.buildTransposedChordNotes(false, section);
+    return SongWidgets.formatTransposedChordNotesFunctions(noteArray, relativeToLeadKey, section); 
   }
 
-  buildTransposedChordNotes(enharmonic){
-      const song = getSong();
-      const section = this.getCurrentSection(song);
+  buildTransposedChordNotes(enharmonic, section = this.getCurrentSection(getSong())){
       const chartChord = getChord(section.chartChord); //from TonalFunctions
       if (!chartChord || chartChord.empty) {
         return [];
@@ -673,9 +670,7 @@ export class TonalPlugin {
       }
   }
 
-  buildKeySignatureCount(wantHand){
-      const song = getSong();
-      const section = this .getCurrentSection(song);
+  buildKeySignatureCount(wantHand, section = this.getCurrentSection(getSong())){
       const transposedKey = Constants.getPreferredRootName(section.rootID);
       const info = getKeySignatureInfo(transposedKey);
       let body = ' ';
@@ -687,9 +682,7 @@ export class TonalPlugin {
       return body;
   }
 
-  buildKeySignatureSimplified(){
-      const song = getSong();
-      const section = this .getCurrentSection(song);
+  buildKeySignatureSimplified(section = this.getCurrentSection(getSong())){
       const transposedKey = Constants.getPreferredRootName(section.rootID);
       const info = getKeySignatureInfo(transposedKey);
       return info.standardKey;

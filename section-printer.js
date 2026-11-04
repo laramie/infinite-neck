@@ -229,11 +229,15 @@ function formatModeWithoutRoot(chartMode = '') {
     return resolveModeName(rawValue) || rawValue;
 }
 
+/** @context.section  the Section whose root is shown when addTransposedRootToChord is on.
+ *  @context.escapeHtml  when true (Sprint 153 Instrument widgets) the chart text is HTML-escaped; the generated
+ *  <b class='chartTransposedRoot'> wrapper is not.  Default false: unchanged behavior for existing callers. */
 export function getChartDisplayValue(value, valueKind = 'text', songChartOptions = {}, context = {}) {
     const text = `${value || ''}`;
     const section = context?.section || null;
+    const escapeText = (s) => (context?.escapeHtml === true ? escapeHtmlAttribute(s) : s);
     if (!songChartOptions?.stripTonalRoots) {
-        return text;
+        return escapeText(text);
     }
 
     let strippedText = text;
@@ -247,11 +251,11 @@ export function getChartDisplayValue(value, valueKind = 'text', songChartOptions
         const rootText = getTransposedRootDisplay(section);
         const strippedSpace =  valueKind === 'mode' ? ' ' : '';
         if (rootText && strippedText && strippedText !== '%') {
-            return `<b class='chartTransposedRoot'>${rootText}</b>${strippedSpace}${strippedText}`;
+            return `<b class='chartTransposedRoot'>${rootText}</b>${strippedSpace}${escapeText(strippedText)}`;
         }
     }
 
-    return strippedText;
+    return escapeText(strippedText);
 }
 
 function percentStringToMultiplier(percentValue) {
