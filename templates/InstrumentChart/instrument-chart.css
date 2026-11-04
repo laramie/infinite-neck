@@ -24,7 +24,7 @@ body.icwTop .instrumentBackground > .captionRow {
 /* Left: replaces the whole Left Rail stack (caption + Section status + whatever is added later). */
 body.icwLeft .leftRailChartHost {
     display: block;
-    min-width: 0;
+    min-width: 4em;
     overflow-wrap: anywhere;
     padding: 0.15em 0.4em;
 }

@@ -6,6 +6,8 @@ sprint shortname: instrument-chart-widgets
 
 date: 20261103
 
+status: **passed and accepted** (20261104, Iteration 4 UI test)
+
 Index of all sprints for reference: [sprint planning index](../../../lifecycle/sprints.md)
 
 ## Purpose
@@ -37,4 +39,5 @@ Purpose of this sprint is to:
     - Teardown: on table rebuild the widgets are removed, and only the SectionStatus owners whose ids start with `tbl` (the `leadsheet` owner shares that registry and is kept).
     - New Jest: `approved-values-scoped`, `instrument-chart-core`, `instrument-chart-builder`.
     - Manual UI acceptance (not run by Copilot): load `songs/demo/superchart.json`, switch both modes on, check each Instrument shows its own Section's chord/mode/key and that `${getSectionCaption}` with HTML in a caption is shown escaped.
+  - "Iteration 4 test results": passed and accepted.  The `setMode` variants all worked.  The left rail widget wrapped every chord until `min-width: 4em` was added by hand in `instrument-chart.css`; GUI controls for the left width and the two paddings moved to sprint-154: [154-it3-implementation-plan.md](../154-print-layout/154-it3-implementation-plan.md).
 

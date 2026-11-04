@@ -119,3 +119,74 @@ Choices by Section in 154-it1-analysis.md
   - print as a third Layout screen (3.6). YES.
   - inheritance instead of copy for Observer layout (3.6). YES.
   - and whether Stage B is in scope for this sprint or the next. NEXT sprint / later Iteration.
+
+# sprint-154 Iteration 4
+
+## ANSWERS for: 10. Questions for the review round
+
+- **Q2. `print` flag defaults** (4.5), now including `LeftRails: false`.  Recommended as written.
+
+  - ANSWER: Accept recommendation.
+  
+- **Q3. The panel in fullscreen print.**  Recommended: ESC returns to it; floating it via `dockable.js` later if wanted.
+
+  - ANSWER:  Accept recommendation.
+  
+- **Q4. Print is not fullscreen** (menus stay, `@media print` hides them).  Recommended: yes.
+
+  - ANSWER: Accept recommendation. 
+  
+- **Q5. Option T** (transient tiles in the model, filtered at save).  Recommended: yes.
+
+  - ANSWER: Accept recommendation. 
+  
+- **Q6. Command siblings.**  Which letter, and an enter / leave pair now?
+
+  - ANSWER: No command-line changes this round.  Presumably we can enter / leave print with the GUI print control panel. 
+  
+- **Q7. Main's own per-table Theme override** while previewing: recommended ignore and restore on leave.
+
+  - ANSWER:  Accept recommendation.
+  
+- **Q8. Pages aligned to multiples of N** (Next snaps).  Recommended: yes.
+
+  - ANSWER: Accept recommendation. 
+  
+- **Q9. Size caps:** 1-8 for rows and columns, 24 tiles.  Enough?
+
+  - ANSWER: Almost.  Allow 48 max tiles so if the author makes small tables he can fit them in, in the style of current music literature chord books.  It may cause slowness, which is OK.
+  
+- **Q10. Auto fit in the first round**, or manual percent until the spike results are in?  Recommended: both, Auto fit measured from `.instrumentBackground`.
+
+  - ANSWER:  Accept recommendation.
+  
+- **Q11. Which table is the Main** when several qualify: remember only in the panel (recommended).
+
+  - ANSWER:  Accept recommendation.
+
+New:
+
+- **Q1. Left width: fixed or minimum?**  Recommended **fixed** (`width` = `min-width` = `max-width`) so all tiles match even with a longer chord.  If you prefer the pure `min-width` of your workaround, the CSS drops two lines and the label says "minimum".
+
+  - ANSWER:  Accept recommendation.
+  
+- **Q12. Default width** `4.8em` (identical to your accepted look, 4em plus padding) or a round `4em` total?
+
+  - ANSWER:  Accept recommendation.
+  
+- **Q13. Top padding default `'align'`** (checked) when the left widget is on.  When the left widget is off, the Top widget has nothing to align with, so the number field is used (default `0.4em`).  OK?
+
+  - ANSWER: OK.
+  
+- **Q14. Widget checkbox defaults** `true` / `true` in `print`.  OK?
+
+  - ANSWER: OK.
+  
+- **Q15. The latent Layout bug fix** (Step 3) is outside the print work.  Include it in this sprint (recommended; two lines in a non-CORE file), or log it separately?
+
+  - ANSWER: Approved for inclusion in this sprint.
+  
+- **Q16. `showDesktopTab` refactor** in `infinite-neck.js` is CORE and touches working tabs.  Recommended: do it (adds the tab cleanly, covered by the UI script); alternative: one more `if` branch with no refactor.
+
+  - ANSWER:  Accept recommendation.
+

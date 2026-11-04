@@ -144,3 +144,14 @@ So the first-round templates should be:
 
 With that one change, plus the answered questions, we think the plan says all holes have  a strategy approved. Please proceed to CORE-APPROVED coding.
 
+# Iteration 4 Test Results
+
+The variants of `InstrumentChartBuilder.setMode({ top: true, left: true }); ` all worked.
+
+The space provided for left rail chords was so small (min-width: 0, wrapping) that all chords wrapped.  As a work-around, we set min-width: 4em.  This was nice and consistent (consistent being important so the tile layouts are consistent).  However, it means we don't have control over this from the GUI.  This does not alter sprint-153, but rather, for sprint-154 we'd like to add a feature to the print control panel to adjust these with controls: 
+- the min-width. (just not-wrapping is not enough because we want them all to be the same in all tiles.)
+- the padding down for the left rail vertical template, so it can be spaced down a bit and doesn't crowd the top horizontal template
+- the padding left for the top horizontal tempate, so it lines up with the left edge of the actual instrument.  Presumably setting this left padding to the min-width of the left rail does this.
+
+Please mark this sprint-153 as passed and accepted, and proceed to rewriting the implementation plan for sprint-154 as a new version with the next available sprint Iteration number, incorporating the state of this sprint-153 and its implied changes to sprint-154, keeping the old one in place as you did for this sprint-153.
+

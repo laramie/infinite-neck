@@ -27,5 +27,8 @@ Purpose of this sprint is to:
     - Copilot produced analysis of Wishlist: [154-it1-analysis.md](154-it1-analysis.md)
   - "Iteration 2":
     - Decisions captured in the design document
-    - Copilot produced implementation plan (with DevTools spike recipe): [154-it2-implementation-plan.md](154-it2-implementation-plan.md)
+    - Copilot produced implementation plan (with DevTools spike recipe): [154-it2-implementation-plan.md](154-it2-implementation-plan.md) (written before sprint-153 was built; superseded by Iteration 3, kept for the spike recipe and unchanged sections)
+  - "Iteration 3":
+    - Sprint-153 passed and accepted.  Its test results add print panel controls: left widget width, left widget top padding, top widget left padding (with "align with left rail").
+    - Copilot produced the revised implementation plan: [154-it3-implementation-plan.md](154-it3-implementation-plan.md).  No `T` / `L` buttons, no re-sync, no ChartWidgets tab; two panel checkboxes drive `InstrumentChartBuilder.setMode()`; widget spacing via `InstrumentChartBuilder.setMetrics()`; a latent `layout.js` flag bug is fixed first.
 
