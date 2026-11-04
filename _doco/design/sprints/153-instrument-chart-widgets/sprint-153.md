@@ -27,4 +27,7 @@ Purpose of this sprint is to:
   - "Iteration 2":
     - Decisions captured in the design document
     - Copilot produced implementation plan: [153-it2-implementation-plan.md](153-it2-implementation-plan.md)
+  - "Iteration 3":
+    - Simplifications captured in the design document (widgets are print-only)
+    - Copilot produced simplified implementation plan: [153-it3-implementation-plan.md](153-it3-implementation-plan.md)
 
