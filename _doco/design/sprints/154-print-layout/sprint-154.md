@@ -24,5 +24,5 @@ Purpose of this sprint is to:
 
   - "Iteration 1": 
     - Define Wishlist
-    - Copilot produced analysis of Wishlist
+    - Copilot produced analysis of Wishlist: [154-it1-analysis.md](154-it1-analysis.md)
 

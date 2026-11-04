@@ -21,3 +21,101 @@ Please produce a high-level analysis of this wishlist, showing how it would be i
 We don't need detailed reporting on code locations yet.  But we would like to understand where new modules would be needed, and broad strokes around new methods and members needed.
 
 Please produce the report in `154-it1-analysis.md`
+
+# Iteration 2
+
+We have made some decisions, answered some questions, and perhaps opened up more.  Please produce a first-draft implementation plan.
+
+As discussed below, we assume that sprint-153 will be implemented first, so you'll have at least one more chance to review the code before committing to an implementation plan for this sprint-154.
+
+## Notes while reading analysis
+
+Yes: Use docked for everything. Float was only for mock-up.  No need to support it at all.  It was actually a bear to set up because of constant dragging around and window resizing to get the spacing right!
+
+Yes: No Tool Tables.
+
+For this sprint, DisplayOptions can take the simplification discussed below for Theme automation: assume that each tile is the same DisplayOptions so they all match, which is really the concept of the superchart.  The fullscreen view or preview may eventually show per-Section DisplayOptions, and that would be very useful, but is out of scope for this sprint.
+
+H7. Yes, accept the recommendation and allow the Caption into the horizontal row widget. (Since the widgets are separate markup, we can author these separately and not have the code decide to hide Caption in vertical/LeftRail mode for example.)
+
+H12. `Print` theme, (descends from `Snow`) already handles most of this.  We have found that `AutoColor: false` prints a whole lot more readably for seeing a whole song during a performance (SingleNote borders actually printed nicely making Note Name and Function very clear and high-contrast), but `AutoColor: true` was still useful for detailed study while practicing, since working with the printed page then shows similar colors to screen view on a monitor.  The note fill colors used in CycleOfColors, Stylesheets, and Roles all become part of the musician's memory and are great for learning modes and keys.  It would be up to the Song author to create or use a Stylesheet for the whole Song that is printer-friendly in both color and grayscale printing (lighter colors, more use of hatching than solid fills).  That is therefore out of scope, so long as selecting a Stylesheet or Look is available during `print` layout.
+
+Superchart is our new term for the printed page with optional Chart at the top, and multiple per-Section snapshots of Instrument@Section.  In the existing music literature, Song Charts, and Scores, often have small glyphs of chords that show a tiny table (about `4 frets` X `6 strings`, for example) with tiny dots where we show Notes.  These tend to be scaled to about the size of a printed word, so fit nicely over the score.  The other option is TAB, where the timeline and the fret positions are merged into a score.  infinite-neck attempts to go beyond the limitations of these systems, by effectively showing Master-Detail view in normal screen presentation: the Chart is Master, the Instrument@Section is Detail which displays when the Current Section cell of the Chart changes.  So when we go to print, we are envisioning something closer to existing scores and TAB, hence the tiling of, say, 6 Sections with a Chart row/rows on top of the page. The musician follows the Chart, and simultaneously has a visual reference of the voicing of each chord in the 6 printed Section snapshots below.  We would rely on recorded notes in the first beat only, so the Song must be authored with an idea of how it will print.
+
+Print layout should include presentation of choice of chart as you can today: Chart, LeadSheet, Line, Line+"Show Next Line".  Since you can turn these on per Layout, if you were in `print` Layout and requested a chart variant normally, that would be the one displayed in the printed page and the screen (really just fullscreen but knows it is `print` so it is effectively print preview).
+
+For print, we would likely hide Instrument Caption and Section Status widgets, because 1) they include print-ink-heavy coloring, 2) are redundant, and 3) are largely not needed for printed supercharts.  sprint-153 was designed to replace the existing widgets for print Layout.  For example, Relative Section Amount would be useful in screen Layout to make sure the Sections are laid out correctly, but we wouldn't need them in print Layout because the page cements the order.  Section Key would be valuable, but will be presented as simple text, similar to how Chart>Chart does it. 
+ 
+
+allowThemeAutomation is overkill for print.  Assume we go with the USER Theme derived from `Snow` and install it as system Theme `Print`. (We also have to tweak the Nut which currently uses colors too light to print, and problematic borders that are too attention-grabbing.)  While having the tiling be able to show Theme-per-table-per-Section might be nice for viewing songs on screen instead of printing them (which means this would work during looping ?!?!?!), that should be considered a nice-to-have.  The Design decisions seem complicated and that feature should be out of scope.  So for these sprints, consider that the only Theme allowed is the default Theme, or one single Theme chosen as part of the print options.  Defaults to Theme: `Print`.  Viewing all on screen as `Theme: Print` then is the simplification, and prints nicely, since we will address issues such as shadows and problematic colors for `Print`.
+
+The issue we are most unclear about is the split between thinking of this as a Layout, and as Print Preview.  Ideally, we think of going into Layout `print` which is effectively Layout `tile` but with rules/limitations versus a generalized `tile` where we could put multiple instruments in multiple Themes, DisplayOptions, and multiple tile sizes etc.  We are definitely not doing that.  But we would like to be able to be tiled in `print` layout and turn on Caption rows, LeftRail widgets, and have it be pretty much what we will see when a print media query is in effect and we send it off to the printer.  So we envision Print Preview to be `print` Layout that is live, e.g. follow the Transport, and be a real mode, even if it has "temporary" Observers in "temporary" tiles, with "temporary" options, e.g. all Observers mimic the Main.
+
+We see going into this mode as the system automatically cloning the required number of Observers, matching the Main as much as possible, and not letting us customize those Observers other than through a single panel that affects all at once and lets us throw them away, for example changing the 2x3 to a 2x4.
+
+We see simple buttons for T and L. `T` == "Top Chart Widgets", `L` == "LeftRail Chart Widgets".  They are always available to the right of `S` which puts them inside the hamburger that makes them hidden (e.g. `btnHamburgerCaptionRowButtonsP46_6`).  They live on the Main, and get copied on the Observers.  It's OK that for now the buttons on the Observers work individually.  But going through the tile/print-preview control panel `templates/printlayout/*` should set them up as cloned values as far as state, even if a manual button click is required to re-sync them.  Obviously the values in the widgets need to come from the right Section, and the template (e.g. the expansion used to build the actual widget) should be in one place: the panel that controls the horizontal and vertical markup, which is tied to the Main first.
+
+As far as the editing of the tiled/print mode (number of rows/columns, widget expansion markup, paging, etc.) we see putting a new Tab page next to divSongWidgetsTab and matching button for the widget expansion markup: "ChartWidgets", and another for all the tiling/cloning options: "PrintLayout" (the control panel `templates/printlayout/*`).  Perhaps a radio button to switch between widgets: "Top Chart" and "LeftRail Chart" on one Tab Page called "ChartWidgets".  We see a GUI-first approach for designing the Tab page called "PrintLayout". We would do command-line access later when we can see which things we would want to make available to the command-line and thus Macros.  Changing anything on "PrintLayout" should affect the Layout and tiling live.  The actual effects are throw-away.  The persistable parts are the choices on PrintLayout Tab.
+
+We would appreciate a code snippet for pasting into DevTools for investigating the spike from section 7.
+
+## Points Answered
+
+Choices by Section in 154-it1-analysis.md
+
+- 1.1 All docked, no floats.
+- 1 Recommendation
+  - Accept the one sentence recommendation.
+- 3.1 points  
+  - Backgrounds and cell colors will be modified by print-friendly Stylesheet, to be developed after implementation.
+  - single `--print-scale` variable sounds right.
+  - no floats
+- 3.2 points
+  - Accept CSS Grid recommendation.
+- 3.3 points
+  - Choose "Forward" as the only option.
+- 3.4 points
+  - Blank policies: support only `blank`
+  - Navigation helper on PrintLayout panel seems cool.
+  - let the plan hide the tile. Agree on this less invasive, second option
+- 3.5 points
+  - We lean towards an ephemeral solution as discussed above, but we  like the "Stage A, page view" option.  We are fine doing that for the first round, and either an option to ditch it all, or just save the panel options and not save the Observers.  Seems there might be more work in defining this.
+- 3.6 points
+  - Agree on the minimal, elegant solution.  "reference by inheritance" etc.
+  - Agree on de-duping the tuning copies.  Not even sure anything goes in the persisted Song file.  In this way, it is more like Print Preview, but the tiling options and Observer options are stored as properties of the panel.
+- 3.7 points
+  - Yes, call it simply `Print` in Themes.
+  - As discussed, no allowThemeAutomation applies to printing (or previewing either).
+- 3.8 points
+  - Yes, use the Main's DisplayOptions, so the tiled tables look as similar as possible.
+- 3.8a points
+  - As discussed, SectionStatus will most likely be turned off for printing.  It seems useful to let it behave as it does today and make the User turn it off, at least in the Main, rather than some fancy control on the tiling control panel `templates/printlayout/*`.
+- 4.5 points
+  - Commands: defer command-line addition until later, except for matching siblings for show/hide/toggle of Layout elements, e.g. `/vtw`
+- 6 Holes
+- H1 We would appreciate some boilerplate or sample code or recipe for completing this Spike.
+- H2 Single `--print-scale` seems a good step.
+- H3 Discussed above.  
+  - `blank` only
+  - Navigation helper
+  - hide the tile
+- H4 Seems we want both: navigating with Transport slides.  Hitting the NextPage button moves by rows*cols.  Not sure how to handle when sliding but then going to print multiple pages.  I guess that's why other apps have a real "Print Preview" in addition to "Page Preview" mode.  If we have to choose, NextPage is more reasonable.
+- H5 Resolve from tile's Section.
+- H6 Just one Main Instrument.
+- H7 Accept recommended tokens.  Our idea is that the default expansion markup will have all the `${getSectionCaption}<br>${beats}<br>...` in the default initial system storage, and authors will delete expansions they don't want. See additional discussion above.
+- H8 minimal persistence, lean towards throwing everything away except options for control panel `templates/printlayout/*`.
+- H9 Personally hate headers and footers as page-wasters! :) Section numbers are available in widgets.  Perhaps supported in later iteration.
+- H10 Regenerate yes.  No undo.  Real data is in the Song and Sections and Main Instrument.  Save data for control panel `templates/printlayout/*`, but don't worry about undo or graveyard.
+- H11 Either use Song default or put Theme choice in control panel `templates/printlayout/*`.  Probably simplest to have it in control panel `templates/printlayout/*` and simply ignore Song and Section settings.
+- H12 Answered above.
+- H13 Not sure.  Make reasonable, safe, simple choice for implementation.
+- H14 Will test.
+- H15 Tool tables and Listeners definitely out of scope.
+- 7.1 would appreciate recipe.
+- 7.2 Hopefully, implement sprint-153 first, which should close this gap.
+- 7.5 Decisions:
+  - forward as the default (3.3). YES.
+  - plan-owned blanks (3.4). YES.
+  - print as a third Layout screen (3.6). YES.
+  - inheritance instead of copy for Observer layout (3.6). YES.
+  - and whether Stage B is in scope for this sprint or the next. NEXT sprint / later Iteration.
