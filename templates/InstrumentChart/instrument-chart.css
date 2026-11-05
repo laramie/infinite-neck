@@ -20,6 +20,8 @@ body.icwTop .instrumentChartTop {
     box-sizing: border-box;
     padding: 0.15em 0.4em 0.15em var(--icw-top-padding-left, 0.4em);
     overflow-wrap: anywhere;
+    color: black;
+    font-size: 300%;
 }
 body.icwTop .instrumentBackground > .captionRow {
     display: none !important;
@@ -35,6 +37,8 @@ body.icwLeft .leftRailChartHost {
     max-width: var(--icw-left-width, 4.8em);
     overflow-wrap: anywhere;
     padding: var(--icw-left-padding-top, 0.15em) 0.4em 0.15em;
+    color: black;
+    font-size: 200%;
 }
 body.icwLeft .tdLeftRailStack > .leftRailStack {
     display: none !important;

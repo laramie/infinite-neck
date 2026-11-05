@@ -19,8 +19,8 @@
 
 export const CHART_WIDGET_TEMPLATES = Object.freeze({
 	top:
-		'<b>${chartChordCaption}</b>&nbsp;${chartModeCaption}&nbsp;&nbsp;${rootKeys}&nbsp;&nbsp;'
-		+ '&sect;${currentSectionCardinal}&nbsp;<small>${beats} beats</small>&nbsp;${getSectionCaption}',
+		'<b>${chartChordCaption}</b></span><span class="spacer2"> </span><span class="fontSmaller">${chartModeCaption}&nbsp;&nbsp;${getSectionCaption}<span class="spacer2"> </span>${rootKeys}&nbsp;&nbsp;'
+		+ '&sect;${currentSectionCardinal}&nbsp;<small>${beats} beats</small></span>',
 	left:
-		'<small>&sect;${currentSectionCardinal}</small><br><b>${chartChordCaption}</b><br>${rootKeys}'
+		'<b>${chartChordCaption}</b><br>${rootKeys}'
 });
