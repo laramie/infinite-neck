@@ -11,6 +11,12 @@ function makeSection(caption, chartChord, key) {
 const sections = [makeSection('One', 'C', 'C'), makeSection('Two', 'G', 'G')];
 const EVENT = 'Widget:SectionStatus:statusChanged';
 
+// The tests use their own User templates so they do not depend on the system ones (which are edited freely).
+const USER_TEMPLATES = {
+  left: [{ id: 'u-test-left', caption: 'test', template: '<small>&sect;${currentSectionCardinal}</small><br><b>${chartChordCaption}</b><br>${rootKeys}' }],
+  top: [{ id: 'u-test-top', caption: 'test', template: '<b>${chartChordCaption}</b>&nbsp;${getSectionCaption}&nbsp;&sect;${currentSectionCardinal}' }]
+};
+
 function emit(ownerID, sectionNumber) {
   EventBus.trigger(EVENT, { ownerID, sectionNumber });
 }
@@ -25,9 +31,11 @@ beforeEach(() => {
     getRootKeyLead: () => 'C',
     getChartDisplayForSection: (kind, section) => (kind === 'chord' ? section.chartChord : section.chartMode)
   });
-  InstrumentChartBuilder.setProviders({ getSection: (idx) => sections[idx] });
+  InstrumentChartBuilder.setProviders({ getSection: (idx) => sections[idx], getUserTemplates: () => USER_TEMPLATES });
   InstrumentChartBuilder.removeAll();
   InstrumentChartBuilder.setMode({ top: false, left: false });
+  InstrumentChartBuilder.resetTemplateIDs();
+  InstrumentChartBuilder.setTemplateIDs({ left: 'u-test-left', top: 'u-test-top' });
 });
 
 afterAll(() => {
@@ -121,6 +129,53 @@ describe('InstrumentChartBuilder', () => {
     hostB.innerHTML = '';
     emit('tblB', 2);
     expect(hostB.innerHTML).toBe('');
+  });
+});
+
+describe('InstrumentChartBuilder templates (sprint 154 it5)', () => {
+  test('setTemplateIDs switches the template and re-expands the live widgets', () => {
+    const host = { innerHTML: '' };
+    InstrumentChartBuilder.createWidget(host, 'tblA', 'left');
+    InstrumentChartBuilder.setMode({ left: true });
+    emit('tblA', 2);
+    expect(host.innerHTML).toBe('<small>&sect;2</small><br><b>G</b><br>G');
+    USER_TEMPLATES.left.push({ id: 'u-plain', caption: 'plain', template: '<b>${chartChordCaption}</b>' });
+    try {
+      InstrumentChartBuilder.setTemplateIDs({ left: 'u-plain' });
+      expect(host.innerHTML).toBe('<b>G</b>');
+      expect(InstrumentChartBuilder.getTemplateIDs().left).toBe('u-plain');
+    } finally {
+      USER_TEMPLATES.left.pop();
+    }
+  });
+
+  test('an edited User template shows up on the next refresh without changing the id', () => {
+    const host = { innerHTML: '' };
+    InstrumentChartBuilder.createWidget(host, 'tblA', 'top');
+    InstrumentChartBuilder.setMode({ top: true });
+    emit('tblA', 1);
+    expect(host.innerHTML).toContain('One');
+    const original = USER_TEMPLATES.top[0].template;
+    USER_TEMPLATES.top[0].template = '<i>${beats}</i>';
+    try {
+      InstrumentChartBuilder.setTemplateIDs({ top: 'u-test-top' });
+      expect(host.innerHTML).toBe('<i>4</i>');
+    } finally {
+      USER_TEMPLATES.top[0].template = original;
+    }
+  });
+
+  test('an unknown id (a deleted User template) shows the first system template; bad input is ignored', () => {
+    const host = { innerHTML: '' };
+    InstrumentChartBuilder.createWidget(host, 'tblA', 'left');
+    InstrumentChartBuilder.setMode({ left: true });
+    emit('tblA', 1);
+    InstrumentChartBuilder.setTemplateIDs({ left: 'u-gone', top: 5 });
+    expect(host.innerHTML).toContain('<b>C</b>');
+    expect(InstrumentChartBuilder.getTemplateIDs().top).toBe('u-test-top');
+    InstrumentChartBuilder.resetTemplateIDs();
+    expect(InstrumentChartBuilder.getTemplateIDs()).toEqual({ top: expect.any(String), left: expect.any(String) });
+    expect(InstrumentChartBuilder.getTemplateIDs().left).not.toBe('u-test-left');
   });
 });
 

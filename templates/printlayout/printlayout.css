@@ -27,3 +27,38 @@
     opacity: 0.75;
     max-width: 60em;
 }
+
+/* Sprint 154 it5: the chart widget template editors (left, then top). */
+.printLayoutPanel .plEditor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    border-top: 1px solid rgba(128, 128, 128, 0.4);
+    padding-top: 0.5em;
+}
+.printLayoutPanel .plEditorTitle {
+    font-weight: bold;
+}
+.printLayoutPanel .plCrud {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    margin-left: 1em;
+}
+.printLayoutPanel .plTemplateText {
+    width: 100%;
+    max-width: 60em;
+    box-sizing: border-box;
+    font-family: monospace;
+}
+.printLayoutPanel .plWarn {
+    color: #b00020;
+    min-height: 0;
+    font-size: 0.85em;
+}
+.printLayoutPanel .plWarn:empty {
+    display: none;
+}
+.printLayoutPanel .plCrud input[type="text"] {
+    max-width: 24em;
+}

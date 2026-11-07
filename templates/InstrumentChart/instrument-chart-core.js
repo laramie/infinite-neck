@@ -18,9 +18,33 @@ export const SAFE_WIDGET_TOKENS = Object.freeze([
 	'enharmonicChartModeNotes', 'keySignatureCount', 'keySignatureCountHand', 'keySignatureSimplified'
 ]);
 
-/** @param placement 'top' or 'left'.  @param id reserved for the later template selector; ignored for now. */
-export function getChartWidgetTemplate(placement, id) {
-	return CHART_WIDGET_TEMPLATES[placement] ?? '';
+/** The first system template of each placement: what the Print options use until the User chooses another. */
+export const CHART_WIDGET_DEFAULT_TEMPLATE_IDS = Object.freeze({
+	top: CHART_WIDGET_TEMPLATES.top[0].id,
+	left: CHART_WIDGET_TEMPLATES.left[0].id
+});
+
+/** Sprint 154 it5.  The { id, caption, template } for `id`: the system list first, then the User's list
+ *  (`userLists` is the Song's { top: [], left: [] }).  An unknown id gives the placement's first system entry;
+ *  an unknown placement gives null. */
+export function getChartWidgetTemplateEntry(placement, id, userLists) {
+	const system = CHART_WIDGET_TEMPLATES[placement];
+	if (!system) {
+		return null;
+	}
+	const user = Array.isArray(userLists?.[placement]) ? userLists[placement] : [];
+	return system.find((entry) => entry.id === id) ?? user.find((entry) => entry.id === id) ?? system[0];
+}
+
+/** `id` itself when it names a template, else the placement's default id. */
+export function resolveChartWidgetTemplateID(placement, id, userLists) {
+	return getChartWidgetTemplateEntry(placement, id, userLists)?.id ?? '';
+}
+
+/** @param placement 'top' or 'left'.  @param id a template id (unknown or omitted: the first system template).
+ *  @param userLists the Song's User templates, { top: [], left: [] }. */
+export function getChartWidgetTemplate(placement, id, userLists) {
+	return getChartWidgetTemplateEntry(placement, id, userLists)?.template ?? '';
 }
 
 /** Merges `raw` ({top?, left?}, booleans only) over `current`.  Anything that is not a boolean is ignored. */

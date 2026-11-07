@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 const approvedValues = await import('../../approved-values.js');
 const { CHART_WIDGET_TEMPLATES } = await import('../../templates/InstrumentChart/instrument-chart-templates.js');
 const core = await import('../../templates/InstrumentChart/instrument-chart-core.js');
+const templateSets = await import('../../templates/InstrumentChart/chart-widget-template-sets.js');
 const { isAllowedSanitizerTag } = await import('../../html-sanitizer.js');
 
 function makeSection({ beats, caption, chartChord, chartMode, key, lead }) {
@@ -30,20 +31,34 @@ beforeEach(() => {
 });
 
 describe('instrument chart templates', () => {
-  test('are the approved Iteration 4 text', () => {
-    expect(CHART_WIDGET_TEMPLATES.top).toBe('<b>${chartChordCaption}</b>&nbsp;${chartModeCaption}&nbsp;&nbsp;${rootKeys}&nbsp;&nbsp;&sect;${currentSectionCardinal}&nbsp;<small>${beats} beats</small>&nbsp;${getSectionCaption}');
-    expect(CHART_WIDGET_TEMPLATES.left).toBe('<small>&sect;${currentSectionCardinal}</small><br><b>${chartChordCaption}</b><br>${rootKeys}');
+  test('each placement is a non-empty ordered list of { id, caption, template } with unique ids', () => {
     expect(Object.keys(CHART_WIDGET_TEMPLATES).sort()).toEqual(['left', 'top']);
+    for (const [placement, list] of Object.entries(CHART_WIDGET_TEMPLATES)) {
+      expect(Array.isArray(list)).toBe(true);
+      expect(list.length).toBeGreaterThan(0);
+      const ids = list.map((entry) => entry.id);
+      expect(new Set(ids).size).toBe(ids.length);
+      for (const entry of list) {
+        expect(Object.keys(entry).sort()).toEqual(['caption', 'id', 'template']);
+        expect(entry.id).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+        expect(entry.id.startsWith('u-')).toBe(false);          // "u-" is for the User's
+        expect(entry.id.startsWith(`${placement}-`)).toBe(true);
+        expect(entry.caption.trim()).not.toBe('');
+        expect(entry.caption.length).toBeLessThanOrEqual(40);
+      }
+    }
   });
 
-  test('vocabulary guard: allowed tags, no classes, only SAFE_WIDGET_TOKENS', () => {
-    for (const template of Object.values(CHART_WIDGET_TEMPLATES)) {
-      for (const match of template.matchAll(/<\/?\s*([A-Za-z][A-Za-z0-9]*)/g)) {
-        expect(isAllowedSanitizerTag(match[1])).toBe(true);
-      }
-      expect(template).not.toMatch(/class\s*=/i);
-      for (const token of core.extractTemplateTokens(template)) {
-        expect(core.SAFE_WIDGET_TOKENS).toContain(token);
+  test('vocabulary guard: the same check the editor applies on Save (tags, class whitelist, SAFE_WIDGET_TOKENS)', () => {
+    for (const list of Object.values(CHART_WIDGET_TEMPLATES)) {
+      for (const entry of list) {
+        expect(templateSets.checkChartWidgetTemplate(entry.template)).toBe('');
+        for (const match of entry.template.matchAll(/<\/?\s*([A-Za-z][A-Za-z0-9]*)/g)) {
+          expect(isAllowedSanitizerTag(match[1])).toBe(true);
+        }
+        for (const token of core.extractTemplateTokens(entry.template)) {
+          expect(core.SAFE_WIDGET_TOKENS).toContain(token);
+        }
       }
     }
   });
@@ -55,10 +70,22 @@ describe('instrument chart templates', () => {
 });
 
 describe('getChartWidgetTemplate / normalizeChartWidgetMode', () => {
-  test('picks by placement and ignores the id', () => {
-    expect(core.getChartWidgetTemplate('top')).toBe(CHART_WIDGET_TEMPLATES.top);
-    expect(core.getChartWidgetTemplate('left', 'whatever')).toBe(CHART_WIDGET_TEMPLATES.left);
+  const user = { top: [{ id: 'u-mine', caption: 'Mine', template: '<b>${beats}</b>' }], left: [] };
+
+  test('picks by placement and id: system list first, then the User list', () => {
+    const [firstTop, secondTop] = CHART_WIDGET_TEMPLATES.top;
+    expect(core.getChartWidgetTemplate('top')).toBe(firstTop.template);
+    expect(core.getChartWidgetTemplate('top', secondTop.id)).toBe(secondTop.template);
+    expect(core.getChartWidgetTemplate('top', 'u-mine', user)).toBe('<b>${beats}</b>');
     expect(core.getChartWidgetTemplate('bottom')).toBe('');
+  });
+
+  test('an unknown id (a deleted User template) falls back to the first system template', () => {
+    expect(core.getChartWidgetTemplate('left', 'whatever')).toBe(CHART_WIDGET_TEMPLATES.left[0].template);
+    expect(core.getChartWidgetTemplate('top', 'u-mine')).toBe(CHART_WIDGET_TEMPLATES.top[0].template);   // no user list given
+    expect(core.resolveChartWidgetTemplateID('top', 'u-mine', user)).toBe('u-mine');
+    expect(core.resolveChartWidgetTemplateID('top', 'u-gone', user)).toBe(CHART_WIDGET_TEMPLATES.top[0].id);
+    expect(core.CHART_WIDGET_DEFAULT_TEMPLATE_IDS).toEqual({ top: CHART_WIDGET_TEMPLATES.top[0].id, left: CHART_WIDGET_TEMPLATES.left[0].id });
   });
 
   test('merges booleans over the current mode and ignores everything else', () => {
@@ -74,15 +101,18 @@ describe('getChartWidgetTemplate / normalizeChartWidgetMode', () => {
 });
 
 describe('expandChartWidgetTemplate', () => {
+  const LEFT = '<small>&sect;${currentSectionCardinal}</small><br><b>${chartChordCaption}</b><br>${rootKeys}';
+  const TOP = '<b>${chartChordCaption}</b> ${chartModeCaption} ${getSectionCaption} &sect;${currentSectionCardinal} ${beats} beats';
+
   test('two Instruments on different Sections expand differently', () => {
-    const first = core.expandChartWidgetTemplate({ template: CHART_WIDGET_TEMPLATES.left, section: sections[0], sectionIndex: 0, tableID: 'tblA' });
-    const second = core.expandChartWidgetTemplate({ template: CHART_WIDGET_TEMPLATES.left, section: sections[1], sectionIndex: 1, tableID: 'tblB' });
+    const first = core.expandChartWidgetTemplate({ template: LEFT, section: sections[0], sectionIndex: 0, tableID: 'tblA' });
+    const second = core.expandChartWidgetTemplate({ template: LEFT, section: sections[1], sectionIndex: 1, tableID: 'tblB' });
     expect(first).toBe('<small>&sect;1</small><br><b>Am</b><br>F&#x2836;A');
     expect(second).toBe('<small>&sect;2</small><br><b>G7</b><br>G');
   });
 
   test('top template includes beats, caption, and the instrument caption token is blank when not supplied', () => {
-    const html = core.expandChartWidgetTemplate({ template: CHART_WIDGET_TEMPLATES.top, section: sections[1], sectionIndex: 1, tableID: 'tblB' });
+    const html = core.expandChartWidgetTemplate({ template: TOP, section: sections[1], sectionIndex: 1, tableID: 'tblB' });
     expect(html).toContain('8 beats');
     expect(html).toContain('Verse');
     expect(html).toContain('Mixolydian');
@@ -90,7 +120,7 @@ describe('expandChartWidgetTemplate', () => {
   });
 
   test('a missing Section expands to empty, and unknown names are removed', () => {
-    expect(core.expandChartWidgetTemplate({ template: CHART_WIDGET_TEMPLATES.top, section: undefined })).toBe('');
+    expect(core.expandChartWidgetTemplate({ template: CHART_WIDGET_TEMPLATES.top[0].template, section: undefined })).toBe('');
     expect(core.expandChartWidgetTemplate({ template: 'a${nope}b', section: sections[0], sectionIndex: 0 })).toBe('ab');
   });
 });

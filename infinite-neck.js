@@ -293,11 +293,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	function installModuleProviders(){
 		InstrumentChartBuilder.setProviders({
-			getSection: (sectionIndex) => getSong().sections[sectionIndex]
+			getSection: (sectionIndex) => getSong().sections[sectionIndex],
+			getUserTemplates: () => getSong()?.chartWidgetTemplates
 		});
 		PrintLayoutController.setProviders({
 			getSong,
-			reinstallTables: () => EventBus.trigger('ReinstallAllTuningsTables'),
+			reinstallTables: () => {
+				EventBus.trigger('ReinstallAllTuningsTables');
+				if (!isPrintLayoutActive()) {
+					// leaving print: the rebuilt tables need their Wiring widgets again (print tiles have none)
+					EventBus.trigger('UpdateAllWiringSelects');
+				}
+			},
 			getThemeId: () => $('#selThemes').val(),
 			setThemeId: (themeId) => { $('#selThemes').val(themeId).trigger('change'); },
 			isFullscreen: isFullscreenActive,
@@ -2631,6 +2638,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			// does, installRBColorChangeEvents()'s own initializePalettePresentation()
 			// call refreshes them again.
 			PalettePresentation.refreshPaletteStatusSpans();
+			// Sprint 154 it5: every table was just rebuilt, so its .divWiring is a fresh, visible element.  Re-apply the
+			// Wiring open/closed state (the 'e' key) to it, as WiringBuilder does after it fills the widgets.
+			restoreWiringOpenState();
 	}
 
 	/** Resolves the { left, top, width, height, zIndex, handleOrientation } rect to

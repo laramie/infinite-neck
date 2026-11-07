@@ -7,6 +7,7 @@
  * 154-it4-implementation-report.md. */
 import * as Constants from './Constants.js';
 import {
+	CHART_WIDGET_DEFAULT_TEMPLATE_IDS,
 	CHART_WIDGET_METRIC_DEFAULTS,
 	normalizeChartWidgetMetrics
 } from './templates/InstrumentChart/instrument-chart-core.js';
@@ -33,10 +34,17 @@ export const PRINT_GRID_DEFAULTS = Object.freeze({
 	mainTableID: '',
 	theme: PRINT_THEME_PRINT,
 	scale: PRINT_SCALE_AUTO,
-	paper: PRINT_DEFAULT_PAPER
+	paper: PRINT_DEFAULT_PAPER,
+	pageBox: true            // Sprint 154 it5: a dashed box around page 1's printable area (screen only)
 });
 
-export const PRINT_CHART_DEFAULTS = Object.freeze({ top: true, left: true, ...CHART_WIDGET_METRIC_DEFAULTS });
+export const PRINT_CHART_DEFAULTS = Object.freeze({
+	top: true,
+	left: true,
+	...CHART_WIDGET_METRIC_DEFAULTS,
+	topTemplateID: CHART_WIDGET_DEFAULT_TEMPLATE_IDS.top,     // Sprint 154 it5: which template of each list
+	leftTemplateID: CHART_WIDGET_DEFAULT_TEMPLATE_IDS.left
+});
 
 /** The flags of the `print` Layout screen (the same names the other screens use). */
 export const PRINT_SCREEN_FLAG_DEFAULTS = Object.freeze({
@@ -101,12 +109,18 @@ export function normalizePrintOptions(raw, validMainTableIDs = [], current = nul
 	const paper = PRINT_PAPERS[g.paper] ? g.paper : PRINT_DEFAULT_PAPER;
 
 	const metrics = normalizeChartWidgetMetrics(c);
+	const templateID = (value, fallback) => (typeof value === 'string' && value !== '' ? value : fallback);
 	return {
-		grid: { rows, cols, mainTableID, theme, scale, paper },
+		grid: {
+			rows, cols, mainTableID, theme, scale, paper,
+			pageBox: typeof g.pageBox === 'boolean' ? g.pageBox : PRINT_GRID_DEFAULTS.pageBox
+		},
 		chart: {
 			top: typeof c.top === 'boolean' ? c.top : PRINT_CHART_DEFAULTS.top,
 			left: typeof c.left === 'boolean' ? c.left : PRINT_CHART_DEFAULTS.left,
-			...metrics
+			...metrics,
+			topTemplateID: templateID(c.topTemplateID, PRINT_CHART_DEFAULTS.topTemplateID),
+			leftTemplateID: templateID(c.leftTemplateID, PRINT_CHART_DEFAULTS.leftTemplateID)
 		}
 	};
 }
@@ -211,6 +225,19 @@ export function lastPageIndex(count, opts) {
 export function pageWidthPx(paperID, marginIn = PRINT_MARGIN_IN) {
 	const paper = PRINT_PAPERS[paperID] || PRINT_PAPERS[PRINT_DEFAULT_PAPER];
 	return Math.floor((paper.widthIn - 2 * marginIn) * 96);
+}
+
+/** Printable height of one page, CSS px (paper height minus the margins), for the on-screen page box. */
+export function pageHeightPx(paperID, marginIn = PRINT_MARGIN_IN) {
+	const paper = PRINT_PAPERS[paperID] || PRINT_PAPERS[PRINT_DEFAULT_PAPER];
+	return Math.floor((paper.heightIn - 2 * marginIn) * 96);
+}
+
+/** The text drawn in the corner of the page box: "Letter, portrait: 7.7 x 10.2 in printable (739 x 979 px)". */
+export function pageBoxLabel(paperID, marginIn = PRINT_MARGIN_IN) {
+	const paper = PRINT_PAPERS[paperID] || PRINT_PAPERS[PRINT_DEFAULT_PAPER];
+	const inches = (value) => Math.round((value - 2 * marginIn) * 10) / 10;
+	return `${paper.label}: ${inches(paper.widthIn)} x ${inches(paper.heightIn)} in printable (${pageWidthPx(paperID, marginIn)} x ${pageHeightPx(paperID, marginIn)} px), page 1`;
 }
 
 export function pageSizeCss(paperID, marginIn = PRINT_MARGIN_IN) {

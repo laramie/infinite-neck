@@ -12,9 +12,14 @@
  * Sprint 154 adds the spacing (CSS variables on <body>; see instrument-chart-core.js):
  *     InstrumentChartBuilder.setMetrics({ leftWidthEm: 5, leftPaddingTopEm: 0.5, topPaddingLeftEm: 'align' });
  *     InstrumentChartBuilder.getMetrics();  InstrumentChartBuilder.resetMetrics();
+ * Sprint 154 it5 chooses the template of each placement by id (system ids in instrument-chart-templates.js, the
+ * User's in the Song's `chartWidgetTemplates`); the Print panel does this for you:
+ *     InstrumentChartBuilder.setTemplateIDs({ top: 'top-chord', left: 'left-chord' });
+ *     InstrumentChartBuilder.getTemplateIDs();  InstrumentChartBuilder.resetTemplateIDs();
  */
 import EventBus from '../../event-bus.js';
 import {
+	CHART_WIDGET_DEFAULT_TEMPLATE_IDS,
 	CHART_WIDGET_METRIC_DEFAULTS,
 	CHART_WIDGET_METRIC_VARS,
 	CHART_WIDGET_PLACEMENTS,
@@ -29,7 +34,9 @@ const BODY_CLASS_BY_PLACEMENT = Object.freeze({ top: 'icwTop', left: 'icwLeft' }
 
 let providers = {
 	/** (sectionIndex) => Section | undefined */
-	getSection: () => undefined
+	getSection: () => undefined,
+	/** () => the Song's User templates, { top: [], left: [] } */
+	getUserTemplates: () => undefined
 };
 
 export class InstrumentChartBuilder {
@@ -37,6 +44,7 @@ export class InstrumentChartBuilder {
 	static mode = { top: false, left: false };
 	static metrics = { ...CHART_WIDGET_METRIC_DEFAULTS };
 	static metricsApplied = false;   // false: no variables on <body>, the CSS fallbacks (the accepted look) apply
+	static templateIDs = { ...CHART_WIDGET_DEFAULT_TEMPLATE_IDS };
 
 	static setProviders(next = {}) {
 		providers = { ...providers, ...next };
@@ -92,6 +100,27 @@ export class InstrumentChartBuilder {
 
 	static getMetrics() {
 		return { ...InstrumentChartBuilder.metrics };
+	}
+
+	/** Merges the template ids in `raw` ({top?, left?}, non-empty strings only) and re-expands every widget.
+	 *  An id that names no template shows the placement's first system template (getChartWidgetTemplate). */
+	static setTemplateIDs(raw) {
+		for (const placement of CHART_WIDGET_PLACEMENTS) {
+			const id = raw?.[placement];
+			if (typeof id === 'string' && id !== '') {
+				InstrumentChartBuilder.templateIDs[placement] = id;
+			}
+		}
+		InstrumentChartBuilder.refreshAll();
+		return InstrumentChartBuilder.getTemplateIDs();
+	}
+
+	static getTemplateIDs() {
+		return { ...InstrumentChartBuilder.templateIDs };
+	}
+
+	static resetTemplateIDs() {
+		InstrumentChartBuilder.templateIDs = { ...CHART_WIDGET_DEFAULT_TEMPLATE_IDS };
 	}
 
 	/** Back to the CSS fallbacks: removes the variables from <body>. */
@@ -168,7 +197,11 @@ class InstrumentChartWidget {
 		}
 		const section = this.sectionIndex === null ? undefined : providers.getSection(this.sectionIndex);
 		const html = expandChartWidgetTemplate({
-			template: getChartWidgetTemplate(this.placement),
+			template: getChartWidgetTemplate(
+				this.placement,
+				InstrumentChartBuilder.templateIDs[this.placement],
+				providers.getUserTemplates()
+			),
 			section,
 			sectionIndex: this.sectionIndex,
 			tableID: this.ownerID,

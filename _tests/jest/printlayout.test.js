@@ -7,6 +7,7 @@ import { Wiring } from '../../Wiring.js';
 import { getThemes } from '../../themeFunctions.js';
 import * as PL from '../../printlayout.js';
 import { PrintLayoutController } from '../../templates/printlayout/printlayout.controller.js';
+import { CHART_WIDGET_TEMPLATES } from '../../templates/InstrumentChart/instrument-chart-templates.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -34,8 +35,20 @@ describe('printlayout.js: normalizePrintOptions', () => {
 
   test('defaults', () => {
     const o = PL.normalizePrintOptions(undefined, mains);
-    expect(o.grid).toEqual({ rows: PL.PRINT_GRID_DEFAULTS.rows, cols: PL.PRINT_GRID_DEFAULTS.cols, mainTableID: 'tblA', theme: PL.PRINT_GRID_DEFAULTS.theme, scale: 'auto', paper: 'letter-portrait' });
-    expect(o.chart).toEqual({ top: true, left: true, leftWidthEm: 4.8, leftPaddingTopEm: 0.15, topPaddingLeftEm: 'align' });
+    expect(o.grid).toEqual({ rows: PL.PRINT_GRID_DEFAULTS.rows, cols: PL.PRINT_GRID_DEFAULTS.cols, mainTableID: 'tblA', theme: PL.PRINT_GRID_DEFAULTS.theme, scale: 'auto', paper: 'letter-portrait', pageBox: true });
+    expect(o.chart).toEqual({
+      top: true, left: true, leftWidthEm: 4.8, leftPaddingTopEm: 0.15, topPaddingLeftEm: 'align',
+      topTemplateID: CHART_WIDGET_TEMPLATES.top[0].id, leftTemplateID: CHART_WIDGET_TEMPLATES.left[0].id
+    });
+  });
+
+  test('pageBox is a boolean; template ids are non-empty strings (anything else is the default)', () => {
+    expect(PL.normalizePrintOptions({ grid: { pageBox: false } }, mains).grid.pageBox).toBe(false);
+    expect(PL.normalizePrintOptions({ grid: { pageBox: 'no' } }, mains).grid.pageBox).toBe(true);
+    const o = PL.normalizePrintOptions({ chart: { topTemplateID: 'u-mine', leftTemplateID: 5 } }, mains);
+    expect(o.chart.topTemplateID).toBe('u-mine');
+    expect(o.chart.leftTemplateID).toBe(CHART_WIDGET_TEMPLATES.left[0].id);
+    expect(PL.normalizePrintOptions({ chart: { topTemplateID: '' } }, mains).chart.topTemplateID).toBe(CHART_WIDGET_TEMPLATES.top[0].id);
   });
 
   test('rows and columns are 1-8 and never more than 48 tiles (rows is reduced)', () => {
@@ -255,5 +268,91 @@ describe('PrintLayoutController (model side, no DOM)', () => {
 
   test('getThemeToSave is null unless print is active', () => {
     expect(PrintLayoutController.getThemeToSave()).toBeNull();
+  });
+
+  test('User chart widget templates: stored in the Song per placement; a deleted id reads as the default', () => {
+    expect(PrintLayoutController.getUserTemplates()).toEqual({ top: [], left: [] });
+    const mine = { id: 'u-mine', caption: 'Mine', template: '<b>${beats}</b>' };
+    PrintLayoutController.setUserTemplates('top', [mine]);
+    expect(song.chartWidgetTemplates).toEqual({ top: [mine], left: [] });
+    PrintLayoutController.setOptions({ chart: { topTemplateID: 'u-mine' } });
+    expect(PrintLayoutController.getOptions().chart.topTemplateID).toBe('u-mine');
+    PrintLayoutController.setUserTemplates('top', []);
+    expect(PrintLayoutController.getOptions().chart.topTemplateID).toBe(CHART_WIDGET_TEMPLATES.top[0].id);
+  });
+
+  test('the chosen template ids are saved in the print screen; pageBox too', () => {
+    PrintLayoutController.setOptions({ chart: { leftTemplateID: CHART_WIDGET_TEMPLATES.left[1].id }, grid: { pageBox: false } });
+    const printScreen = song.getLayout().screenList.print;
+    expect(printScreen.chart.leftTemplateID).toBe(CHART_WIDGET_TEMPLATES.left[1].id);
+    expect(printScreen.grid.pageBox).toBe(false);
+  });
+});
+
+describe('printlayout.js: page box (sprint 154 it5)', () => {
+  test('the printable height is the paper height minus both margins, in CSS px', () => {
+    expect(PL.pageHeightPx('letter-portrait')).toBe(Math.floor((11 - 0.8) * 96));
+    expect(PL.pageHeightPx('letter-landscape')).toBe(Math.floor((8.5 - 0.8) * 96));
+    expect(PL.pageHeightPx('a4-portrait')).toBe(Math.floor((11.69 - 0.8) * 96));
+    expect(PL.pageHeightPx('nonsense')).toBe(PL.pageHeightPx('letter-portrait'));
+  });
+
+  test('the label names the paper and both sizes', () => {
+    expect(PL.pageBoxLabel('letter-portrait')).toBe('Letter, portrait: 7.7 x 10.2 in printable (739 x 979 px), page 1');
+  });
+
+  test('print.css draws the box from the variables the controller sets', () => {
+    const css = fs.readFileSync(path.join(here, '../../print.css'), 'utf8');
+    expect(css).toContain('printPageBoxOn');
+    expect(css).toContain('var(--print-page-height');
+    expect(css).toContain('attr(data-page-box)');
+    expect(css).toMatch(/@media print\s*\{[^}]*printPageBoxOn #tabledest::after\s*\{\s*display:\s*none/);
+  });
+
+  test('print.css hides the Wiring div of every tile (sprint 154 it5 bug)', () => {
+    const css = fs.readFileSync(path.join(here, '../../print.css'), 'utf8');
+    expect(css).toMatch(/body\.printScreen \.divWiring\s*\{\s*display:\s*none !important/);
+  });
+});
+
+describe('chartWidgetTemplates persistence (sprint 154 it5)', () => {
+  const saved = (song) => JSON.parse(JSON.stringify(song, SongPersistence.persistentSongFileReplacer));
+  const mine = { id: 'u-mine', caption: 'Mine', template: '<b>${chartChordCaption}</b>' };
+
+  function load(extra = {}) {
+    const data = { ...JSON.parse(fs.readFileSync(path.join(here, '../../songs/tests/display-options.json'), 'utf8')), ...extra };
+    const song = new Song(data);
+    song.ensureDefaultSection();
+    song.fixupCurrentIndexForLoadedSong();
+    song.setHeadless(true, true);
+    return song;
+  }
+
+  test('a Song without User templates has the empty lists and writes nothing', () => {
+    const song = load();
+    expect(song.chartWidgetTemplates).toEqual({ top: [], left: [] });
+    expect('chartWidgetTemplates' in saved(song)).toBe(false);
+  });
+
+  test('only the non-empty placements are saved, and they load back', () => {
+    const song = load({ chartWidgetTemplates: { top: [mine], left: [] } });
+    expect(saved(song).chartWidgetTemplates).toEqual({ top: [mine] });
+    expect(load(saved(song)).chartWidgetTemplates).toEqual({ top: [mine], left: [] });
+  });
+
+  test('a hand-edited Song file cannot smuggle unsafe markup in: such entries are dropped on load', () => {
+    const song = load({
+      chartWidgetTemplates: {
+        top: [
+          mine,
+          { id: 'u-script', caption: 'Script', template: '<script>alert(1)</script>' },
+          { id: 'u-handler', caption: 'Handler', template: '<b onclick="x()">${beats}</b>' },
+          { id: 'u-token', caption: 'Token', template: '${getSongName}' },
+          { id: 'top-chord', caption: 'Clash', template: '<b>${beats}</b>' }
+        ],
+        left: 'nonsense'
+      }
+    });
+    expect(song.chartWidgetTemplates).toEqual({ top: [mine], left: [] });
   });
 });

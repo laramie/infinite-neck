@@ -10,9 +10,11 @@ import EventBus from '../../event-bus.js';
 import { Wiring } from '../../Wiring.js';
 import { InstrumentChartBuilder } from '../InstrumentChart/instrument-chart.builder.js';
 import * as PL from '../../printlayout.js';
+import { resolveChartWidgetTemplateID } from '../InstrumentChart/instrument-chart-core.js';
+import { emptyUserTemplates } from '../InstrumentChart/chart-widget-template-sets.js';
 
 const PAGE_STYLE_ID = 'printLayoutPageStyle';
-const BODY_VARS = ['--print-page-width', '--print-cols', '--print-scale'];
+const BODY_VARS = ['--print-page-width', '--print-page-height', '--print-cols', '--print-scale'];
 
 let providers = {
 	getSong: () => undefined,
@@ -66,11 +68,27 @@ export class PrintLayoutController {
 		});
 	}
 
-	/** The normalized panel options ({grid, chart}), read from layout.screenList.print. */
+	/** The normalized panel options ({grid, chart}), read from layout.screenList.print.  A chosen template id that no longer
+	 *  exists (a deleted User template) reads as the placement's first system template. */
 	static getOptions() {
 		const song = providers.getSong();
 		const printScreen = song?.getLayout()?.screenList?.print;
-		return PL.normalizePrintOptions(printScreen, PrintLayoutController.getMainCandidates());
+		const opts = PL.normalizePrintOptions(printScreen, PrintLayoutController.getMainCandidates());
+		const userLists = PrintLayoutController.getUserTemplates();
+		opts.chart.topTemplateID = resolveChartWidgetTemplateID('top', opts.chart.topTemplateID, userLists);
+		opts.chart.leftTemplateID = resolveChartWidgetTemplateID('left', opts.chart.leftTemplateID, userLists);
+		return opts;
+	}
+
+	/** The Song's User chart widget templates, { top: [], left: [] }. */
+	static getUserTemplates() {
+		return providers.getSong()?.chartWidgetTemplates ?? emptyUserTemplates();
+	}
+
+	/** Replaces one placement's User list in the Song (the editors call this; the Print options pick the id). */
+	static setUserTemplates(placement, list) {
+		const song = providers.getSong();
+		song.chartWidgetTemplates = { ...emptyUserTemplates(), ...song.chartWidgetTemplates, [placement]: list };
 	}
 
 	/** Merges `partial` ({grid?, chart?}) into the options and persists them in layout.screenList.print. */
@@ -80,7 +98,7 @@ export class PrintLayoutController {
 		const next = PL.normalizePrintOptions(partial, PrintLayoutController.getMainCandidates(), PrintLayoutController.getOptions());
 		printScreen.grid = next.grid;
 		printScreen.chart = next.chart;
-		return next;
+		return PrintLayoutController.getOptions();   // the same, with a deleted template's id resolved to the default
 	}
 
 	/** The Theme to write into the Song file while print has changed the live Theme (null: nothing to override). */
@@ -149,6 +167,7 @@ export class PrintLayoutController {
 		PrintLayoutController.restore = null;
 		InstrumentChartBuilder.setMode({ top: false, left: false });
 		InstrumentChartBuilder.resetMetrics();
+		InstrumentChartBuilder.resetTemplateIDs();
 		PrintLayoutController.clearDom();
 		PrintLayoutController.notify();
 	}
@@ -209,6 +228,7 @@ export class PrintLayoutController {
 		body.style.setProperty('--print-page-width', `${pagePx}px`);
 		body.style.setProperty('--print-cols', `${opts.grid.cols}`);
 		PrintLayoutController.applyPageStyle(opts.grid.paper);
+		PrintLayoutController.applyPageBox(opts.grid);
 
 		const wantedTheme = opts.grid.theme === PL.PRINT_THEME_SONG ? PrintLayoutController.restore?.theme : opts.grid.theme;
 		if (wantedTheme && providers.getThemeId() !== wantedTheme) {
@@ -220,6 +240,7 @@ export class PrintLayoutController {
 			leftPaddingTopEm: opts.chart.leftPaddingTopEm,
 			topPaddingLeftEm: opts.chart.topPaddingLeftEm
 		});
+		InstrumentChartBuilder.setTemplateIDs({ top: opts.chart.topTemplateID, left: opts.chart.leftTemplateID });
 		InstrumentChartBuilder.setMode({ top: opts.chart.top, left: opts.chart.left });
 
 		PrintLayoutController.markTiles(opts);
@@ -237,9 +258,19 @@ export class PrintLayoutController {
 	}
 
 	static clearDom() {
-		document.body.classList.remove('printScreen');
+		document.body.classList.remove('printScreen', 'printPageBoxOn');
 		BODY_VARS.forEach((name) => document.body.style.removeProperty(name));
+		document.getElementById('tabledest')?.removeAttribute('data-page-box');
 		document.getElementById(PAGE_STYLE_ID)?.remove();
+	}
+
+	/** The dashed box around page 1's printable area (print.css).  The width is exact (it is the grid's own width);
+	 *  the height is the paper height minus the margins, in CSS px, which is what the browser prints at 100% scale. */
+	static applyPageBox(grid) {
+		const body = document.body;
+		body.classList.toggle('printPageBoxOn', grid.pageBox === true);
+		body.style.setProperty('--print-page-height', `${PL.pageHeightPx(grid.paper)}px`);
+		document.getElementById('tabledest')?.setAttribute('data-page-box', PL.pageBoxLabel(grid.paper));
 	}
 
 	static getTileOuters() {

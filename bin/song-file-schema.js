@@ -267,6 +267,22 @@ const pluginSchema = {
     additionalProperties: true
 };
 
+// Sprint 154 it5: one placement's User chart widget templates (see templates/InstrumentChart/chart-widget-template-sets.js).
+const chartWidgetTemplateListSchema = {
+    type: 'array',
+    maxItems: 20,
+    items: {
+        type: 'object',
+        properties: {
+            id: { type: 'string', pattern: '^u-[a-z0-9]+(-[a-z0-9]+)*$' },
+            caption: { type: 'string', minLength: 1, maxLength: 40 },
+            template: { type: 'string', minLength: 1, maxLength: 2000 }
+        },
+        required: ['id', 'caption', 'template'],
+        additionalProperties: false
+    }
+};
+
 const chartOptionsSchema = {
     type: 'object',
     properties: {
@@ -415,6 +431,16 @@ export const songFileV2Schema = {
         pluginFiringOrder: {
             type: 'array',
             items: { type: 'string', minLength: 1 }
+        },
+        // Sprint 154 it5: the User's Instrument chart widget templates, per placement; omitted when empty.
+        chartWidgetTemplates: {
+            type: 'object',
+            minProperties: 1,
+            properties: {
+                top: chartWidgetTemplateListSchema,
+                left: chartWidgetTemplateListSchema
+            },
+            additionalProperties: false
         },
         rootID: integerLikeSchema,
         sharps: { type: 'boolean' },

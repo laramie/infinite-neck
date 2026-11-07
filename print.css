@@ -68,7 +68,40 @@ body.printScreen .floatDockableButton {
     display: none;
 }
 
+/* Tiles have no Wiring widget, so a tile's .divWiring would be an empty box that takes space.  The 'e' key still
+ * toggles the Wiring state (WIRING_OPEN in infinite-neck.js); it just has nothing to show while printing. */
+body.printScreen .divWiring {
+    display: none !important;
+}
+
+/* The printable area of page 1 (Paper choice): a dashed box around the tile grid, on screen only.  See
+ * PrintLayoutController.applyPageBox().  --print-page-height is set by the controller, in CSS px. */
+body.printScreen.printPageBoxOn #tabledest {
+    position: relative;
+}
+body.printScreen.printPageBoxOn #tabledest::after {
+    content: attr(data-page-box);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: var(--print-page-height, 979px);
+    box-sizing: border-box;
+    border: 1px dashed #d33;
+    pointer-events: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 2px 4px;
+    font: 10px/1 sans-serif;
+    color: #d33;
+    z-index: 5;
+}
+
 @media print {
+    body.printScreen.printPageBoxOn #tabledest::after {
+        display: none;
+    }
     html, body.printScreen {
         background: white;
         -webkit-print-color-adjust: exact;

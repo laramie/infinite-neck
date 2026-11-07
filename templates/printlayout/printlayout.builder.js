@@ -5,6 +5,7 @@ import EventBus from '../../event-bus.js';
 import { PrintLayoutController } from './printlayout.controller.js';
 import { PRINT_LIMITS, PRINT_PAPERS, PRINT_THEME_PRINT, PRINT_THEME_SONG, PRINT_SCALE_AUTO } from '../../printlayout.js';
 import { CHART_WIDGET_ALIGN } from '../InstrumentChart/instrument-chart-core.js';
+import { ChartTemplateEditor } from './chart-template-editor.js';
 
 const PAPER_LABELS = {
 	'letter-portrait': 'Letter, portrait',
@@ -35,6 +36,7 @@ function labeled(text, control) {
 export class PrintLayoutBuilder {
 	static root = null;
 	static subscribed = false;
+	static editors = [];          // Sprint 154 it5: [left, top] chart widget template editors
 
 	static addToDest(divDestSelector) {
 		const dest = document.querySelector(divDestSelector);
@@ -76,7 +78,8 @@ export class PrintLayoutBuilder {
 				labeled('Paper', select('plPaper')),
 				labeled('Theme', select('plTheme')),
 				labeled('Auto fit', checkbox('plScaleAuto')),
-				labeled('Scale %', numberInput('plScale', PRINT_LIMITS.minScalePercent, PRINT_LIMITS.maxScalePercent, 5))
+				labeled('Scale %', numberInput('plScale', PRINT_LIMITS.minScalePercent, PRINT_LIMITS.maxScalePercent, 5)),
+				labeled('Page box', checkbox('plPageBox'))
 			]),
 			el('div', { class: 'plRow' }, [
 				el('button', { id: 'plBtnFirst', type: 'button', text: '|<', title: 'First page' }),
@@ -95,9 +98,16 @@ export class PrintLayoutBuilder {
 			]),
 			el('div', {
 				class: 'plHint',
-				text: 'Each page holds Rows x Columns Sections, starting at the current Section. Use the Section buttons or the page buttons to move; Print\u2026 uses the browser dialog (set Margins: Default, Scale: 100%).'
+				text: 'Each page holds Rows x Columns Sections, starting at the current Section. Use the Section buttons or the page buttons to move; Print\u2026 uses the browser dialog (set Margins: Default, Scale: 100%). The dashed Page box is the printable area of page 1 for the chosen Paper, at 100% print scale.'
 			})
 		]);
+		// Left before top, one over the other (Sprint 154 it5).
+		PrintLayoutBuilder.editors = [
+			new ChartTemplateEditor('left', 'Left rail widget template'),
+			new ChartTemplateEditor('top', 'Top caption widget template')
+		];
+		const hint = panel.querySelector('.plHint');
+		PrintLayoutBuilder.editors.forEach((editor) => panel.insertBefore(editor.root, hint));
 		PrintLayoutBuilder.bind(panel);
 		return panel;
 	}
@@ -126,6 +136,7 @@ export class PrintLayoutBuilder {
 		on('plTheme', 'change', (e) => apply({ grid: { theme: e.target.value } }));
 		on('plScaleAuto', 'change', (e) => apply({ grid: { scale: e.target.checked ? PRINT_SCALE_AUTO : (num('plScale') || 100) } }));
 		on('plScale', 'change', () => apply({ grid: { scale: num('plScale') } }));
+		on('plPageBox', 'change', (e) => apply({ grid: { pageBox: e.target.checked } }));
 		on('plBtnFirst', 'click', () => PrintLayoutController.goPage('first'));
 		on('plBtnPrev', 'click', () => PrintLayoutController.goPage('previous'));
 		on('plBtnNext', 'click', () => PrintLayoutController.goPage('next'));
@@ -185,6 +196,7 @@ export class PrintLayoutBuilder {
 		q('plScaleAuto').checked = auto;
 		q('plScale').disabled = auto;
 		q('plScale').value = auto ? `${Math.round(PrintLayoutController.lastFitScale * 100)}` : `${opts.grid.scale}`;
+		q('plPageBox').checked = opts.grid.pageBox;
 
 		q('plTop').checked = opts.chart.top;
 		q('plLeft').checked = opts.chart.left;
@@ -194,6 +206,8 @@ export class PrintLayoutBuilder {
 		q('plTopAlign').checked = align;
 		q('plTopPadLeft').disabled = align;
 		q('plTopPadLeft').value = align ? '' : `${opts.chart.topPaddingLeftEm}`;
+
+		PrintLayoutBuilder.editors.forEach((editor) => editor.sync(opts));
 
 		let pageLabel = '';
 		if (active) {

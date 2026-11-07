@@ -3,6 +3,7 @@ import { Wiring } from './Wiring.js';
 import { Graveyard } from './graveyard.js';
 import { Layout } from './layout.js';
 import { normalizeUserSets } from './templates/function-symbols/functionSymbolSets.js';
+import { normalizeUserTemplates, persistUserTemplates } from './templates/InstrumentChart/chart-widget-template-sets.js';
 import { normalizeSongGates } from './templates/display-options/displayOptionsGates.js';
 import { normalizeSongDisplayOptionsDefault } from './templates/display-options/displayOptionsMeta.js';
 import { isSongTutorialPersistable } from './Tutorial.js';
@@ -333,6 +334,8 @@ export class SongPersistence {
         this.midiDevice = normalizeMidiDevice(this.midiDevice);
         // Sprint 148 it3: User Function Symbols sets (registry = built-ins + these).  Per-Song, not a shared default.
         this.functionSymbolSets = normalizeUserSets(obj.functionSymbolSets);
+        // Sprint 154 it5: the User's Instrument chart widget templates, { top: [], left: [] } (system ones live in source).
+        this.chartWidgetTemplates = normalizeUserTemplates(obj.chartWidgetTemplates);
         // Sprint 148 it4: Song-level (column) gates for the DisplayOptions matrix; omitted when empty.
         const displayOptionGates = normalizeSongGates(obj.displayOptionGates);
         if (displayOptionGates) {
@@ -402,6 +405,9 @@ export class SongPersistence {
         }
         if (key === 'functionSymbolSets' && Array.isArray(value) && value.length === 0) {
             return undefined;
+        }
+        if (key === 'chartWidgetTemplates') {
+            return persistUserTemplates(value);   // only non-empty placements; nothing at all when there are none
         }
         // Sprint 154: the print Layout's transient tiles (ids like tblP46_1__pt3) are never saved.
         if (Array.isArray(value) && PRINT_TILE_ARRAY_KEYS[key]) {
