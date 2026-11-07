@@ -252,5 +252,5 @@ left:
   }
 ]
 ```
-Again, the captions are programmer-editable via the source code for the system items, and User-editable for the User-added items via the GUI, so it doesn't matter what they are in this rev.  They have no symbolic or semantic meaning or mapping, they just bind to each template object as sibling properties.
+Again, the captions and templates are programmer-editable via the source code for the system items, and User-editable for the User-added items via the GUI, so it doesn't matter what they are in this rev.  They have no symbolic or semantic meaning or mapping, they just bind to each template object as sibling properties.
 
