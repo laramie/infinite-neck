@@ -10,7 +10,7 @@ Index of all sprints for reference: [sprint planning index](../../../lifecycle/s
 
 ## Purpose
 
-Purpose of this sprint is to:  Fix CRUD operations on Palette:Stylsheets, and redesign any of the UX that is counter-intuitive, while keeping the existing flow and features.
+Purpose of this sprint is to:  Fix CRUD operations on Palette:Stylesheets, and redesign any of the UX that is counter-intuitive, while keeping the existing flow and features.
 
 ## Sprint document locations
 
