@@ -190,3 +190,67 @@ New:
 
   - ANSWER:  Accept recommendation.
 
+# sprint-154 Iteration 5
+
+Testing is going well.  We have one bug, one feature request that may be informational only, and one feature request that is required.
+
+## bug
+
+The bug is that this element shows up when we first click "Enter Print Layout": 
+```
+<div id="divP46_1_wiring" class="divWiring">Wiring for divP46_1 goes here.</div>
+```
+Note that it has no controls in it, but is visible and does consume the regular amount of space.
+Since we are in print layout, and the code seems to already suppress display of the event wiring controls, this div should also not be displayed.  We have been dismissing it with the usual `e` keyboard shortcut.  We don't think disabling this keyboard shortcut is the best way to fix this bug, we'd prefer to have that div be suppressed. But the cleanest bugfix would solve the problem and not make future debugging of keyboard shortcuts a head-scratcher, regardless of the strategy used.
+
+## Optional Feature
+
+The optional/informational-only feature is that we are having a hard time visualizing the bounds of the printed page once "Paper" `#plPaper` is chosen.  Would a bounding box representing the page dimensions or the printable area dimensions displayed around all the tiles printable on page 1 be feasible and accurate?  If it can be calculated in advance of going to the system print dialog, then it would be cool, and you should try an implementation.  If it can't be reliably calculated or displayed, then please just inform us of the problems or decisions in the implementation report, and skip coding it.
+
+## Required Feature
+
+For the required feature of this Iteration, we would like to now implement the increase of `CHART_WIDGET_TEMPLATES` from a single value for top and a single value for left to now be multiple values for each provided by the system, and allow User-editable values to the end of each list.
+
+This will require a caption for each and an id.
+
+Follow the example in `#btnCustomizeFunctionSymbols` for `#dropDownFunctionSymbols`.  That editor allows chosing a caption, a system-managed ID, a Save and an `X` button, a dropdown, a "Customize" button, a textarea for editing, and a preview table.  We do not need the preview tables, since we will be sitting on the `#divPrintLayoutTab` tab, and will have the print preview tiles open and will be able to see changes.  It does mean that the changes should be "live" with appropriate events so the instrument table print captions "Top caption widget" and "Left rail widget" get updated. Also, we don't need the up/down buttons for re-ordering the User-managed list items.  They can simply be added to the list and retain the order there, and the `X` button simply removes them from the list and SELECT, since they should all have IDs.
+
+We will need two of these editors, one for "Top caption widget" and one for "Left rail widget".  Just place them on the `#divPrintLayoutTab`, "left" before "top" arranged over the other on the page.  If they were divs, it would just be  a div for the "left" editor, followed by a div for the "top" editor.  They don't need a special container different than how the other controls run down the page.
+
+We need one feature not found in the dropDownFunctionSymbols editor area.  We need a dropdown and insert button similar to "SongWidgets" > "class:", i.e. the controls `#selWhitelistClassesSongWidgets` and `.btnInsertWhitelistClass`.  Their instances on `#divPrintLayoutTab` should be just like the ones on the SongWidgets page, but should target the correct textarea.  Specifically, they should point to the same whitelist.  (Rather than the previous idea proposed in this sprint, we are not using radio buttons to make the controls do double-duty. Instead, these "top" and "left" editors will coexist, one per each, and both visible at the same time, so there will be two of everything.)  We don't need the save false button from the SongWidgets page, because we will have an actual Save button as implemented on the Function Symbols editor.
+
+Please proceed to APPROVED coding, making the choices you normally propose as "Recommended" choices in questions to us, but auto-approving them yourself, and reporting the choices and implementation details in an implementation report `154-it5-implementation-report.md`, rather than an implementation plan that we approve. We think the patterns of the Function Symbols editor, the SongWidgets whitelist insert mechanism, and the previous discussion in this sprint on how to turn the single frozen values into expandable lists give sufficient guidance.  If there are any issues, we'll fix them in a subsequent clean-up round.
+
+Here is the example of what the system-provided list will look like, that you can popluate the structure with.  (We will actually use the User-edited list to develop the system-provided list further, and copy from the Song JSON to the source in `instrument-chart-templates.js` as developers, so this is just a list to establish how the captions will work.  You'll need to work out how the IDs are persisted.) We are not saying this is the best data structure to store, or how you handle IDs, or whether `placement` is a property, or only the name associated with each list.  We leave those details up to you. We just want to point out how the captions will look.
+
+```
+top: 
+[
+  {
+    placement: "top",
+    template: '<b>${chartChordCaption}</b></span><span class="spacer2"> </span><span class="fontSmaller">${chartModeCaption}&nbsp;&nbsp;${getSectionCaption}<span class="spacer2"> </span>${rootKeys}&nbsp;&nbsp;'
+      + '&sect;${currentSectionCardinal}&nbsp;<small>${beats} beats</small></span>',
+    caption: "Chord,Mode,Caption,k,s,b"
+  },
+  {
+    placement: "top",
+    template: '<b>${chartChordCaption}</b>',
+    caption: "Chord"
+  }
+]
+left: 
+[
+  {
+    placement: "left",
+    template: '<b>${chartChordCaption}</b><br>${rootKeys}',
+    caption: "Chord,k"
+  },
+  {
+    placement: "left",
+    template: '<b>${chartChordCaption}</b>',
+    caption: "Chord"
+  }
+]
+```
+Again, the captions are programmer-editable via the source code for the system items, and User-editable for the User-added items via the GUI, so it doesn't matter what they are in this rev.  They have no symbolic or semantic meaning or mapping, they just bind to each template object as sibling properties.
+
