@@ -22,6 +22,7 @@ Initial goals of this sprint:
 - make `Default` row behavior available for collapsed folders without extra run-time drag on recalculating built-up stylesheets.  In other words, it may be desireable to have "NoteFunctions" show a "Default" of its own when the "folder" is closed.  Thus there would be a full row shown for NoteFunctions that may just be "CycleOfColors" but "CycleOfColors" is no longer visible because "NoteFunctions" is closed up.  To consider whether this is visible or not, since showing "CycleOfColors" is probably required in the built-up name, e.g. "light+Fingerings+CycleOfColors" may be a valid set, and is referenced in the `/vdd` and DisplayOptionsMatrix views.  To consider: Since "AllClear" is always "checked" (has a checkmark glyph and not a checkbox), then it probably should not clutter up the built-up names.
 - constrain length of table column display of stylesheet built-up names in `/vdd` and DisplayOptionsMatrix views so that column doesn't get too wide.  Possibly a mode of splitting on `+` characters so the grid views gain more row height as needed.  This is in view only, the storage would always be the full name, and at least a title/tool-tip should always show it to the User.  There may be a way to expand the width of the display in the palette>stylesheets view so there is no cropping there.
 - Only User stylesheets get `.ssButtons` to move rows or delete rows.
+- We envision that there may be a new left column for the open/closed glyph so that when closed, we see the glyph, the collapsed name, and the cells with colors follow; when open we see the glyph and the folder name, with no color cells, and below that the contained rows with checkbox, link, name, and color cells.  This is to be worked out.  When everything is closed, the checkboxes and links aren't shown, but the row is compact and only using one line.
 
 ## Initial system stylesheets list
 
@@ -52,6 +53,15 @@ Again, `Default` may go away and there may be default presentations of each clos
 ```
 AllClear
 > Default
+```
+
+After a User adds two sheets, it may be: 
+
+```
+AllClear
+> Default
+User-1
+User-2
 ```
 
 Note that there is no UI for editing system stylesheets or folders, they will be done in code using the existing patterns for stylesheets, and a new, simple, developer-maintainable data structure for folders.
