@@ -197,6 +197,7 @@ Recommended answer in *italics*. Q1 to Q8 block coding.
 8. System tick state persistence. Today it lives only in the recipe stored by Sections/Song-DEFAULTS (not in the Song file), so unticking Roles without a SAVE Diff is lost on reopen, while user ticks persist. Acceptable, or persist (for example apply `song.activeStylesheets` at open)? *Accept; document in help; it is the same rule as every other Display Option.*
 
 **UI**
+
 9. Folder open/closed state: session only (module `Set`), localStorage, or in the Song? *Session only, default closed.*
 10. What does a closed folder row show: only its composite and name, or also the ticked member names (`NoteFunctions (CycleOfColors)`)? *Name plus composite; member names in the tooltip.*
 11. A folder-level checkbox (tick all / none)? *No. It fights `exclusive`.*
@@ -204,6 +205,7 @@ Recommended answer in *italics*. Q1 to Q8 block coding.
 19. Glyph in the name cell or a new left column (5.1)? *In the name cell for this sprint.*
 
 **Names and content**
+
 13. Folder id must differ from its member id (`Print` folder vs `Print` sheet vs table Theme `Print`). *Folder `Print`, sheet `PrintGray`; all ids reserved.*
 14. Which Mood set, and which `light-minor` survives (6)? *Decide from the swatch tool.*
 15. Update system Songs to the new ids now, or later? *Later iteration; nothing conflicts today.*
@@ -215,6 +217,7 @@ Recommended answer in *italics*. Q1 to Q8 block coding.
 22. Keep the id `All-Clear` or rename to `AllClear` as in the wishlist? *Keep `All-Clear`: no shipped Song stores it, but code, tests, help and the Graveyard use it and the gain is cosmetic.*
 
 **Holes and risks found**
+
 - **Sprint 150 it3 may not be browser-verified** (UA checklist C in its report). Sprint 155 builds on that code; I recommend closing that UA first or fixing the two together.
 - `Default` is used as both a token and a computed row (3.1); the Result row label uses it too.
 - Every `Default` expectation in tests ([stylesheet-plan.test.js](../../../../_tests/jest/stylesheet-plan.test.js), [stylesheet-open-and-matrix.test.js](../../../../_tests/jest/stylesheet-open-and-matrix.test.js)) assumes level semantics and must be rewritten, not patched.

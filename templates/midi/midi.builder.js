@@ -309,7 +309,15 @@ export class MidiTabBuilder {
 	static eventNamespace = '.midiTabBuilder';
 	static pageStart = null;
 
+	// MIDI is quiescent until the User turns on the #cbMidiConnect checkbox (top control of the MIDI tab), which
+	// persists song.midiDevice.connected (so a Song saved connected reconnects on open). Until
+	// then midiAccess stays null: no navigator.requestMIDIAccess() call (so no browser permission
+	// prompt), no port enumeration, no input listener, no light/clear traffic.
+	// `connecting` is true while the browser's permission request is pending; `connectAttempt`
+	// invalidates a pending request that a disconnect/Song switch has since superseded.
 	static midiAccess = null;
+	static connecting = false;
+	static connectAttempt = 0;
 	static inputs = [];
 	static outputs = [];
 	static detachCurrentInputListener = null;
@@ -376,7 +384,7 @@ export class MidiTabBuilder {
 			MidiTabBuilder.pageStart = performance.now();
 			MidiTabBuilder.populateChannelSelects();
 			MidiTabBuilder.bindEvents();
-			MidiTabBuilder.initMidiAccess();
+			MidiTabBuilder.applyConnectionUi();
 		}
 		return MidiTabBuilder.div_MidiTab;
 	}
@@ -395,6 +403,7 @@ export class MidiTabBuilder {
 	// whatever the PREVIOUSLY loaded Song had configured.
 	static renderFromSong(song = getSong()) {
 		MidiTabBuilder.populateInstrumentPicker(song);
+		MidiTabBuilder.syncConnectionFromSong(song);
 		MidiTabBuilder.syncDeviceSelectsFromSong(song);
 		MidiTabBuilder.syncControlsFromDevice(song);
 	}
@@ -1610,6 +1619,11 @@ export class MidiTabBuilder {
 		}
 		const device = MidiTabBuilder.getDevice();
 		el.classList.remove('midiForwardStatusOk', 'midiForwardStatusWarn');
+		if (!MidiTabBuilder.midiAccess) {
+			el.textContent = 'Forwarding: OFF (MIDI is not connected)';
+			el.classList.add('midiForwardStatusWarn');
+			return;
+		}
 		if (device.enabled !== true) {
 			el.textContent = 'Forwarding: OFF (MIDI Routing is off)';
 			el.classList.add('midiForwardStatusWarn');
@@ -1786,6 +1800,18 @@ export class MidiTabBuilder {
 
 	static bindEvents() {
 		const eventNamespace = MidiTabBuilder.eventNamespace;
+
+		$('#cbMidiConnect')
+			.off(`change${eventNamespace}`)
+			.on(`change${eventNamespace}`, function () {
+				const wantsConnection = this.checked;
+				this.blur(); // keep keyboard shortcuts working after the click
+				if (wantsConnection) {
+					MidiTabBuilder.connectMidi();
+				} else {
+					MidiTabBuilder.disconnectMidi();
+				}
+			});
 
 		$(`#selMidiInDevice`)
 			.off(`change${eventNamespace}`)
@@ -2024,7 +2050,85 @@ export class MidiTabBuilder {
 		}
 	}
 
+	// Reconciles the live connection with the (just opened/switched-to) Song's persisted
+	// midiDevice.connected: connects if the Song was saved connected, tears down if a previous
+	// Song left MIDI connected but this one is not. Never writes to the Song.
+	static syncConnectionFromSong(song = getSong()) {
+		const wantsConnection = (song.midiDevice || {}).connected === true;
+		if (wantsConnection && !MidiTabBuilder.midiAccess && !MidiTabBuilder.connecting) {
+			MidiTabBuilder.initMidiAccess();
+		} else if (!wantsConnection && (MidiTabBuilder.midiAccess || MidiTabBuilder.connecting)) {
+			MidiTabBuilder.teardownMidiAccess();
+		}
+		MidiTabBuilder.applyConnectionUi();
+	}
+
+	// User turned #cbMidiConnect on: remember it in the Song, then ask the browser for access.
+	// A real failure (permission denied/no Web MIDI) un-remembers it, so the Song isn't left
+	// claiming a connection that never happened.
+	static async connectMidi() {
+		const device = MidiTabBuilder.getDevice();
+		device.connected = true;
+		if (!MidiTabBuilder.midiAccess && !MidiTabBuilder.connecting) {
+			const result = await MidiTabBuilder.initMidiAccess();
+			if (result === false) {
+				device.connected = false;
+			}
+		}
+		MidiTabBuilder.applyConnectionUi();
+	}
+
+	static disconnectMidi() {
+		MidiTabBuilder.getDevice().connected = false;
+		MidiTabBuilder.teardownMidiAccess();
+	}
+
+	// Drops everything initMidiAccess() set up. The browser can't revoke a granted MIDIAccess, so
+	// this detaches our handlers and forgets the ports instead; nothing is sent or received after.
+	static teardownMidiAccess() {
+		MidiTabBuilder.connectAttempt++;
+		MidiTabBuilder.connecting = false;
+		MidiTabBuilder.releaseForwardedPitches(); // needs the ports, so before they are dropped
+		MidiTabBuilder.attachToInput(null);
+		if (MidiTabBuilder.midiAccess) {
+			MidiTabBuilder.midiAccess.onstatechange = null;
+		}
+		MidiTabBuilder.midiAccess = null;
+		MidiTabBuilder.inputs = [];
+		MidiTabBuilder.outputs = [];
+		MidiTabBuilder.lastPaintPlan = null;
+		MidiTabBuilder.lastPaintTableID = '';
+		MidiTabBuilder.momentaryPressSectionByCellKey.clear();
+		['selMidiInDevice', 'selMidiOutDevice', 'selMidiForwardDevice', 'selMidiDebugOutDevice'].forEach((id) => {
+			const sel = document.getElementById(id);
+			if (sel) {
+				sel.innerHTML = '';
+			}
+		});
+		const indicator = document.getElementById('spanMidiNoteInIndicator');
+		if (indicator) {
+			indicator.textContent = 'no NOTE ON received yet';
+		}
+		MidiTabBuilder.updateForwardStatusIndicator();
+		MidiTabBuilder.applyConnectionUi();
+	}
+
+	// Syncs the #cbMidiConnect checkbox and greys out/disables the MIDI tab's controls
+	// (everything except the Activity log) while not connected.
+	static applyConnectionUi() {
+		const active = MidiTabBuilder.midiAccess !== null || MidiTabBuilder.connecting;
+		$('#cbMidiConnect').prop('checked', active);
+		const tab = $('#MidiTab');
+		tab.toggleClass('midiTabDisconnected', !active);
+		tab.find('.midiSection:not(.midiLogSection)').find('select, input, button').prop('disabled', !active);
+	}
+
+	// Resolves true on success, false on a real failure (denied/unsupported), or null if a
+	// disconnect/Song switch superseded this request while the permission prompt was pending.
 	static async initMidiAccess() {
+		const attempt = ++MidiTabBuilder.connectAttempt;
+		MidiTabBuilder.connecting = true;
+		MidiTabBuilder.applyConnectionUi();
 		let midiAccess;
 		try {
 			// Iteration 5, Round 3 (143-it5-design.md "Speeding up batch lighting"):
@@ -2036,10 +2140,20 @@ export class MidiTabBuilder {
 			// granted once up front, not re-negotiable per later feature use.
 			midiAccess = await requestMidiAccess({ sysex: true });
 		} catch (err) {
+			if (attempt !== MidiTabBuilder.connectAttempt) {
+				return null;
+			}
+			MidiTabBuilder.connecting = false;
 			MidiTabBuilder.logActivity('error', [], err.message);
-			return;
+			MidiTabBuilder.applyConnectionUi();
+			return false;
 		}
+		if (attempt !== MidiTabBuilder.connectAttempt) {
+			return null;
+		}
+		MidiTabBuilder.connecting = false;
 		MidiTabBuilder.midiAccess = midiAccess;
+		MidiTabBuilder.applyConnectionUi();
 		MidiTabBuilder.inputs = listInputs(midiAccess);
 		MidiTabBuilder.outputs = listOutputs(midiAccess);
 
@@ -2084,6 +2198,7 @@ export class MidiTabBuilder {
 			MidiTabBuilder.syncOnDeviceConnect();
 			MidiTabBuilder.updateForwardStatusIndicator();
 		};
+		return true;
 	}
 
 	// Runs once an output port is actually available (initial MIDI access grant,

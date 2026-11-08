@@ -4,6 +4,12 @@
      Instrument routing controls per 143-design-3.md. -->
 <template id="midi-template">
     <div id="MidiTab">
+        <div class="midiConnect">
+            <label for="cbMidiConnect" title="Connect to MIDI devices (asks the browser for MIDI permission). Saved in the Song, so the Song reconnects when opened.">
+                <input id="cbMidiConnect" type="checkbox" name="cbnMidiConnect" value="1"> <b>Connect MIDI</b>
+            </label>
+        </div>
+        <div id="divMidiConnectNotice" class="midiConnectNotice">MIDI is not connected. Turn on Connect MIDI above to connect; the Song remembers it.</div>
         <div class="midiSection">
             <h4>MIDI IN</h4>
             <label for="selMidiInDevice">Input device:</label>
@@ -121,7 +127,7 @@
             </label>
         </div>
 
-        <div class="midiSection">
+        <div class="midiSection midiLogSection">
             <div class="midiActivityLogHeader">
                 <h4>Activity log</h4>
                 <button id="btnMidiClearActivityLog" class="MenuButton BtnPunchedOut" type="button" title="Clear the activity log">Clear</button>

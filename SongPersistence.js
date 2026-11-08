@@ -253,6 +253,9 @@ function normalizeMidiDevice(rawMidiDevice) {
         tableID: `${raw.tableID || ''}`,
         channel,
         enabled: raw.enabled === true,
+        // Whether MIDI was turned on (Connect MIDI checkbox on the MIDI tab) when the Song was saved. Absent/false
+        // means a quiescent MIDI tab: no browser MIDI permission request, no port traffic, on open.
+        connected: raw.connected === true,
         forwardName: `${raw.forwardName || ''}`,
         forwardChannel
     };

@@ -11,6 +11,24 @@
     margin: 0 0 0.4em 0;
 }
 
+#MidiTab .midiConnect {
+    margin-bottom: 0.5em;
+}
+
+#MidiTab .midiConnectNotice {
+    display: none;
+    margin-bottom: 0.75em;
+    font-style: italic;
+}
+
+#MidiTab.midiTabDisconnected .midiConnectNotice {
+    display: block;
+}
+
+#MidiTab.midiTabDisconnected .midiSection:not(.midiLogSection) {
+    opacity: 0.5;
+}
+
 #MidiTab .midiNoteInIndicator {
     display: inline-block;
     min-width: 22em;
