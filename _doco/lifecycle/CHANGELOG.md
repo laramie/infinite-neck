@@ -1,5 +1,170 @@
 # ChangeLog
 
+### 20261109
+
+Tag: v2.1-beta-18
+
+- 78ff740 **2026-11-08** Only turn on MIDI when checkbox atop MIDI Tab page is checked, or when this was done in a Song then saved.
+- 26deece **2026-11-07** Iteration 1 complete
+- 4d55cb6 **2026-11-07** Ready for sprint-155 Iteration 1.
+- 12fef94 **2026-11-07** Ready for sprint-155 Iteration 1.
+- ce8ef95 **2026-11-07** Iteration 5 coded, and testing well.
+- 1847355 **2026-11-07** Ready for Iteration 5
+- 013d8cb **2026-11-07** Ready for Iteration 5
+- ec47607 **2026-11-07** Ready for Iteration 5
+- b8f7ab2 **2026-11-04** added gradient and halftone cell backgrounds which print better than solid fill colors.
+- a70fe4b **2026-11-04** sprint-154 coded.
+- 10539b9 **2026-11-04** Ready for sprint-154 Iteration 4 : implementation.
+- 8074540 **2026-11-04** sprint-153 coded
+- bcc5b8d **2026-11-04** Ready for Iteration 4
+- 2f93ffd **2026-11-03** Iteration 2 implementation plan revs done.
+- 5faf7e6 **2026-11-03** Ready for Iteration 2
+- e9d8468 **2026-11-03** Ready for analysis on sprints 153 and 154.
+- 048afd8 **2026-11-03** Reordered so P46 > S6 and P48 > S6 are first.
+- 289be4e **2026-11-03** Changed menu "c)aption row" to "m)aster row" so that we can have "c)aption" in show/hide/toggle.  This is needed because in wizard mode you can use the Song.Section.caption as the tutorial caption.  You may still want Song Widgets which are in topControlsCaptions which is now just called "m)aster row" in the menu, but is unchanged in the code.
+- 8e926a9 **2026-11-03** Added superchart demo
+- 0295b68 **2026-11-03** Iteration 5 done
+- 324f93d **2026-11-03** Ready for Iteration 5
+- facc089 **2026-11-02** Updated TutorialModes section
+- 9f5a94b **2026-11-02** Added section on tutorial modes, and how to save a tutorial without the "npm run build:tutorial-prompts" build process, and how to access the "practice list".
+- d676bb7 **2026-11-02** Menu changes working.
+- ee3c8bb **2026-11-02** Fixed filename.  Ready for Iteration 4.
+- ab3a5fe **2026-11-02** Ready for Iteration 4
+- 90f0443 **2026-11-02** Testing going well. Committing.
+- 3180295 **2026-11-02** Ready for it3
+- 48f775d **2026-11-02** sprint-152 Iteration 2 complete.  Testing going well but not complete.  Next is Iteration 3 with wizard mode prompt editing.
+- dfcb7d6 **2026-11-02** Ready for Iteration 2: implementation.
+- c14ddf3 **2026-11-02** prep for sprint-152
+- 1515af4 **2026-11-02** prep for sprint-152
+- ef49e22 **2026-11-02** Did some more work on contenteditable, this time updating TransposePlugin.  Move my-editor id to do a different table.
+- 9271983 **2026-11-02** Fixed the "Customize" button to use the arrows instead of "Customize Less..." Made the second message be on the same line as the first message, so they don't go weird on vertical alignment.  Second message reports on saving the stylesheet, which is in the second group of edit controls, and gets messages from the first group as well, which is strange.
+- 18b62bb **2026-11-01** tighten up layout of stylesheet notes by shrinking margin on picker buttons.
+- 720a56a **2026-11-01** Tweaked CSS and layouts to condense stylesheet controls. Moved buttons around, especially the "Customize" button is now a child of Stylesheets area which gets hidden, so you can't customize without stylesheets being open.
+- f587957 **2026-11-01** sprint-150 Iteration 3 complete
+- b44e9fc **2026-11-01** Ready for Iteration 3
+- 9d9f878 **2026-11-01** Edited to remove reverse literal maps, after testing, the reverse mapping works because the code deals with reverse, so explicit reverse not needed.  i.e. 'P48 > P46' reverses so 'P46 > P48' is not needed.
+- 50637c0 **2026-11-01** sprint-151 complete
+- 87e880b **2026-11-01** sprint-151 Iteration 2 implementation testing well.
+- c45f013 **2026-11-01** Ready for Iteration 2
+- e21948e **2026-11-01** Ready for sprint-151 Iteration 1.
+- 49350aa **2026-11-01** sprint-150 has completed the migration of palette into templates/palette/, and has produced the Iteration 2 implementation plan.
+- 7032b5d **2026-10-31** Ready for Iteration 2
+- 2663e8f **2026-10-31** Ready for Iteration 2.
+- a30888a **2026-10-30** Help file updated. Ready for sprint-150. sprint-150 report in place from Claude.
+- 04400d5 **2026-10-30** Theme Matrix feature "Preview" is looking good.  Implementation report it2-it4 has features and bugfixes that *could* be applied next.
+- d7c872d **2026-10-30** html cleaner.
+- b5f94a2 **2026-10-30** Theme section added by Claude.
+- 0a2fede **2026-10-30** fixed 143-it2-design.md which is supposed to be 146-it2-design.md
+- dd4f413 **2026-10-30** added themed version of autobahn
+- 1295f2f **2026-10-30** fixed markup bug
+- 02b7382 **2026-10-30** typo 143 -> 146 in sprint-146 docs
+- bcbba40 **2026-10-29** Notes are in correct spots lower on the neck.  Changed piano ratios.
+- ab87d5c **2026-10-29** Set Piano Theme for SingleNote Shadow Color to greenglow so the piano single notes don't pop out so much.
+- 9767ebd **2026-10-29** version 2 with light-3, theme per instrument, and piano width ratio 1.6
+- 6126e5d **2026-10-29** diatonics.json added
+- 135bb7e **2026-10-29** sprint-148 Iteration 8 fixes Song-DEFAULTS applying on every Section change, when they should only apply on Song load.
+- 482e27a **2026-10-29** Trying new Matrix Song-DEFAULTS instead of Section 1.
+- b39853c **2026-10-29** Edited feature and scope section to sprint overview document.
+- db8c546 **2026-10-29** Added feature and scope section to sprint overview document.
+- 82796c5 **2026-10-29** Fix in and rolled back.  Sprint passed all current tests and recipes.
+- 263cd1e **2026-10-29** sprint-148 Iteration 7 UA testing complete.
+- b55a365 **2026-10-28** Ready for bugfixes/features found in UA testing.
+- af5d57f **2026-10-28** Ready for bugfixes/features found in UA testing.
+- 1dacf94 **2026-10-28** UA tests partially done.  Fix in for Apply button and missing magenta states.  Ready for help.html update by Copilot; new sections added.
+- 70f2b89 **2026-10-27** Ready to work on recipes
+- 74627b5 **2026-10-27** Added instructions on clearing plugins with graveyard bury (save+clear)
+- 4970f71 **2026-10-27** Completed recipe tests
+- 95bdbf8 **2026-10-27** Now with Song-DEFAULTS instead of Section 1 DisplayOptions or Presentation Mode.
+- 83394de **2026-10-26** sprint-148 It6 round4 precedence in place and working.
+- f3fdea7 **2026-10-26** sprint-148 It6 round4 precedence in place and working.
+- 57a3530 **2026-10-26** Ready for sprint-148 It6 round4 coding
+- c42de04 **2026-10-26** Ready for 148-it6-round-4
+- f0ce5cd **2026-10-26** sprint-148 it6 round 3 implemented
+- 011ffb1 **2026-10-25** Implemented sprint-148 Iteration 6 Round 2 to copy Current Section to Song-DEFAULTS
+- 5310485 **2026-10-25** Ready for sprint-148 Iteration 6 Round 2
+- 5279f67 **2026-10-25** Ready for sprint-148 Iteration 6.
+- fdc43eb **2026-10-25** Ready for sprint-148 Iteration 6.
+- d999971 **2026-10-25** Removed Fill and Clip plugin settings, they were temporary.
+- 2b4c204 **2026-10-25** Cleaned graveyard
+- fb33601 **2026-10-25** reset to P4 as /fpa Instrument
+- 1fb9e1e **2026-10-25** Cleaned up for release.
+- 3029a87 **2026-10-25** Added placed notes for the other instruments.
+- f8a2776 **2026-10-25** Changed how SongWidgets and allowed CSS classes do centering of widgets. Tweaked name that note "fret flavors" song.
+- f7f72a1 **2026-10-22** Added option to ArpeggioPlugin to allow extra clear beat.
+- 5bc6b4d **2026-10-22** Added more width options to dropDownCellWidth so it is smoother around 200 which happens to be when the 12th fret is close to the full width.
+- bfde5ec **2026-10-22** Added ArpeggioPlugin option /fpann to reveal all NamedNotes that match the flashcard reveal.
+- 7f08160 **2026-10-22** Added face diamonds to old song that stored P4 without them.  Turned Transpose load enabled off. Tweaked fullscreen options. Used USER theme to get these things working.
+- ce5684c **2026-10-22** Added SongWidgets
+- 3c790ec **2026-10-22** ArpeggioPlugin now handles "/fpat > placed single" so you can practice exact note positions.
+- 47977e7 **2026-10-22** Added commens for sprint-148
+- 7ff2d02 **2026-10-22** Added fix for ArpeggioPlugin for body.HideNutNames
+- 98fc95d **2026-10-22** sprint-149 first round complete.  All works except the Arpeggio reveal doesn't show the note name, though placing a NamedNote does.
+- a486aa9 **2026-10-22** Ready for sprint-149
+- 01bbe9b **2026-10-21** Fixed bug where caption line and widgets line would merge when Song Widgets was empty.  Now we add a BR that does the opposite of SongWidgets. Added HTML output of /vdF so that hakka is replaced by entity so links and such in Info and SongWidgets correctly show in JSON in the ShowMessages, which otherwise turns those into actual links etc. Added SongWidgets to piano songs.
+- b2d31ee **2026-10-21** Added Song Widgets to scales songs. Tweaked the view and layout of the DisplayOptionsMatrix buttons, spacing, styles. Reworked the Matrix Legend with clean LI lists and one-cell examples.
+- 4c3365d **2026-10-21** sprint-148 Iteration 5 Round 4 complete
+- 0ada07f **2026-10-21** Ready for sprint-148 Iteration 5 Round 4
+- a1a5b1d **2026-10-21** Tweaks described in # sprint-148 Iteration 5 Round 3
+- 3085233 **2026-10-21** ready for sprint-148 Iteration 5 Round 3
+- 8bef0aa **2026-10-21** Round 2 implemented
+- ac5791d **2026-10-20** Ready for Round 2
+- a6bacc5 **2026-10-20** sprint-148 Iteration 5 Round 1 complete. Ready for Round 2, implementing first version of Matrix.
+- 6ced55d **2026-10-20** Ready for Iteration 5
+- 63dccf0 **2026-10-20** Ready for Iteration 5
+- 156bbcf **2026-10-20** Iteration 4 Round 5 complete. /vdd is working as the static version of the DisplayOptionsMatrix, the SaveDiff functionality is in and tested, tand the reveals of HIDEs tied to granular note type choices is complete and tested.
+- ba37231 **2026-10-20** Ready to submit testing report.
+- 842fe61 **2026-10-20** Ready to submit testing report.
+- 682c17a **2026-10-20** Special handling and importance cascade for cell-level versus column and row levels for DisplayOptionsMatrix.
+- 8a07ce7 **2026-10-20** Got CSS rules so that cell:r, cell:w, cell:rw hatches work, and strikethrough, borders, and shadows all coordinate with cell,row,column blocks.
+- aa675dd **2026-10-19** testing for round 4 report 2 going well, new styles for /vdd
+- f2300ae **2026-10-19** Submitting report.
+- 25161ab **2026-10-19** sprint-148 It4 Round 3 implemented.
+- a3acda2 **2026-10-18** Ready for sprint 148 Iteration 4 Round 3 - Implementation
+- cfc3e88 **2026-10-18** Ready for sprint-148 Iteration 4 Round 2
+- 1a6a91a **2026-10-18** Clarification of autocolor at end of Round 1
+- dba277a **2026-10-18** Round 1 answered and reported.  Ready for Round 2 and design team answers next.
+- 7aa032b **2026-10-17** Ready for Iteration 4 Round 1
+- 50fdabe **2026-10-17** Ready for Iteration 4 Round 1
+- d709d18 **2026-10-17** sprint 148 Iteration 3 Round 2 complete: Function Symbols updated to allow User sets and CRUD on User sets.  Minimally saves just the ID in the Song, plus User sets are saved as JSON, but not the built-in sets.
+- 553270e **2026-10-17** Ready for Iteration 3 Round 2
+- 187013c **2026-10-16** sprint-148 Iteration 3 Implementation Plan ready
+- 869e1c2 **2026-10-16** Ready for sprint-148 Iteration 3 functions panel
+- 7b77ae9 **2026-10-14** Ready for Iteration 2
+- 81b5f73 **2026-10-14** sprint-148 Iteration 1
+- c2f120a **2026-10-14** Corrected typo of 137-chord-caption-widget to 147-chord-caption-widget, including renamind dir and files, and some references in comments and chat-log.  Corrected the pertinent comments from "Sprint 137" to "Sprint 147" where they were introduced in the current sprint, and not touching any previous "Sprint 137" where they related to correct previous sprint 137-macros.
+- d8c4561 **2026-10-13** miniPaletteStatus Hiding caused a bug in this test.  Fixed.
+- ec17e55 **2026-10-13** Hiding checkmark looks like the others now, so spacing is correct.
+- 7fb238c **2026-10-13** miniPaletteStatus now has "Hiding" when a note category is hidden.
+- d8a4caf **2026-10-13** Ready for miniPaletteStatus to show "Hiding"
+- 38cc5a3 **2026-10-13** Removed displayOptions of hideTinyNotes and hideNamedNotes and this allows the macros that toggle these to work without them getting reset on every Section boundary.  This is an interesting prototype for the planned sprint where we selectively remove stored displayOptions from Sections so that we control them more granularly.
+- 6b8e2c3 **2026-10-13** Cleaned up and fixed Info and SongWidgets.  Removed Arpeggio enabling and doco, since we aren't using it in this song.
+- cd4dd34 **2026-10-13** Added more styles for sanitized use in SongWidgets--resizing, centering, spacing. Added ability to use hyperlinks to targets (macro, raise) in Caption and SongWidgets. Added All-Chords-w-Modes-Piano.json that really uses these widgets nicely and toggles between NamedNotes for chords and TinyNotes for Modes.
+- 9aba528 **2026-10-12** sprint-137 Iteration 8 complete.
+- a1839e1 **2026-10-12** Ready for Iteration 8.
+- 162f2d7 **2026-10-12** sprint-137 Iteration 7 complete. Ready for Iteration 8.
+- b60b723 **2026-10-11** Cleaned up SongWidgets help
+- e10b41f **2026-10-11** Ready for Iteration 7
+- 2422770 **2026-10-11** help file updated with expansions.
+- f97bc65 **2026-10-11** Iteration 6 complete
+- 74666de **2026-10-11** Ready for Iteration 6
+- 78d91ec **2026-10-11** Ready for Iteration 5, sprint-137
+- ba25730 **2026-10-11** Ready for Iteration 4 of sprint-137
+- 0c0ce01 **2026-10-11** Removed the incorrect LeadKey note movements, and transformed just the note Functions instead.  Added aqua coloring for LeadKey version.
+- d795ec1 **2026-10-11** Iteration 2 complete, Iteration 3 fixit ready.
+- a290d11 **2026-10-10** Ready for sprint-137 Iteration 2 implementation which will AutoColor the Functions, use whiteKey and blackKey CSS, and handle em for flats.
+- 2a2124f **2026-10-10** Sprint 137 mocks in place for Function table widget, routing works through approved-values. SongWidgets.js imported.
+- 9045c41 **2026-10-09** Sprint 137 Iteration 1 done.
+- 503478c **2026-10-09** clarified transposedChordNotes examples
+- ac0a765 **2026-10-09** Ready for sprint-137
+- d9a6dcf **2026-10-05** Changed behavior of palette color button: now it doesn't automatically turn  off hiding just because Color: radio button is chosen.  Now you must actually place a note or turn off hiding manually.  This happens in name-that-note when the user used to suddenly turn on all notes to show again (hidden because that's how name-that-note works) just by clicking the 6, 7, 8 keys for example.
+- aad9672 **2026-10-05** Added flashcard version of All-Cords. Added name that note for MIDI instruments.
+- 13baef8 **2026-10-01** Added Info.
+- cad8ea1 **2026-10-01** Added ionian piano scales; added demo of function symbols extensions.
+- 6de8162 **2026-09-30** Added categories so we don't have to cram extensions into functions and degrees.  Since you can automate by Section, you can choose whether you want the 4 or the 11 in each Section by using Function/Extensions/Extensions(only)/Jazz/Jazz Extensions.  Added em CSS rule for within a Note for flats and sharps that are done using "Function Symbols" since there is separate handling for "enharmonicName" built-in that we don't want to mess with.
+- c05d2ac **2026-09-26** Added "Extensions (only)" which replace 6 with 13 fully, etc.
+- c4c5efe **2026-09-25** Added "Extensions" to Functions in View dropdown (e.g. Tau / &flat;9).
+- e8efda9 **2026-09-22** Removed chromatic mode from Tonal suggestions, so you will no longer see 'C chromatic'.
+
 ### 20260921
 
 Tag: v2.1-beta-16

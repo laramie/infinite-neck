@@ -21,6 +21,7 @@ Purpose of this sprint is to:  Fix CRUD operations on Palette:Stylesheets, and r
   - "Iteration 1": Identify holes, pitfall, potential fixes, and potential feature upgrades to make the UX smooth and more like some of the other idioms now in use in the App.  Report: [150-it1-report.md](150-it1-report.md).
   - "Iteration 2": Migrate `palette*` to `templates/palette/`, probe and UA checklists, implementation plan.  Plan: [150-it2-implementation-plan.md](150-it2-implementation-plan.md).
   - "Iteration 3": Implementation of Stylesheet CRUD, Looks and recipes, Matrix strike-through, glyph/height fixes, help maintenance.  Report and UA checklist C: [150-it3-implementation-report.md](150-it3-implementation-report.md).
+    - UA checklist: ALL PASS on 20261108 .
 
   
 

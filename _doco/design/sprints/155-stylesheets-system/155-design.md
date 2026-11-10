@@ -69,3 +69,188 @@ Note that there is no UI for editing system stylesheets or folders, they will be
 ## Iteration 1 request
 
 Copilot, please analyse this wishlist and initial layout proposal, and come up with a rough implementation plan with questions and holes for the Design Team.  Let it be `155-it1-analysis.md`.
+
+# Iteration 2
+
+## Design Team reports:
+
+- sprint-150 UA checklist: ALL PASS on 20261108, recorded in `_doco/design/sprints/150-palette-crud-redo/sprint-150.md`
+- We had specified `AllClear` as a typo.  Correct: use existing name `All-Clear`
+- We absolutely agree that order matters, and should work as it does today: bottom of lists in page has highest precedence, applied last.
+
+- We simplify the requirement to not use "All-Clear".  Insted, use it as any other Stylesheet name including in built-up lists.  That way there is no special handling.  For long names we have two strategies: 1) the breaking characters you proposed are accepted, and the `nobr` markup is to be removed; 2) "Look" can be used by Users to shorten names in the DisplayOptionsMatrix views and `/vdd` view. 
+- since there is space after the folder name when the folder is "closed" we can use the rest of that line to report the long built-up name of the contents of the folder.  If it is exclusive child elements, there will be just one.  But in the case of non-exclusive child elements they would be like:
+` > Folder : Child1+Child2 `
+- We like the idea of the simple glyph in the existing cell, rather than adding a TD. e.g. Accept 5.1 cheaper alternative.
+- `user2+user1+Default` is accepted: show reality in order of precedence in the built-up names with last-applied-first.
+- `B. Live system composite` is the choice. `Default` as the "Shipping Set".  Presume this means if we were to change the Shipping Set from including "CycleOfColors" to future sheet "CycleOfColors2027" that opening a Song would automatically get the change.  A User who wanted to lock in "CycleOfColors" would then need to select a subset of the Shipping Set somehow?  To discuss.
+
+
+- _We will clean old songs e.g. "mojo"_
+- _We will curate sheets such as "light" into system sheets first._
+- _At that time we will curate the lists MoodBlue, MoodLight, LaMer and Forest correctly._
+
+- _We would like to simplify "Default".  Most likely: make "Default" the shipping set, and make it a Look that is in the list. Ideal would be if it were read-only to the User.  It starts off as first, and since we have no re-order feature, would stay as first in the list.  So it is no longer a stylesheet, or a fake stylesheet row or preview row.  We leave the bottom "Result" row for that duty.
+
+
+## Answers for: 155-it1-analysis.md :: 8. Questions and holes for the Design Team
+
+Your list is repeated verbatim with new whitespace and "ANSWER" answers.  Bullet point 19 is out of sequence and is left like that.
+
+**Model**
+1. Confirm built-in *levels* are replaced by independent checkboxes (a click on `Roles` no longer ticks everything under it). *Yes.*
+
+- ANSWER: YES
+
+
+2. Folder mode: `exclusive` (one ticked at most) or free multi-select? *Exclusive for Print; NoteFunctions exclusive too, with "none ticked" allowed (then `note1` to `note12` show AllClear white). Revisit after UA.*
+
+- ANSWER: YES
+
+
+3. List order vs precedence: one order (bottom wins), or an explicit `layer`? *One order: AllClear, NoteFunctions, Roles, Fingerings, Highlights, Print, Default.*
+
+- ANSWER: Accept "One order". "Print" is now "PrintPress"
+
+
+4. Do the curated `Mood*` sheets color `noteRoot`? If yes NoteFunctions must outrank Roles. *No: keep them to `note1` to `note12` and let Roles keep `noteRoot`, unless a look really needs it.*
+
+- ANSWER: No. We will fix existing Songs. We need to work out how Piano, Guitar, and MIDI use different noteRoot styles, and if this is solved at a Song or system level.
+
+
+5. What is the `Default` row (3.1, A or B) and what does the token `Default` mean? *B for the row, token = shipping set alias.*
+
+- ANSWER: Accept proposal. 
+
+
+6. How is "only AllClear" written, and is `Default` written when the set equals the shipping set? *`AllClear` literal only when alone; yes write `Default` for the shipping set.*
+
+- ANSWER: We think both apply: the Default for the shipping set makes sense, and we also want to loosen the restriction against showing "All-Clear".  We want to simplify and use "All-Clear" wherever it makes sense like any other name. 
+
+
+7. User-before-system: store it that way or only display it? Do user sheets also reverse (highest first)? *Store it; reverse users too so left always means "wins".*
+
+- ANSWER: Accept proposal.
+
+
+8. System tick state persistence. Today it lives only in the recipe stored by Sections/Song-DEFAULTS (not in the Song file), so unticking Roles without a SAVE Diff is lost on reopen, while user ticks persist. Acceptable, or persist (for example apply `song.activeStylesheets` at open)? *Accept; document in help; it is the same rule as every other Display Option.*
+
+
+- ANSWER: On testing, we see that saving user stylesheets, and checking them and then SaveDiff saves their state.  Unticking both system stylesheets and user stylesheets without another SaveDiff then saving song loses both tick states on reopening song.  This is fine behavior.  Desired tick state is store in stylesheet or Look.
+
+
+
+
+**UI**
+
+
+
+9. Folder open/closed state: session only (module `Set`), localStorage, or in the Song? *Session only, default closed.*
+
+- ANSWER: Accept recommendation.
+
+
+10. What does a closed folder row show: only its composite and name, or also the ticked member names (`NoteFunctions (CycleOfColors)`)? *Name plus composite; member names in the tooltip.*
+
+- ANSWER: Seems like we will have room for the member names in the row display: ` > Folder : Child1+Child2 `
+
+
+11. A folder-level checkbox (tick all / none)? *No. It fights `exclusive`.*
+
+- ANSWER: NO.
+
+
+12. Click on a system link: load the editor only, or also tick? *Load only; the checkbox ticks. User links keep tick + load.*
+
+- ANSWER: Load only.
+
+
+19. Glyph in the name cell or a new left column (5.1)? *In the name cell for this sprint.*
+
+- ANSWER: Accept recommendation.
+
+
+
+**Names and content**
+
+13. Folder id must differ from its member id (`Print` folder vs `Print` sheet vs table Theme `Print`). *Folder `Print`, sheet `PrintGray`; all ids reserved.*
+
+- ANSWER: 
+  - `Print` stays as an ID of a Theme.
+  - `PrintPress` is the ID of the Stylesheet folder
+  - We agree that "PrintPress" flavors need to be complete and need to be later so they win.
+  - Initial list of "PrintPress" flavors unique names:
+    - "PrintPress">"Letterpress" :: will be just a copy of "All-Clear" since this works today as a black+white scheme.
+    - "PrintPress">"Gradient" :: copy of "All-Clear" that we will copy printable gradients into based on our hatch sets in the Hatch pickers.
+    - "PrintPress">"Halftone" :: copy of "All-Clear" that we will create printable halftones like found in `#dropDownBorderImageWhiteKey`
+
+
+14. Which Mood set, and which `light-minor` survives (6)? *Decide from the swatch tool.*
+
+- ANSWER: 
+
+
+15. Update system Songs to the new ids now, or later? *Later iteration; nothing conflicts today.*
+
+- ANSWER: 
+
+
+16. Print sheets: which keys, `captionClass`, and whether the new classes go into the pickers. *All roles including `note1` to `note12`; yes captionClass; not in the pickers yet.*
+
+- ANSWER: 
+
+
+17. Should entering the Print screen (Sprint 154) auto-tick a Print sheet? Not in the wishlist. *Out of scope; note it for 156.*
+
+- ANSWER: Out of scope.  We want the User to manually select this.
+
+
+18. Width: `<wbr>` wrap vs abbreviation, and which surfaces get it (Matrix, `/vdd`, `.ActiveStylesheets`, Result label)? *`<wbr>` on all four; full string always in `title`.*
+
+- ANSWER: Accept recommendation.
+
+
+20. Looks store recipes; Looks saved under the old level grammar are unaffected (none shipped). Any Looks to pre-install with the system sheets? *No.*
+
+- ANSWER: No.
+
+
+21. `defaultOn` per sheet (Print and Mood sheets off). *Yes, replaces "tick everything" at open.*
+
+- ANSWER: Yes.
+
+
+22. Keep the id `All-Clear` or rename to `AllClear` as in the wishlist? *Keep `All-Clear`: no shipped Song stores it, but code, tests, help and the Graveyard use it and the gain is cosmetic.*
+
+- ANSWER: Keep.
+
+
+
+**Holes and risks found**
+
+- **Sprint 150 it3 may not be browser-verified** (UA checklist C in its report). Sprint 155 builds on that code; I recommend closing that UA first or fixing the two together.
+
+- ANSWER: sprint-150 UA checklist: ALL PASS on 20261108, recorded in `_doco/design/sprints/150-palette-crud-redo/sprint-150.md`
+  
+
+
+- `Default` is used as both a token and a computed row (3.1); the Result row label uses it too.
+
+- Every `Default` expectation in tests ([stylesheet-plan.test.js](../../../../_tests/jest/stylesheet-plan.test.js), [stylesheet-open-and-matrix.test.js](../../../../_tests/jest/stylesheet-open-and-matrix.test.js)) assumes level semantics and must be rewritten, not patched.
+
+- [SongPersistence.js](../../../../SongPersistence.js#L262) defaults `activeStylesheets` to `"Default"`; keep working with the alias.
+
+- The `mojo` value in `pentatonics-7-m-V7-in-6-keys-with-fill.json` has no sheet; it only works because of the "unknown first token means Default" rule. Keep that rule (3.3).
+
+- ANSWER: Keep rule. _We'll fix the song._
+
+
+- Because the system sheets are module singletons, `checked` flags are shared; the reset at open (Sprint 150) must stay and use `defaultOn`.
+
+
+
+- Matrix/`/vdd` "missing sheet" detection must treat an unknown system token like a missing user sheet (3.3).
+
+
+
+

@@ -7,7 +7,7 @@ vi _doco/lifecycle/CHANGELOG.md
 
 node bin/version-update.js ./version.json
 
-# Add version to version.js instead of generated value.  Use v2.1-beta-17 
+# Add version to version.js instead of generated value.  (Used v2.1-beta-18 on 20261109)
 
 vi ./version.json
 
