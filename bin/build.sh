@@ -18,6 +18,16 @@ node bin/version-read.js
 ## Then push from vscode with CTRL-`
 git push --tags
 
+
+20261109 --------stopped here-------
+
+
+
+
+
+
+
+
 npm run package:deploy 
 ## ==>  dist/infinite-neck-20260921-102749.tar.gz
 
