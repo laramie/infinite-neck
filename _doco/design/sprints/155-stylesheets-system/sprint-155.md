@@ -19,5 +19,6 @@ This sprint is to organize the system stylesheets in "folders" that are expandab
 
 ## Iterations
 
-  - "Iteration 1": Provide wishlist and initial layout; Produce Copilot analysis.
+  - "Iteration 1": Provide wishlist and initial layout; Produce Copilot analysis. Report: [155-it1-analysis.md](155-it1-analysis.md).
+  - "Iteration 2": Design simplifications and answers; Copilot implementation plan for review: [155-it2-implementation-plan.md](155-it2-implementation-plan.md).
 

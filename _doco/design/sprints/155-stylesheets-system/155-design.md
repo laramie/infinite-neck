@@ -278,6 +278,65 @@ Your list is repeated verbatim with new whitespace and "ANSWER" answers.  Bullet
 
 - Matrix/`/vdd` "missing sheet" detection must treat an unknown system token like a missing user sheet (3.3).
 
+# Iteration 3 : Implementation
+
+We answer the implementation plan questions below, and APPROVE core coding.
+
+One thing we were uncertain about that we'd like to address first: The User choices should not be in a folder, and are non-exclusive.  Thus there is no folder summarization of them either.
+
+## 9. Questions for the Design Team :: ANSWERED
+
+Q1 to Q3 block coding. Recommendation in italics.
+
+1. **Id of the Mood sheet.** `light` (as written) collides with the `light` embedded in 8 Songs and would rename theirs on open; the earlier list also says `MoodLight`. *Use `MoodLight`; folder `Moods`; keep Song copies as they are.*
+
+- ANSWER: Accepted (Use `MoodLight` in folder `Moods`). Also do the same so new folder `Moods` contains a copy in `MoodMinor` from `light-minor` from `http://localhost:8000/infinite-neck/?song=theory/mode-nat-minor-transposed-ebony-ivory.json`
+
+
+
+2. **Print this sprint?** Q13 listed `PrintPress` with Letterpress/Gradient/Halftone, but Iteration 2 only asks for one Mood sheet. *Not now; the layout takes it as a data-only addition. Optionally add `Letterpress` (a copy of `All-Clear`) now so a second folder and the "later so they win" order get real UA coverage.*
+
+- ANSWER:  Call the folder that was suggested as `PrintPress` instead as `Printing` and place three stylesheets in it, all stocked with values from `All-Clear` so we can replace them via hand-editing.  The three sheets are `Letterpress`, `Gradient`, `Halftone`.  Make one `note1` from `Gradient` use a gradient from `CycleOfColors` from its `note1` which should be `noteHatchedRootPink` and anything else that that one cell will need to render as it does in CycleOfColors, in case there's anything in the construction of one of these that we might miss.  Do the same for `Halftone` for its `note1`, using `halftone-trippy` which is `url('img/halftone-trippy.png')` from `#dropDownBorderImageWhiteKey`.
+
+
+3. **`Highlights` placement.** Not in your list of no-folder sheets. *Top level, after `Fingerings`.*
+
+- ANSWER: Accidental ommission.  Yes, as you proposed.
+
+
+4. **`Default` inside names.** Accept `Default` as a token in canonical names (`b+a+MoodLight+Default`) when the ticked set contains the shipping set, and explicit lists otherwise? *Yes (4.3).*
+
+- ANSWER: Yes.
+
+
+5. **"All" checkbox.** Default state and persistence, and the style reference (I used the Floaty markup; "MIDI on" was not found by that text). Also whether the word "Stylesheets" stays in the corner cell next to it. *Default on (today's look), session-only, drop the word because the button above already says it.*
+
+- ANSWER: Floaty is correct.  Drop the word "Stylesheets".  However, default the checkbox "All" to unchecked so that unchecked rows go blank.
+
+
+6. **First column.** Three fixed slots glyph | mark | name, children tinted not indented? *Yes.*
+
+- ANSWER: Yes.
+
+
+7. **Closed-folder text.** Members in precedence order (as recipes) and name only when none ticked? *Yes.*
+
+- ANSWER: Yes,
+
+
+8. **Exclusive.** Q2 answered yes for NoteFunctions and Print; do you also want `Moods` exclusive? *Yes, exclusive with none allowed. Only Jest can exercise it until a folder has two sheets.*
+
+- ANSWER: For now, `Moods` is exclusive.  Presumably by editing the module it will be easy to change this.  Should not be made brittle in jest tests for this possibility.
+
+
+9. **`Default` "in the list".** I read this as the Looks dropdown, first and read-only (the stylesheets table has no `Default` row). Correct?
+
+- ANSWER:  Correct.
+
+
+10. **Instrument strip label** (`.colorDictSwatchStrip`, a fifth place a long recipe shows). *Look/`Default` name when the selection equals one, else the recipe with a `title`.*
+
+- ANSWER: OK.
 
 
 
