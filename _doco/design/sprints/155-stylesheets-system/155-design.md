@@ -72,6 +72,32 @@ Copilot, please analyse this wishlist and initial layout proposal, and come up w
 
 # Iteration 2
 
+## Design Simplifications
+
+Below in "Design Team reports" you can see detailed responses to 155-it1-analysis.md.
+
+Here we sketch the overarching design of sprint-155's UI, with simplifications that restate findings and override ideas from before.
+
+Folders are view-only.  Their names are not Looks or stylesheets.
+
+Folders, when closed, show their folder name, and the visual summary of stylesheets they fold, that is, they behave like the old "Default" row.  
+
+Folders, when open, show only the folder name and a blank space for the rest of the row.  The folder name consumes the same space in the first column as stylesheet names.  The glyph for open/closed should be padded for in the stylesheet names so all the folder and stylesheet names line up vertically.
+
+Folder rows never have a checkbox.
+
+Some stylesheets will not be in folders: All-Clear, Fingerings, Roles.  These may get overrides in lower stylesheets that are in folders.  For example, the Moods folder will contain mood stylesheets that override both NoteFunctions and Roles.
+
+The Moods folder will contain stylesheets that override NoteFunctions and Roles, so it can style notes when AutoColor is off and on.  These will be the "light", "blue", "LaMer", "Forest" and so on.  Copilot does not need to set these up or arrange them, since we will curate these after the sprint-155 plumbing is in place.  Similarly named stylesheets in songs can be left there in the songs.  We will use them in place to preview them and not require swatches to be built.
+
+We just need one mood stylesheet, use "light" copied from a Song.  Put it in a "Moods" folder.  Put the coding for that in a separate module so we can maintain all the new system optional stylesheets in that module.  Put the coding for Folder names in a separate module so we can maintain them there.
+
+Atop the stylesheets table, in the 0,0 corner cell, we want a checkbox styled like "MIDI on" and "Floaty" that has caption "All".  When checked, all rows will have their colors shown in cells in that table, whether they are checked or not.  When "All" is not checked, rows will only show their colors if their individual row is checked.  This requires a rule for handling of closed-up folder rows, to ensure that folder rows ignore the "All" checkbox. So if a folder row is closed, but all of its child stylesheets are unchecked, then the folder row is necessarily blank.  If some children are checked, then the closed up folder row should show the sum of its checked child rows, the way old "Default" does for all checked system rows.  Thus it does not follow the "All" checkbox and attempt to sum all possible children--it keeps its correct behavior: blank if no children checked, sum of checked children if children checked.
+
+System rows and folders will be editable only by developers.  There is no UX for CRUD or ordering.
+
+"Default" is gone.  "Result" is the bottom row and is accurate: it is the summarization, and includes the live User stylesheet choices of system and User sheets.  There is some summarization of the Folders in folder rows when closed, as described above.
+
 ## Design Team reports:
 
 - sprint-150 UA checklist: ALL PASS on 20261108, recorded in `_doco/design/sprints/150-palette-crud-redo/sprint-150.md`
@@ -79,18 +105,19 @@ Copilot, please analyse this wishlist and initial layout proposal, and come up w
 - We absolutely agree that order matters, and should work as it does today: bottom of lists in page has highest precedence, applied last.
 
 - We simplify the requirement to not use "All-Clear".  Insted, use it as any other Stylesheet name including in built-up lists.  That way there is no special handling.  For long names we have two strategies: 1) the breaking characters you proposed are accepted, and the `nobr` markup is to be removed; 2) "Look" can be used by Users to shorten names in the DisplayOptionsMatrix views and `/vdd` view. 
-- since there is space after the folder name when the folder is "closed" we can use the rest of that line to report the long built-up name of the contents of the folder.  If it is exclusive child elements, there will be just one.  But in the case of non-exclusive child elements they would be like:
-` > Folder : Child1+Child2 `
+
 - We like the idea of the simple glyph in the existing cell, rather than adding a TD. e.g. Accept 5.1 cheaper alternative.
+
 - `user2+user1+Default` is accepted: show reality in order of precedence in the built-up names with last-applied-first.
+
 - `B. Live system composite` is the choice. `Default` as the "Shipping Set".  Presume this means if we were to change the Shipping Set from including "CycleOfColors" to future sheet "CycleOfColors2027" that opening a Song would automatically get the change.  A User who wanted to lock in "CycleOfColors" would then need to select a subset of the Shipping Set somehow?  To discuss.
 
 
 - _We will clean old songs e.g. "mojo"_
-- _We will curate sheets such as "light" into system sheets first._
-- _At that time we will curate the lists MoodBlue, MoodLight, LaMer and Forest correctly._
 
-- _We would like to simplify "Default".  Most likely: make "Default" the shipping set, and make it a Look that is in the list. Ideal would be if it were read-only to the User.  It starts off as first, and since we have no re-order feature, would stay as first in the list.  So it is no longer a stylesheet, or a fake stylesheet row or preview row.  We leave the bottom "Result" row for that duty.
+- We will curate sheets such as "light" into system optional sheets. At that time we will curate the lists MoodBlue, MoodLight, LaMer and Forest correctly.
+
+- _We would like to simplify "Default".  Make "Default" the shipping set, and make it a Look that is in the list. Ideal would be if it were read-only to the User.  It starts off as first, and since we have no re-order feature, would stay as first in the list.  So it is no longer a stylesheet, or a fake stylesheet row or preview row.  We leave the bottom "Result" row for that duty.
 
 
 ## Answers for: 155-it1-analysis.md :: 8. Questions and holes for the Design Team
@@ -120,12 +147,12 @@ Your list is repeated verbatim with new whitespace and "ANSWER" answers.  Bullet
 
 5. What is the `Default` row (3.1, A or B) and what does the token `Default` mean? *B for the row, token = shipping set alias.*
 
-- ANSWER: Accept proposal. 
+- ANSWER: See above.  We want Default not to be a row, but a Look.
 
 
 6. How is "only AllClear" written, and is `Default` written when the set equals the shipping set? *`AllClear` literal only when alone; yes write `Default` for the shipping set.*
 
-- ANSWER: We think both apply: the Default for the shipping set makes sense, and we also want to loosen the restriction against showing "All-Clear".  We want to simplify and use "All-Clear" wherever it makes sense like any other name. 
+- ANSWER: The Default for the shipping set should now be a look, and we want to loosen the restriction against showing "All-Clear".  We want to simplify and use "All-Clear" wherever it makes sense like any other name. 
 
 
 7. User-before-system: store it that way or only display it? Do user sheets also reverse (highest first)? *Store it; reverse users too so left always means "wins".*
