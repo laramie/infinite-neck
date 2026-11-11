@@ -194,6 +194,13 @@
     box-shadow: inset 0 0 5px 6px rgb(0, 50, 251);
 }
 
+/* Sprint 155: a Color recipe wraps after each "+" (the builder puts a <wbr> there) instead of being clipped */
+#divDisplayOptionsMatrix td.dmWrapCell {
+    white-space: normal;
+    max-width: 14em;
+    overflow-wrap: anywhere;
+}
+
 /* Sprint 150: a Color value naming a stylesheet the Song no longer has (wavy orange strike; the title says which) */
 #divDisplayOptionsMatrix .dmMissingSheet {
     text-decoration: line-through wavy #ff9900;

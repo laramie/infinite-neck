@@ -1,25 +1,34 @@
 // Sprint 150: pure (no DOM, no jQuery) model for the Palette's Stylesheet CRUD.
 // colorFunctions.js renders and applies; this module decides, so Jest can test every rule.
 //
-// Vocabulary
-//   built-in : All-Clear, CycleOfColors, Roles, Fingerings, Highlights, Default (read-only layers, in order).
-//   user sheet: {readOnly:false, computed:false, checked, dict} saved with the Song.
-//   recipe   : "<highest ticked built-in>[+<ticked user sheet>...]", e.g. "Fingerings+CycleOfColors-user2".
-//   Look     : a named recipe, stored per Song in song.colorLooks = {name: recipe}.
+// Sprint 155 vocabulary (the layout and shipping set are in systemFolders.js)
+//   system sheet: a read-only, checkbox-ticked sheet from SYSTEM_LAYOUT (All-Clear, CycleOfColors, Roles, ...).
+//                 They are independent: any subset may be ticked.  List order is precedence, the bottom wins.
+//   user sheet  : {readOnly:false, computed:false, checked, dict} saved with the Song; a flat, non-exclusive list.
+//   recipe      : a '+'-joined set of sheet names, last-applied first, user sheets first, e.g. "b+a+MoodLight+Default".
+//                 The token Default means the shipping set.  Token order is cosmetic: song.colorDicts order decides.
+//   Look        : a named recipe, stored per Song in song.colorLooks = {name: recipe}.  The Look Default (the shipping
+//                 set) always exists, is first, and is not stored.
 
-export const BUILT_IN_ORDER = ['All-Clear', 'CycleOfColors', 'Roles', 'Fingerings', 'Highlights', 'Default'];
+import {
+    SYSTEM_LAYOUT, DEFAULT_LOOK_NAME, layoutSheets, systemIds, shippingIds, findLayoutSheet, exclusiveSiblings
+} from './systemFolders.js';
+
+export const BUILT_IN_ORDER = systemIds();
+export const RESERVED_NAMES = [...BUILT_IN_ORDER, DEFAULT_LOOK_NAME];
 export const MAX_SHEET_NAME_LENGTH = 40;
 
 const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj || {}, key);
 const lower = (s) => String(s).toLowerCase();
-const BUILT_IN_LOWER = BUILT_IN_ORDER.map(lower);
+const RESERVED_LOWER = RESERVED_NAMES.map(lower);
 const SAFE_CLASS = /^[A-Za-z0-9_ -]*$/;
 
 //=============================== names ========================================
 
+/** The canonical spelling of a system sheet id or of Default, or null. */
 export function builtInName(name) {
-    const i = BUILT_IN_LOWER.indexOf(lower(name ?? ''));
-    return i < 0 ? null : BUILT_IN_ORDER[i];
+    const i = RESERVED_LOWER.indexOf(lower(name ?? ''));
+    return i < 0 ? null : RESERVED_NAMES[i];
 }
 
 export function isBuiltInName(name) {
@@ -67,7 +76,7 @@ export function isUserSheet(colorDicts, key) {
 
 export function takenNames(song) {
     return [
-        ...BUILT_IN_ORDER,
+        ...RESERVED_NAMES,
         ...Object.keys((song && song.colorDicts) || {}),
         ...Object.keys((song && song.colorLooks) || {})
     ];
@@ -137,10 +146,10 @@ export function sanitizeColorDicts(userEntries, { knownRoles = null } = {}) {
             reason = 'collides with a built-in stylesheet';
         }
         if (findKeyCI(placed, name)) {
-            name = freeName(name, [...BUILT_IN_ORDER, ...placed]);
+            name = freeName(name, [...RESERVED_NAMES, ...placed]);
             reason = 'duplicate name';
         }
-        if (isBuiltInName(name)) name = freeName(name + '-user', [...BUILT_IN_ORDER, ...placed]);
+        if (isBuiltInName(name)) name = freeName(name + '-user', [...RESERVED_NAMES, ...placed]);
         const dict = {};
         for (const [noteKey, cell] of Object.entries(entry.dict)) {
             if (!hasOwn(entry.dict, noteKey)) continue;
@@ -158,18 +167,42 @@ export function sanitizeColorDicts(userEntries, { knownRoles = null } = {}) {
 
 //=============================== flags and order ==============================
 
-export function resetBuiltInFlags(colorDicts) {
-    builtInKeys(colorDicts).forEach((k) => { colorDicts[k].checked = true; });
+/** Song open: system sheets are ticked per the shipping set (alwaysOn or defaultOn). User flags are untouched. */
+export function resetSystemFlags(colorDicts, layout = SYSTEM_LAYOUT) {
+    layoutSheets(layout).forEach((s) => {
+        if (hasOwn(colorDicts, s.id)) colorDicts[s.id].checked = s.alwaysOn || s.defaultOn;
+    });
     return colorDicts;
 }
 
-/** Built-in link click: tick built-ins up to and including `key`, untick the rest. User flags are untouched. */
-export function setBuiltInLevel(colorDicts, key) {
-    const level = builtInName(key);
-    if (!level || !hasOwn(colorDicts, level)) return false;
-    const cut = BUILT_IN_ORDER.indexOf(level);
-    builtInKeys(colorDicts).forEach((k) => { colorDicts[k].checked = BUILT_IN_ORDER.indexOf(k) <= cut; });
-    return true;
+/** Checkbox click on a system sheet.  alwaysOn sheets stay ticked.  Ticking a sheet in an exclusive folder unticks its
+ *  siblings.  Returns true when any flag changed. */
+export function setSystemSheetChecked(colorDicts, id, checked, layout = SYSTEM_LAYOUT) {
+    const sheet = findLayoutSheet(id, layout);
+    if (!sheet || !hasOwn(colorDicts, id)) return false;
+    const want = sheet.alwaysOn ? true : !!checked;
+    let changed = false;
+    const set = (key, value) => {
+        if (hasOwn(colorDicts, key) && !!colorDicts[key].checked !== value) { colorDicts[key].checked = value; changed = true; }
+    };
+    set(id, want);
+    if (want) exclusiveSiblings(id, layout).forEach((other) => set(other, false));
+    return changed;
+}
+
+/** Is system sheet `id` in effect?  alwaysOn sheets always are. */
+export function isSystemTicked(colorDicts, id, layout = SYSTEM_LAYOUT) {
+    const sheet = findLayoutSheet(id, layout);
+    if (!sheet) return false;
+    return sheet.alwaysOn || (hasOwn(colorDicts, id) && !!colorDicts[id].checked);
+}
+
+/** song.colorDicts for a new Song: system sheets in layout order, then the user sheets, flags reset to the shipping set. */
+export function assembleColorDicts(systemSheets, userDicts, layout = SYSTEM_LAYOUT) {
+    const out = {};
+    systemIds(layout).forEach((id) => { if (hasOwn(systemSheets, id)) out[id] = systemSheets[id]; });
+    Object.keys(userDicts || {}).forEach((k) => { out[k] = userDicts[k]; });
+    return resetSystemFlags(out, layout);
 }
 
 /** Returns a new colorDicts with built-ins first, then user sheets with `key` moved by delta. null at the ends. */
@@ -187,46 +220,90 @@ export function moveUserSheet(colorDicts, key, delta) {
 
 //=============================== recipes ======================================
 
-export function highestBuiltIn(colorDicts) {
-    const ticked = builtInKeys(colorDicts).filter((k) => colorDicts[k].checked);
-    return ticked.length ? ticked[ticked.length - 1] : 'All-Clear';
+/** The system sheets in effect, in layout order (alwaysOn sheets always are). */
+function tickedSystemIds(colorDicts, layout) {
+    return layoutSheets(layout).filter((s) => s.alwaysOn || (hasOwn(colorDicts, s.id) && colorDicts[s.id].checked)).map((s) => s.id);
 }
 
-export function buildRecipe(colorDicts) {
-    const users = userKeys(colorDicts).filter((k) => colorDicts[k].checked);
-    return [highestBuiltIn(colorDicts), ...users].join('+');
+/** The ticked set as a recipe: user sheets (last-applied first), then the system sheets (last-applied first).
+ *  When the system sheets include the whole shipping set the shipping part is written as the token Default, after the
+ *  extras: "b+a+MoodLight+Default".  expandDefault writes the system sheets out instead (used by Save Look, so a
+ *  Look keeps meaning the same sheets even if the shipping set changes later). */
+export function buildRecipe(colorDicts, { layout = SYSTEM_LAYOUT, expandDefault = false } = {}) {
+    const users = userKeys(colorDicts).filter((k) => colorDicts[k].checked).reverse();
+    const system = tickedSystemIds(colorDicts, layout);
+    const shipping = shippingIds(layout);
+    if (!expandDefault && shipping.every((id) => system.includes(id))) {
+        const extras = system.filter((id) => !shipping.includes(id)).reverse();
+        return [...users, ...extras, DEFAULT_LOOK_NAME].join('+');
+    }
+    return [...users, ...system.reverse()].join('+');
 }
 
-/** A first token that is not a built-in implies level Default (legacy values like "user" or "mojo"). */
-export function parseRecipe(str) {
+/** {system: [ids in layout order] | null, users: [names]}.  Tokens: a system id or Default (the shipping set), matched
+ *  case-insensitively, else a user sheet name.  A recipe with no system token (an old-style value such as "user")
+ *  means the shipping set plus those user sheets.  All-Clear is always included.  The empty recipe is {system: null}. */
+export function parseRecipe(str, layout = SYSTEM_LAYOUT) {
     const tokens = String(str ?? '').split('+').map((t) => t.trim()).filter(Boolean);
-    if (!tokens.length) return { level: null, users: [] };
-    let level = builtInName(tokens[0]);
-    const rest = level ? tokens.slice(1) : tokens;
-    if (!level) level = 'Default';
+    if (!tokens.length) return { system: null, users: [] };
+    const ids = systemIds(layout);
+    const picked = new Set();
     const users = [];
-    rest.forEach((t) => { if (!isBuiltInName(t) && !users.includes(t)) users.push(t); });
-    return { level, users };
+    let sawSystem = false;
+    tokens.forEach((t) => {
+        if (lower(t) === lower(DEFAULT_LOOK_NAME)) {
+            sawSystem = true;
+            shippingIds(layout).forEach((id) => picked.add(id));
+            return;
+        }
+        const id = ids.find((i) => lower(i) === lower(t));
+        if (id) {
+            sawSystem = true;
+            picked.add(id);
+        } else if (!users.includes(t)) {
+            users.push(t);
+        }
+    });
+    if (!sawSystem) shippingIds(layout).forEach((id) => picked.add(id));
+    layoutSheets(layout).filter((s) => s.alwaysOn).forEach((s) => picked.add(s.id));
+    return { system: ids.filter((id) => picked.has(id)), users };
 }
 
-export function recipeKey(recipeOrParsed) {
-    const p = typeof recipeOrParsed === 'string' ? parseRecipe(recipeOrParsed) : recipeOrParsed;
-    if (!p.level) return '';
-    return p.level + '|' + [...p.users].sort().join(',');
+export function recipeKey(recipeOrParsed, layout = SYSTEM_LAYOUT) {
+    const p = typeof recipeOrParsed === 'string' ? parseRecipe(recipeOrParsed, layout) : recipeOrParsed;
+    if (!p.system) return '';
+    return p.system.join(',') + '|' + [...p.users].sort().join(',');
 }
 
-function resolveValue(value, colorLooks) {
+/** The Looks table: Default (the shipping set, always first, never stored) then the Song's own Looks. */
+export function lookTable(colorLooks, layout = SYSTEM_LAYOUT) {
+    const out = { [DEFAULT_LOOK_NAME]: shippingIds(layout).slice().reverse().join('+') };
+    Object.keys(colorLooks || {}).forEach((name) => {
+        if (lower(name) !== lower(DEFAULT_LOOK_NAME)) out[name] = colorLooks[name];
+    });
+    return out;
+}
+
+export function allLooks(song, layout = SYSTEM_LAYOUT) {
+    return lookTable(song && song.colorLooks, layout);
+}
+
+function resolveValue(value, colorLooks, layout = SYSTEM_LAYOUT) {
     const v = String(value ?? '');
-    return hasOwn(colorLooks, v) ? { look: v, recipe: String(colorLooks[v]) } : { look: null, recipe: v };
+    const looks = lookTable(colorLooks, layout);
+    return hasOwn(looks, v) ? { look: v, recipe: String(looks[v]) } : { look: null, recipe: v };
 }
 
-/** Sets built-in level and user flags absolutely from a Look name or recipe. Does not reorder. Returns {missing}. */
-export function applyRecipe(colorDicts, value, colorLooks = {}) {
-    const { recipe } = resolveValue(value, colorLooks);
-    const p = parseRecipe(recipe);
+/** Sets the system flags (alwaysOn or named) and the user flags absolutely from a Look name or recipe.
+ *  Does not reorder. Returns {missing}. */
+export function applyRecipe(colorDicts, value, colorLooks = {}, layout = SYSTEM_LAYOUT) {
+    const { recipe } = resolveValue(value, colorLooks, layout);
+    const p = parseRecipe(recipe, layout);
     const missing = [];
-    if (!p.level) return { missing, applied: false };
-    setBuiltInLevel(colorDicts, p.level);
+    if (!p.system) return { missing, applied: false };
+    layoutSheets(layout).forEach((s) => {
+        if (hasOwn(colorDicts, s.id)) colorDicts[s.id].checked = s.alwaysOn || p.system.includes(s.id);
+    });
     const known = userKeys(colorDicts);
     known.forEach((k) => { colorDicts[k].checked = p.users.includes(k); });
     p.users.forEach((u) => { if (!known.includes(u)) missing.push(u); });
@@ -234,19 +311,20 @@ export function applyRecipe(colorDicts, value, colorLooks = {}) {
 }
 
 /** What to store in song.currentColorDict: keep the preferred spelling if it still means the ticked set,
- *  else a Look with the same recipe, else the canonical recipe. */
-export function chooseColorDictValue({ colorDicts, colorLooks = {}, preferred = '', keepMissing = false }) {
-    const canonical = buildRecipe(colorDicts);
-    const key = recipeKey(canonical);
+ *  else a Look with the same recipe (Default first), else the canonical recipe. */
+export function chooseColorDictValue({ colorDicts, colorLooks = {}, preferred = '', keepMissing = false, layout = SYSTEM_LAYOUT }) {
+    const canonical = buildRecipe(colorDicts, { layout });
+    const key = recipeKey(canonical, layout);
     const pref = String(preferred ?? '');
     if (pref) {
-        const { recipe } = resolveValue(pref, colorLooks);
+        const { recipe } = resolveValue(pref, colorLooks, layout);
         // keepMissing: a Section that names a sheet that is gone keeps its own spelling (the Matrix flags it)
         // until the user changes the selection; re-recording the sheet makes it work again.
-        if (keepMissing && parseRecipe(recipe).users.some((u) => !isUserSheet(colorDicts, u))) return pref;
-        if (recipeKey(recipe) === key) return pref;
+        if (keepMissing && parseRecipe(recipe, layout).users.some((u) => !isUserSheet(colorDicts, u))) return pref;
+        if (recipeKey(recipe, layout) === key) return pref;
     }
-    const look = Object.keys(colorLooks || {}).find((n) => recipeKey(String(colorLooks[n])) === key);
+    const looks = lookTable(colorLooks, layout);
+    const look = Object.keys(looks).find((n) => recipeKey(String(looks[n]), layout) === key);
     return look ?? canonical;
 }
 
@@ -422,7 +500,7 @@ export function planSave(editor, { rawName, colorDicts, colorLooks = {} }) {
     let name = cleaned.name;
     let nameNote = cleaned.changed && name ? 'cleaned' : '';
     if (!name) {
-        name = freeName('user', [...BUILT_IN_ORDER, ...Object.keys(colorDicts), ...Object.keys(colorLooks)]);
+        name = freeName('user', [...RESERVED_NAMES, ...Object.keys(colorDicts), ...Object.keys(colorLooks)]);
         nameNote = 'empty';
     }
     if (isBuiltInName(name)) {
@@ -465,7 +543,7 @@ export function planSave(editor, { rawName, colorDicts, colorLooks = {} }) {
 export function planCopy(editor, { colorDicts, colorLooks = {} }) {
     const cells = visibleCells(editor, { withOriginal: true });
     if (!Object.keys(cells).length) return blocked('empty');
-    const taken = [...BUILT_IN_ORDER, ...Object.keys(colorDicts), ...Object.keys(colorLooks)];
+    const taken = [...RESERVED_NAMES, ...Object.keys(colorDicts), ...Object.keys(colorLooks)];
     let preferred;
     if (editor.sourceKind === 'user') preferred = editor.selectedKey + '-copy';
     else if (editor.sourceKind === 'builtin') preferred = editor.selectedKey + '-user';
@@ -479,7 +557,7 @@ export function planRename(selectedKey, rawName, { colorDicts, colorLooks = {} }
     const cleaned = cleanSheetName(rawName);
     if (!cleaned.name) return blocked('empty');
     if (cleaned.name === selectedKey) return blocked('no-change', { name: cleaned.name });
-    const taken = [...BUILT_IN_ORDER, ...Object.keys(colorDicts).filter((k) => k !== selectedKey), ...Object.keys(colorLooks)];
+    const taken = [...RESERVED_NAMES, ...Object.keys(colorDicts).filter((k) => k !== selectedKey), ...Object.keys(colorLooks)];
     if (findKeyCI(taken, cleaned.name)) return blocked('name-taken', { name: cleaned.name });
     return { ok: true, action: 'rename', from: selectedKey, name: cleaned.name, nameNote: cleaned.changed ? 'cleaned' : '' };
 }
@@ -533,16 +611,76 @@ export function buildSheetEntry(plan, roleTemplates, checked = true) {
     return { readOnly: false, computed: false, checked, dict };
 }
 
+//=============================== table rows ===================================
+
+/** Cells of the ticked sheets in `ids`, merged in the given (layout) order, the last one winning. Used for a closed
+ *  folder's summary row. Returns {noteKey: cell} with the cells as stored. */
+export function folderSummaryCells(colorDicts, ids) {
+    const out = {};
+    (ids || []).forEach((id) => {
+        Object.entries((hasOwn(colorDicts, id) && colorDicts[id].dict) || {}).forEach(([k, v]) => {
+            if (v && v.colorClass && !v.readonly) out[k] = v;
+        });
+    });
+    return out;
+}
+
+/** "Folder : child+child" with the ticked children in precedence order (the last-applied first, as in a recipe),
+ *  or just "Folder" when none is ticked. `tickedIds` is in layout order. */
+export function folderLabel(name, tickedIds) {
+    const ids = [...(tickedIds || [])].reverse();
+    return ids.length ? `${name} : ${ids.join('+')}` : name;
+}
+
+/** The rows of the Stylesheets table, top to bottom: the system layout (a folder's sheets only while it is open), then
+ *  the user sheets as a flat list. `showColors` says whether a sheet row shows its cells ("All" overrides unticked).
+ *  A folder row shows `summaryIds` merged while closed (its own `showAll` is ignored) and blank cells while open. */
+export function planStylesheetRows(colorDicts, { openFolders = new Set(), showAll = false, layout = SYSTEM_LAYOUT } = {}) {
+    const rows = [];
+    const sheetRow = (s, folder) => {
+        const checked = isSystemTicked(colorDicts, s.id, layout);
+        return { kind: 'sheet', id: s.id, folder, system: true, checked, alwaysOn: s.alwaysOn, showColors: checked || showAll };
+    };
+    layout.forEach((entry) => {
+        if (entry.sheet) {
+            if (hasOwn(colorDicts, entry.sheet)) rows.push(sheetRow(findLayoutSheet(entry.sheet, layout), null));
+            return;
+        }
+        const children = entry.sheets.filter((s) => hasOwn(colorDicts, s.id)).map((s) => findLayoutSheet(s.id, layout));
+        if (!children.length) return;
+        const ticked = children.filter((s) => isSystemTicked(colorDicts, s.id, layout)).map((s) => s.id);
+        const open = openFolders.has(entry.folder);
+        rows.push({
+            kind: 'folder', name: entry.folder, open, ids: children.map((s) => s.id), ticked,
+            label: folderLabel(entry.folder, ticked), summaryIds: ticked
+        });
+        if (open) children.forEach((s) => rows.push(sheetRow(s, entry.folder)));
+    });
+    const users = userKeys(colorDicts);
+    users.forEach((id, userIndex) => {
+        rows.push({ kind: 'sheet', id, folder: null, system: false, checked: !!colorDicts[id].checked, alwaysOn: false,
+            showColors: !!colorDicts[id].checked || showAll, userIndex, userCount: users.length });
+    });
+    return rows;
+}
+
+const HTML_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+/** Recipe text as safe HTML that may break after each "+": each token is escaped, joined by "+<wbr>". */
+export function wrapRecipeHtml(text) {
+    return String(text ?? '').split('+').map((t) => t.replace(/[&<>"']/g, (c) => HTML_ESCAPES[c])).join('+<wbr>');
+}
+
 //=============================== Looks ========================================
 
 export function planSaveLook({ rawName, colorDicts, colorLooks = {} }) {
     const cleaned = cleanSheetName(rawName);
     if (!cleaned.name) return blocked('empty');
-    const taken = [...BUILT_IN_ORDER, ...Object.keys(colorDicts)];
+    const taken = [...RESERVED_NAMES, ...Object.keys(colorDicts)];
     if (findKeyCI(taken, cleaned.name)) return blocked('name-taken', { name: cleaned.name });
     const existingKey = findKeyCI(Object.keys(colorLooks), cleaned.name);
     const name = existingKey ?? cleaned.name;
-    const recipe = buildRecipe(colorDicts);
+    const recipe = buildRecipe(colorDicts, { expandDefault: true });
     if (existingKey && colorLooks[existingKey] === recipe) return blocked('no-change', { name });
     return { ok: true, action: existingKey ? 'update' : 'create', name, recipe, nameNote: cleaned.changed ? 'cleaned' : '' };
 }

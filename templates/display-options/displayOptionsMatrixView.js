@@ -16,7 +16,7 @@ import { describeBlocks } from './displayOptionsGates.js';
 import { resolveDisplayOptions, songDefaultValues } from './displayOptionsResolver.js';
 import { escapeHtml, cellText, cellState, gateMarkHtml, keyLabelHtml, WANT_LITERAL_ROWMARK_TEXT, WANT_LITERAL_COLMARK_TEXT } from './displayOptionsCellRules.js';
 import { ZONES } from './displayOptionsMatrixTools.js';
-import { describeColorValue } from '../palette/stylesheetPlan.js';
+import { describeColorValue, wrapRecipeHtml } from '../palette/stylesheetPlan.js';
 
 /** Text longer than this gets a title attribute with the full text (the CSS clips with an ellipsis). */
 export const CLIP_TITLE_LENGTH = 12;
@@ -41,11 +41,14 @@ function dataAttrs(interactive, zone, { sectionIndex = null, key = null } = {}) 
     return text;
 }
 
-function cellBody(value) {
+/** Sprint 155: a Color (currentColorDict) recipe such as "b+a+MoodLight+Default" can be long, so it wraps after each "+"
+ *  (class dmWrapCell) instead of being clipped.  `wrap` is the class to add to the td ('' for every other key). */
+function cellBody(value, key = '') {
     const text = cellText(value, { boolMarks: true });
-    const html = escapeHtml(text) || '&nbsp;';
+    const wraps = key === 'currentColorDict' && !!text;
+    const html = wraps ? wrapRecipeHtml(text) : (escapeHtml(text) || '&nbsp;');
     const title = text.length > CLIP_TITLE_LENGTH ? ` title='${escapeHtml(text)}'` : '';
-    return { html, title };
+    return { html, title, wrap: wraps ? ' dmWrapCell' : '' };
 }
 
 /** Sprint 150: a Color (currentColorDict) value that names a stylesheet this Song no longer has is struck through.
@@ -96,9 +99,9 @@ function keyRowHtml(song, interactive, keys) {
 }
 
 function specialCellHtml(interactive, key, value, song = null) {
-    const { html, title: baseTitle } = value === undefined || value === null ? { html: '', title: '' } : cellBody(value);
+    const { html, title: baseTitle, wrap = '' } = value === undefined || value === null ? { html: '', title: '' } : cellBody(value, key);
     const { cls, title } = missingSheetMark(song, key, value, baseTitle);
-    return `<td class='dmSpecialCell${cls}'${dataAttrs(interactive, ZONES.specialCell, { key })}${title}>${html}</td>`;
+    return `<td class='dmSpecialCell${wrap}${cls}'${dataAttrs(interactive, ZONES.specialCell, { key })}${title}>${html}</td>`;
 }
 
 /** The DEFAULTS row. */
@@ -144,8 +147,9 @@ export function buildSectionRowHtml(song, sectionIndex, { currentIndex = -1, int
             ...gateFlagClasses('dmRowGate', blocks.row),
             ...gateFlagClasses('dmCellGate', blocks.cell),
             ...(blocks.adapter ? ['dmAdapterKey'] : [])];
-        const { html, title: baseTitle } = state === 'absent' ? { html: '', title: '' } : cellBody(block[key]);
+        const { html, title: baseTitle, wrap = '' } = state === 'absent' ? { html: '', title: '' } : cellBody(block[key], key);
         const mark = state === 'absent' ? { cls: '', title: baseTitle } : missingSheetMark(song, key, block[key], baseTitle);
+        if (wrap) classes.push('dmWrapCell');
         if (mark.cls) classes.push('dmMissingSheet');
         const title = mark.title;
         cells.push(`<td class='${classes.join(' ')}'${dataAttrs(interactive, ZONES.cell, { sectionIndex, key })}${title}>${html}</td>`);

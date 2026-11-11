@@ -9,6 +9,7 @@
 
 import { DISPLAY_OPTION_KEYS, DISPLAY_OPTION_META } from './templates/display-options/displayOptionsMeta.js';
 import { describeBlocks } from './templates/display-options/displayOptionsGates.js';
+import { wrapRecipeHtml } from './templates/palette/stylesheetPlan.js';
 import { escapeHtml, cellText, gateClasses, CELL_GATE_CLASS, cellState, gateMarkHtml, keyLabelHtml, WANT_LITERAL_ROWMARK_TEXT, WANT_LITERAL_COLMARK_TEXT } from './templates/display-options/displayOptionsCellRules.js';
 
 let getSongProvider = function () {
@@ -83,8 +84,12 @@ export function displayOptionsTable(){
                 cells.push(`<td class='${classes}' style='background-color: #303030;'>${markHtml || ''}</td>`);
                 continue;
             }
-            const text = escapeHtml(cellText(block[key])) || '&nbsp;';
-            cells.push(`<td class='${classes}' style='background-color: ${state === 'changed' ? 'chartreuse' : 'white'};'>${text}${markHtml}</td>`);
+            // Sprint 155: a Color recipe wraps after each "+" instead of making the column very wide.
+            const wraps = key === 'currentColorDict';
+            const rawText = cellText(block[key]);
+            const text = (wraps && rawText ? wrapRecipeHtml(rawText) : escapeHtml(rawText)) || '&nbsp;';
+            const wrapStyle = wraps ? ' white-space: normal; max-width: 14em;' : '';
+            cells.push(`<td class='${classes}' style='background-color: ${state === 'changed' ? 'chartreuse' : 'white'};${wrapStyle}'>${text}${markHtml}</td>`);
         }
         res.push(`<tr>${cells.join('')}</tr>`);
         skippedRow = false;

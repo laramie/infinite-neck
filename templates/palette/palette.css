@@ -427,6 +427,44 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 #palette .ssMark {
     display: inline-block;
     min-width: 1.4em;
+    text-align: center;
+}
+/* Sprint 155: the first cell is three fixed slots (glyph | mark | name) so names line up in every kind of row.
+   Rows in a folder are tinted, not indented. */
+#palette .ssFirstCell {
+    display: flex;
+    align-items: center;
+    gap: 0.2em;
+}
+#palette .ssGlyphSlot {
+    flex: 0 0 1.6em;
+    text-align: center;
+}
+#palette .ssMark {
+    flex: 0 0 1.6em;
+}
+#palette .ssName {
+    flex: 1 1 auto;
+}
+#palette .ssFolderToggle {
+    padding: 0 0.2em;
+    min-width: 1.4em;
+    cursor: pointer;
+}
+#palette .ssFolderLink {
+    color: inherit;
+    font-style: italic;
+}
+#palette tr.ssRowFolder > td.userColorResultLinks {
+    background-color: #6eb4ff;
+}
+#palette tr.ssRowChild > td.userColorResultLinks {
+    background-color: #e3e8ee;
+}
+#palette #ssAllLabel {
+    display: inline-block;
+    font-weight: bold;
+    cursor: pointer;
 }
 #palette .ssButtonsTD {
     width: auto;

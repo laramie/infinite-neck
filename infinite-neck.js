@@ -17,7 +17,8 @@ import {
 	resetStylesheetEditor,
 	setColorFunctionsProviders
 } from './colorFunctions.js';
-import { repointReferences, resetBuiltInFlags, sanitizeColorDicts } from './templates/palette/stylesheetPlan.js';
+import { assembleColorDicts, repointReferences, sanitizeColorDicts } from './templates/palette/stylesheetPlan.js';
+import { OPTIONAL_SHEETS } from './templates/palette/optionalSheets.js';
 import {
 	addCmdResults,
 	hideCmdLine,
@@ -2496,17 +2497,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		const { dicts: userColorDicts, renames } = sanitizeColorDicts(userEntries, {
 			knownRoles: new Set(Object.keys(gUserColorDictOEM.dict))
 		});
-		// The built-ins are module singletons: every Song open starts with all of them ticked (no carry-over
-		// of an earlier Song's All-Clear/level); each user sheet keeps its own saved `checked` flag.
-		song.colorDicts = resetBuiltInFlags({
+		// Sprint 155: the system sheets are module singletons placed in the order of SYSTEM_LAYOUT (systemFolders.js).
+		// Every Song open resets their ticks to the shipping set (no carry-over from an earlier Song); each user
+		// sheet keeps its own saved `checked` flag.  There is no "Default" sheet: Default is a Look.
+		song.colorDicts = assembleColorDicts({
 			"All-Clear": gAllClear,
 			"CycleOfColors": gDefault_CycleOfColors,
 			"Roles": gUserColorDictRolesDefault,
 			"Fingerings": gUserColorDictFingeringsDefault,
 			"Highlights": gUserColorDictHighlightsDefault,
-			"Default": gUserColorDictOEM,
-			...userColorDicts
-		});
+			...OPTIONAL_SHEETS
+		}, userColorDicts);
 		renames.forEach(({ from, to, reason }) => {
 			if (to) {
 				const count = repointReferences(song, from, to);

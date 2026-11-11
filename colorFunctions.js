@@ -20,11 +20,11 @@ import {
 	toInt
 } from './utils.js';
 import {
-	applyRecipe, buildRecipe, buildSheetEntry, chooseColorDictValue, countChanges, createEditor,
+	allLooks, applyRecipe, buildRecipe, buildSheetEntry, chooseColorDictValue, countChanges, createEditor,
 	describeLookPlan, describePlan, describeUsage, editorClearRole, editorLoadEdits, editorSelect,
-	editorSetPart, findLookUsage, findSheetUsage, freeName, isBuiltInName, isUserSheet, joinClass,
-	moveUserSheet, planCopy, planRename, planSave, planSaveLook, repointReferences, setBuiltInLevel,
-	splitClass, takenNames, userKeys, visibleCell
+	editorSetPart, findLookUsage, findSheetUsage, folderSummaryCells, freeName, isBuiltInName, isUserSheet, joinClass,
+	moveUserSheet, planCopy, planRename, planSave, planSaveLook, planStylesheetRows, repointReferences,
+	setSystemSheetChecked, splitClass, takenNames, userKeys, visibleCell, wrapRecipeHtml
 } from './templates/palette/stylesheetPlan.js';
 
 var colorFunctionsProviders = {
@@ -111,6 +111,10 @@ function resolveLookupContext(lookupContext = {}) {
 	// rebuilding the role table or the Stylesheets table never wipes picks.
 	const editor = createEditor();
 
+	// Sprint 155 view state of the Stylesheets table.  Session-only: not saved, and not reset when a Song opens.
+	const openFolders = new Set();
+	let showAllRows = false;
+
 	const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj || {}, key);
 
 	/** Captions may carry entities ("&#9839;"); decode to plain text and always insert as text. */
@@ -123,6 +127,7 @@ function resolveLookupContext(lookupContext = {}) {
 		return String(name).replace(/[^A-Za-z0-9_-]/g, '_');
 	}
 
+	/** The Song's OWN Looks (what is stored).  The plan functions add the read-only Look Default themselves. */
 	function songLooks() {
 		const song = getSong();
 		return (song && song.colorLooks) || {};
@@ -160,38 +165,12 @@ function resolveLookupContext(lookupContext = {}) {
 
 	//------------------------------ table ---------------------------------------
 
+	/** Rebuilds the Stylesheets table and brings the stored values in step with what is ticked.
+	 *  The folder and "All" toggles change only what is shown, so they call renderStylesheetsTable() alone. */
 	export function buildColorDicts(options = {}){
 		const song = getSong();
 		if (!song || !song.colorDicts) return;
-		var tbl = $("<table class='tblColorDicts'>").attr('id', 'tblColorDicts');
-
-		// Headers from gUserColorDict.dict, which is the definitive list of all merged Roles+Fingerings+Functions
-		var headerRow = $('<tr>').attr('id', 'ssRowHeader');
-		headerRow.append($('<td class="ssHeaderCaption">').text('Stylesheets'));
-		roleKeys().forEach((notekey) => {
-			headerRow.append($('<td class="vertical-header">').append($('<span>').text(notekey.substring('note'.length))));
-		});
-		headerRow.append($('<td class="ssHeaderButtons">'));
-		tbl.append(headerRow);
-
-		// then all matching keys in each Dict in the song's list.
-		const users = userKeys(song.colorDicts);
-		for (const [dictkey, schemeObj] of Object.entries(song.colorDicts)) {
-			const userIndex = users.indexOf(dictkey);
-			tbl.append(colorDictDisplayRow(dictkey, schemeObj, {
-				link: true,
-				selected: dictkey === editor.selectedKey,
-				userIndex,
-				userCount: users.length
-			}));
-		}
-
-		// Finally, the current, live, merged master list where lookups happen.
-		var resultRow = colorDictDisplayRow("\u21D2\u00A0Result", gUserColorDict, { link: false });
-		resultRow.attr('id', 'ssRowResult').css({"height": "3em"});
-		tbl.append(resultRow);
-
-		$('#divColorDictsDest').empty().append(tbl);
+		renderStylesheetsTable();
 
 		// Keep the stored values in step with what is ticked: the recipe, a matching Look, or (when a Section
 		// pointed at a sheet that is gone) the Section's own spelling, so the Matrix can flag it.
@@ -207,11 +186,67 @@ function resolveLookupContext(lookupContext = {}) {
 				keepMissing: true
 			});
 		}
-		const lookName = hasOwn(songLooks(), song.currentColorDict) ? song.currentColorDict : '';
-		$('.ActiveStylesheets').text('Active Stylesheets: ' + recipe + (lookName ? '  (Look: ' + lookName + ')' : ''));
+		const lookName = hasOwn(allLooks(song), song.currentColorDict) ? song.currentColorDict : '';
+		$('.ActiveStylesheets').html('Active Stylesheets: ' + wrapRecipeHtml(recipe)
+			+ (lookName && lookName !== recipe ? '  (Look: ' + wrapRecipeHtml(lookName) + ')' : ''));
 
-		updateCurrentColorDictStrip(recipe, gUserColorDict);
+		// The strip names the Look (Default included) when the selection is one, else shows the recipe; the title has the recipe.
+		updateCurrentColorDictStrip(lookName || recipe, gUserColorDict, recipe);
 		refreshLooksUi();
+	}
+
+	/** Draws the table only: header with the "All" checkbox, the system sheets and folders, the user sheets, the Result. */
+	function renderStylesheetsTable() {
+		const song = getSong();
+		if (!song || !song.colorDicts) return;
+		var tbl = $("<table class='tblColorDicts'>").attr('id', 'tblColorDicts');
+
+		// Headers from gUserColorDict.dict, which is the definitive list of all merged Roles+Fingerings+Functions
+		var headerRow = $('<tr>').attr('id', 'ssRowHeader');
+		// "All": show the colors of unticked rows too.  Unchecked by default, so unticked rows are blank.
+		const allBox = $('<input type="checkbox" tabindex="-1" name="cbnStylesheetsAll" value="1">')
+			.attr('id', 'ssAllCheck')
+			.prop('checked', showAllRows)
+			.on('change', function () {
+				showAllRows = this.checked;
+				this.blur();
+				renderStylesheetsTable();
+			});
+		const allLabel = $('<label class="MainMenuTabBtn BtnPunchedOut BtnPunchedOutLighter">')
+			.attr({ id: 'ssAllLabel', for: 'ssAllCheck', title: 'Show the colors of unticked stylesheets too' })
+			.append(allBox, document.createTextNode('All'));
+		headerRow.append($('<td class="ssHeaderCaption">').append(allLabel));
+		roleKeys().forEach((notekey) => {
+			headerRow.append($('<td class="vertical-header">').append($('<span>').text(notekey.substring('note'.length))));
+		});
+		headerRow.append($('<td class="ssHeaderButtons">'));
+		tbl.append(headerRow);
+
+		// System sheets and folders in precedence order, then the user sheets.
+		planStylesheetRows(song.colorDicts, { openFolders, showAll: showAllRows }).forEach((r) => {
+			if (r.kind === 'folder') {
+				tbl.append(folderDisplayRow(r, song));
+				return;
+			}
+			tbl.append(colorDictDisplayRow(r.id, song.colorDicts[r.id], {
+				link: true,
+				selected: r.id === editor.selectedKey,
+				userIndex: r.userIndex ?? -1,
+				userCount: r.userCount ?? 0,
+				system: r.system,
+				folder: r.folder,
+				checked: r.checked,
+				alwaysOn: r.alwaysOn,
+				showColors: r.showColors
+			}));
+		});
+
+		// Finally, the current, live, merged master list where lookups happen.
+		var resultRow = colorDictDisplayRow("\u21D2\u00A0Result", gUserColorDict, { link: false });
+		resultRow.attr('id', 'ssRowResult').css({"height": "3em"});
+		tbl.append(resultRow);
+
+		$('#divColorDictsDest').empty().append(tbl);
 	}
 
 	function roleCell(noteRole, note, caption = null) {
@@ -239,55 +274,96 @@ function resolveLookupContext(lookupContext = {}) {
 			});
 	}
 
-	export function colorDictDisplayRow(dictkey, schemeObj, rowOptions = {}){
-		const { link = false, selected = false, userIndex = -1, userCount = 0 } = rowOptions;
-		const isUser = !schemeObj.readOnly && !schemeObj.computed;
-		const slug = domId(dictkey);
-		var row = $('<tr>');
-		var linkTD = $('<td>');
-		var nobr = $('<nobr>');
-
-		if (link) {
-			row.attr('id', 'ssRow-' + slug).addClass(isUser ? 'ssRowUser' : 'ssRowBuiltIn');
-			if (selected) row.addClass('ssSelected');
-			if (isUser) {
-				nobr.append($('<input type="checkbox" class="ssSheetCheck">')
-					.attr({ id: 'ssCheck-' + slug, 'data-dictkey': dictkey, title: 'Include this stylesheet' })
-					.prop('checked', !!schemeObj.checked)
-					.on('change', function () {
-						const sheet = getSong().colorDicts[dictkey];
-						if (!sheet) return;
-						sheet.checked = this.checked;
-						refreshAfterUserChange();
-						displayOptionsChanged();
-					}));
-			} else if (schemeObj.computed) {
-				nobr.append($('<span class="ssMark">').text(schemeObj.checked ? '\u21D2\u00A0' : '\u21CF\u00A0'));
-			} else {
-				nobr.append($('<span class="ssMark">').text(schemeObj.checked ? '\u2713\u00A0' : '\u00A0\u00A0'));
-			}
-			nobr.append($('<a href="#" class="choose-stylesheet">')
-				.attr({
-					id: 'ssLink-' + slug,
-					'data-dictkey': dictkey,
-					title: isUser ? 'Select: tick it and load it into the editor' : 'Select this built-in level (all built-ins up to here)'
-				})
-				.text(dictkey));
-			linkTD.attr('id', 'ssLinkTD-' + slug).addClass('userColorResultLinks').append(nobr);
-		} else {
-			row.addClass('userColorResultRow');
-			linkTD.addClass('userColorResultCaption').text(dictkey);
-		}
-		row.append(linkTD);
-
+	/** A row's role cells: the stored cells, or blanks (an unticked row without "All", or an open folder). */
+	function appendRoleCells(row, cells) {
 		roleKeys().forEach((notekeyTempl) => {
-			var note = schemeObj.dict ? schemeObj.dict[notekeyTempl] : null;
+			var note = cells ? cells[notekeyTempl] : null;
 			if (!note) {
 				row.append($('<td>').html('&nbsp;').attr('from', notekeyTempl));
 				return;
 			}
 			row.append(roleCell(notekeyTempl, note, note.colorClass ? undefined : ''));
 		});
+	}
+
+	/** The first cell is three fixed slots, so names line up whatever the row: glyph | mark | name. */
+	function firstCellBox(glyphSlot, markSlot, nameSlot) {
+		return $('<div class="ssFirstCell">').append(glyphSlot, markSlot, nameSlot);
+	}
+
+	/** A folder row (view only: no checkbox, not a sheet). Closed it shows the merged colors of its ticked sheets. */
+	function folderDisplayRow(desc, song) {
+		const slug = domId(desc.name);
+		const toggle = () => {
+			if (desc.open) openFolders.delete(desc.name); else openFolders.add(desc.name);
+			renderStylesheetsTable();
+		};
+		const row = $('<tr class="ssRowFolder">').attr('id', 'ssFolder-' + slug);
+		const glyph = ssButton('ssFolderToggle-' + slug, 'ssFolderToggle', desc.open ? '\u25BC' : '\u25B6',
+			desc.open ? 'Close the folder' : 'Open the folder', false, toggle)
+			.attr('aria-expanded', String(desc.open));
+		const link = $('<a href="#" class="ssFolderLink">')
+			.attr({ id: 'ssFolderLink-' + slug, title: desc.open ? 'Close the folder' : 'Open the folder' })
+			.text(desc.label)
+			.on('click', function (e) {
+				e.preventDefault();
+				toggle();
+			});
+		row.append($('<td>').attr('id', 'ssLinkTD-' + slug).addClass('userColorResultLinks').append(
+			firstCellBox($('<span class="ssGlyphSlot">').append(glyph), $('<span class="ssMark">'), $('<span class="ssName">').append(link))));
+		appendRoleCells(row, desc.open ? null : folderSummaryCells(song.colorDicts, desc.summaryIds));
+		row.append($('<td>').addClass('ssButtonsTD'));
+		return row;
+	}
+
+	export function colorDictDisplayRow(dictkey, schemeObj, rowOptions = {}){
+		const { link = false, selected = false, userIndex = -1, userCount = 0, system = false, folder = null,
+			alwaysOn = false, showColors = true } = rowOptions;
+		const isUser = !system && !schemeObj.readOnly && !schemeObj.computed;
+		const ticked = rowOptions.checked ?? !!schemeObj.checked;
+		const slug = domId(dictkey);
+		var row = $('<tr>');
+		var linkTD = $('<td>');
+
+		if (link) {
+			row.attr('id', 'ssRow-' + slug).addClass(isUser ? 'ssRowUser' : 'ssRowBuiltIn');
+			if (folder) row.addClass('ssRowChild');
+			if (selected) row.addClass('ssSelected');
+			const markSlot = $('<span class="ssMark">');
+			if (schemeObj.computed) {
+				markSlot.text(schemeObj.checked ? '\u21D2' : '\u21CF');
+			} else if (alwaysOn) {
+				markSlot.text('\u2713').attr('title', 'Always included');
+			} else {
+				markSlot.append($('<input type="checkbox" class="ssSheetCheck">')
+					.attr({ id: 'ssCheck-' + slug, 'data-dictkey': dictkey, title: 'Include this stylesheet' })
+					.prop('checked', ticked)
+					.on('change', function () {
+						const colorDicts = getSong().colorDicts;
+						if (!colorDicts[dictkey]) return;
+						// Ticking a sheet in an exclusive folder unticks its siblings.
+						if (system) setSystemSheetChecked(colorDicts, dictkey, this.checked);
+						else colorDicts[dictkey].checked = this.checked;
+						refreshAfterUserChange();
+						displayOptionsChanged();
+					}));
+			}
+			const nameLink = $('<a href="#" class="choose-stylesheet">')
+				.attr({
+					id: 'ssLink-' + slug,
+					'data-dictkey': dictkey,
+					title: isUser ? 'Select: tick it and load it into the editor' : 'Load it into the editor (the checkbox decides whether it is included)'
+				})
+				.text(dictkey);
+			linkTD.attr('id', 'ssLinkTD-' + slug).addClass('userColorResultLinks')
+				.append(firstCellBox($('<span class="ssGlyphSlot">'), markSlot, $('<span class="ssName">').append(nameLink)));
+		} else {
+			row.addClass('userColorResultRow');
+			linkTD.addClass('userColorResultCaption').text(dictkey);
+		}
+		row.append(linkTD);
+
+		appendRoleCells(row, showColors ? schemeObj.dict : null);
 
 		if (link) {
 			const buttonsTD = $('<td>').attr('id', 'ssButtonsTD-' + slug).addClass('ssButtonsTD');
@@ -308,9 +384,9 @@ function resolveLookupContext(lookupContext = {}) {
 		return row;
 	}
 
-	export function updateCurrentColorDictStrip(dictLabel, colorScheme){
+	export function updateCurrentColorDictStrip(dictLabel, colorScheme, title = ''){
 		var newRow = $('<tr>');
-		newRow.append($('<td class="userColorResultCaption">').text(dictLabel));
+		newRow.append($('<td class="userColorResultCaption">').html(wrapRecipeHtml(dictLabel)).attr('title', title || dictLabel));
 		['noteTransparent', 'noteAutomatic'].forEach((noteRole) => {
 			const note = gUserColorDict.dict[noteRole];
 			if (note) newRow.append(roleCell(noteRole, note));
@@ -330,20 +406,22 @@ function resolveLookupContext(lookupContext = {}) {
 
 	//------------------------------ select, apply, order ------------------------
 
-	/** Link click.  A built-in sets the built-in level only (user ticks are left alone); a user sheet is ticked.
-	 *  Either way the editor is loaded from it. No reordering: order is changed only with the arrow buttons. */
+	/** Link click.  A system sheet is only loaded into the editor (the checkboxes decide what is ticked); a user sheet
+	 *  is ticked and loaded. No reordering: order is changed only with the arrow buttons. */
 	export function chuseStylesheet(dictkey){
 		const song = getSong();
 		if (!song || !hasOwn(song.colorDicts, dictkey)) return;
-		if (isBuiltInName(dictkey)) {
-			setBuiltInLevel(song.colorDicts, dictkey);
-		} else {
-			song.colorDicts[dictkey].checked = true;
-		}
+		const system = isBuiltInName(dictkey);
+		if (!system) song.colorDicts[dictkey].checked = true;
 		editorSelect(editor, song.colorDicts, dictkey);
-		setNameField(isBuiltInName(dictkey) ? freeName(dictkey + '-user', takenNames(song)) : dictkey);
+		setNameField(system ? freeName(dictkey + '-user', takenNames(song)) : dictkey);
 		showStylesheetMessage('');
 		renderAllEditorCells();
+		if (system) {
+			renderStylesheetsTable();
+			refreshStylesheetHint();
+			return;
+		}
 		refreshAfterUserChange();
 		refreshStylesheetHint();
 		displayOptionsChanged();
@@ -401,7 +479,9 @@ function resolveLookupContext(lookupContext = {}) {
 			+ (used ? ' Still referenced by: ' + used + '. Those show the sheet as missing until you re-create it with the same name.' : ''));
 	}
 
-	/** Rebuilds the live dict: start from the OEM defaults, then layer every ticked non-computed sheet in list order. */
+	/** Rebuilds the live dict: start from the OEM defaults, then layer every ticked non-computed sheet in list order.
+	 *  The OEM seed is kept for the column order and for the frame keys (noteTransparent, noteAutomatic) that only Roles
+	 *  supplies; All-Clear is always ticked and covers every other role, so it overrides the seed. */
 	export function applyStylesheetsTo_gUserColorDict(){
 		const live = gUserColorDict.dict;
 		Object.keys(live).forEach((k) => { delete live[k]; });
@@ -615,13 +695,14 @@ function resolveLookupContext(lookupContext = {}) {
 		const song = getSong();
 		const sel = $('#selColorLooks');
 		if (!song || !sel.length) return;
-		const looks = songLooks();
+		const looks = allLooks(song);
 		sel.empty().append($('<option>').attr('value', '').text('(Looks)'));
 		Object.keys(looks).forEach((name) => {
 			sel.append($('<option>').attr('value', name).text(name + '  =  ' + looks[name]));
 		});
 		sel.val(hasOwn(looks, song.currentColorDict) ? song.currentColorDict : '');
-		$('#btnRemoveColorLook').prop('disabled', !sel.val());
+		// Default is built in: it can be chosen but never removed.
+		$('#btnRemoveColorLook').prop('disabled', !hasOwn(songLooks(), sel.val()));
 		refreshLookHint();
 	}
 

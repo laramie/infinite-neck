@@ -4422,11 +4422,11 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 <h4>Stylesheets</h4>
 <p>A <b>Stylesheet</b> is a named set of colors (and hatch patterns) for the Roles, fingers, Note Functions and highlights. The Palette always uses a <i>stack</i> of Stylesheets: the sheets that are switched on are merged from the top of the list to the bottom, and a later sheet wins for any color it defines. A sheet only has to define the colors it wants to change, so a small sheet can override just the II and the &Delta; and leave everything else to the sheets underneath. The merged answer, shown on the bottom row, is what you see and what the color buttons show.
 </p>
-<p>Press <span class="GUIReferenceInline">Stylesheets</span> to show or hide the list. Press the button again to close it. Above the table, <i>Active Stylesheets:</i> shows the <b>recipe</b> in effect: the highest built-in sheet that is on, then your sheets that are on, in list order, for example <i>Default+mine</i> or <i>Fingerings+mine+other</i>. Under the table are the <a href="#paletteLooks">Looks</a> controls and a <span class="GUIReferenceInline">Legend</span> button that explains every mark on this page.
+<p>Press <span class="GUIReferenceInline">Stylesheets</span> to show or hide the list. Press the button again to close it. Above the table, <i>Active Stylesheets:</i> shows the <b>recipe</b> in effect: your sheets that are on, then the system sheets that are on, last applied first, for example <i>mine+MoodLight+Default</i>. The word <i>Default</i> stands for the system sheets that are on when a Song opens. Under the table are the <a href="#paletteLooks">Looks</a> controls and a <span class="GUIReferenceInline">Legend</span> button that explains every mark on this page.
 </p>
 
 <p><b><i>Reading the table</i></b></p>
-<p>Each row is one Stylesheet. Its name is a link, followed by one cell for every Role, finger, Note Function (<b>1</b> to <b>12</b>) and highlight (<b>H1</b> to <b>H3</b>), headed by its name written sideways. A cell shows the color that sheet gives it, and is <i>empty</i> where the sheet says nothing. So you can see exactly what a sheet overrides: a sheet you recorded with two colors has two filled cells. A sheet that was copied from a built-in sheet has them all filled.
+<p>Each row is one Stylesheet. The first cell has three fixed places: a folder arrow, a checkbox or mark, and the name (a link). After it comes one cell for every Role, finger, Note Function (<b>1</b> to <b>12</b>) and highlight (<b>H1</b> to <b>H3</b>), headed by its name written sideways. A cell shows the color that sheet gives it, and is <i>empty</i> where the sheet says nothing. A row that is <i>not</i> ticked is blank, so only what is in effect is drawn; tick <b>All</b> (the checkbox at the top left) to see the colors of the unticked rows too. The order down the table is the order the sheets are applied: <b>lower rows win</b>.
 </p>
 <table class="ExamplesTable">
   <tr>
@@ -4436,47 +4436,43 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td>a checkbox</td>
-    <td>One of <i>your</i> sheets</td>
-    <td>Checked: switched on, and in the stack. Uncheck it to switch it off. The sheet is still in the Song and still in the list.</td>
+    <td>A system sheet, or one of <i>your</i> sheets</td>
+    <td>Checked: switched on, and in the stack. Uncheck it to switch it off. The sheet is still in the Song and still in the list. System sheets are independent: any combination may be on.</td>
   </tr>
   <tr>
     <td>&#x2713;</td>
-    <td>A built-in sheet</td>
-    <td>Switched on. There is no checkbox on built-in rows: you turn them on and off by clicking their names (see below).</td>
+    <td><i>All-Clear</i></td>
+    <td>Always on: it has no checkbox. It is the bottom layer, so every Role has a color even when everything else is off.</td>
   </tr>
   <tr>
-    <td>(blank)</td>
-    <td>A built-in sheet</td>
-    <td>Switched off.</td>
-  </tr>
-  <tr>
-    <td>&rArr; or &#x21CF;</td>
-    <td><i>Default</i></td>
-    <td><i>Default</i> is all the built-in sheets together. &rArr; means it is in effect, and &#x21CF; that it is not.</td>
+    <td>&#x25B6; &#x25BC;</td>
+    <td>A <b>folder</b> (<i>NoteFunctions</i>, <i>Moods</i>, <i>Printing</i>)</td>
+    <td>Opens or closes the folder. A folder is only a way of grouping the list: it has no checkbox and is not a Stylesheet. Closed, it shows its name followed by the sheets of it that are on (for example <i>Moods : MoodLight</i>) and the merged colors of those sheets. Open, its sheets appear, tinted, and you tick them there. Whether the folders are open is not saved. A folder whose sheets are <i>exclusive</i> (<i>Moods</i>, <i>Printing</i>) allows one sheet on at a time: ticking one unticks the others.</td>
   </tr>
   <tr>
     <td>&#x2191; &#x2193; &#x232B;</td>
     <td>One of <i>your</i> sheets, at the right end of its row</td>
-    <td><b>&#x2191;</b> and <b>&#x2193;</b> move the sheet up or down among <i>your</i> sheets (a sheet lower in the list wins; they are greyed at the ends, and your sheets always stay below the built-in ones). <b>&#x232B;</b> deletes the sheet to the Graveyard. Built-in rows have no buttons. See <a href="#paletteStylesheetTasks">Creating, changing and deleting Stylesheets</a>.</td>
+    <td><b>&#x2191;</b> and <b>&#x2193;</b> move the sheet up or down among <i>your</i> sheets (a sheet lower in the list wins; they are greyed at the ends, and your sheets always stay below the system ones). <b>&#x232B;</b> deletes the sheet to the Graveyard. System rows have no buttons. Your sheets are never in a folder and are never exclusive. See <a href="#paletteStylesheetTasks">Creating, changing and deleting Stylesheets</a>.</td>
   </tr>
 </table>
 <p>The row of the sheet shown in the editor is marked with a gold bar at the left of its name. The last row, <b>&rArr; Result</b>, is the merged result of everything switched on. It is what the Instruments use. Click any swatch in any row to choose that color as your paint color.
 </p>
 
-<p><b><i>The built-in sheets</i></b></p>
+<p><b><i>The system sheets</i></b></p>
 <table class="ExamplesTable">
   <tr>
     <th>Sheet</th>
     <th>Contains</th>
   </tr>
-  <tr><td><b>All-Clear</b></td><td>Every Role, finger, Note Function and highlight set to white. Click it to see the Instruments in plain white.</td></tr>
-  <tr><td><b>CycleOfColors</b></td><td>The twelve Note Function colors that AutoColor uses.</td></tr>
-  <tr><td><b>Roles</b></td><td>Emboss, Auto, Root, Scale, Chord, Ch2, Ch3, Colornote, C2, C3, Chromatic, Passing, the three Avoids, Bass, Lead and Lead 2.</td></tr>
-  <tr><td><b>Fingerings</b></td><td>The finger colors: Finger0 to Finger4 and Thumb.</td></tr>
-  <tr><td><b>Highlights</b></td><td>H1, H2 and H3.</td></tr>
-  <tr><td><b>Default</b></td><td>All of the above together, as shipped. It is the way to reset the colors.</td></tr>
+  <tr><td><b>All-Clear</b></td><td>Every Role, finger, Note Function and highlight set to white. Always on, at the bottom of the stack.</td></tr>
+  <tr><td><b>NoteFunctions</b> folder: <b>CycleOfColors</b></td><td>The twelve Note Function colors that AutoColor uses. On when a Song opens.</td></tr>
+  <tr><td><b>Roles</b></td><td>Emboss, Auto, Root, Scale, Chord, Ch2, Ch3, Colornote, C2, C3, Chromatic, Passing, the three Avoids, Bass, Lead and Lead 2. On when a Song opens.</td></tr>
+  <tr><td><b>Fingerings</b></td><td>The finger colors: Finger0 to Finger4 and Thumb. On when a Song opens.</td></tr>
+  <tr><td><b>Highlights</b></td><td>H1, H2 and H3. On when a Song opens.</td></tr>
+  <tr><td><b>Moods</b> folder: <b>MoodLight</b>, <b>MoodMinor</b></td><td>Note Function colors for the major and the natural-minor lights. Off when a Song opens; they are below CycleOfColors in the table, so they win and ticking one changes the Note Functions. They do not color the Root.</td></tr>
+  <tr><td><b>Printing</b> folder: <b>Letterpress</b>, <b>Gradient</b>, <b>Halftone</b></td><td>Complete sheets for printing (they set every Role), at the bottom of the stack so they win. Off when a Song opens. They start out all white; <i>Gradient</i> and <i>Halftone</i> show one finished cell (the I) as a pattern for editing.</td></tr>
 </table>
-<p>The built-in sheets are not saved in the Song file: they are always supplied, and <b>every Song you open starts with all of them switched on</b> (an All-Clear you clicked in an earlier Song does not carry over). Your own sheets are saved, with whether each is switched on, and in their order. Names are cleaned when a Song is opened: a name with spaces or symbols is renamed (<i>my sheet</i> becomes <i>my-sheet</i>), a name that matches a built-in gets <i>-user</i>, and each rename is reported in the User Log and followed by every Section that used the old name.
+<p>The system sheets are not saved in the Song file: they are always supplied, and <b>every Song you open starts with the same ones on</b> (CycleOfColors, Roles, Fingerings and Highlights, plus All-Clear): a choice you made in an earlier Song does not carry over. That starting set is what the Look and recipe word <i>Default</i> means. Your own sheets are saved, with whether each is switched on, and in their order. Names are cleaned when a Song is opened: a name with spaces or symbols is renamed (<i>my sheet</i> becomes <i>my-sheet</i>), a name that matches a system sheet or <i>Default</i> gets <i>-user</i>, and each rename is reported in the User Log and followed by every Section that used the old name. Folder names are not reserved.
 </p>
 
 <p><b><i>What clicking a name does</i></b></p>
@@ -4490,12 +4486,12 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
     <td>Switches it on and loads it into the <a href="#paletteCustomize">editor</a> (its name goes in the <i>Stylesheet name</i> box and its colors show in the editor cells). <b>Nothing is reordered</b>: your other sheets that were on are still on, and the order only changes with the &#x2191; &#x2193; buttons.</td>
   </tr>
   <tr>
-    <td>The name of a <b>built-in sheet</b> (<i>All-Clear</i>, <i>CycleOfColors</i>, <i>Roles</i>, <i>Fingerings</i>, <i>Highlights</i>)</td>
-    <td>Sets the <b>built-in level</b>: that sheet and every built-in sheet above it are switched on, and the built-in sheets below it are switched off. <b>Your own sheets are left exactly as they were</b>. The editor shows the built-in sheet's colors as <i>inherited</i>, and the name box is filled with the next free <i>name-user</i>, such as <i>Roles-user</i> or <i>Roles-user2</i>.</td>
+    <td>The name of a <b>system sheet</b> (<i>All-Clear</i>, <i>CycleOfColors</i>, <i>Roles</i>, <i>MoodLight</i>, ...)</td>
+    <td>Loads it into the editor <b>without changing what is on</b>: use its checkbox for that. The editor shows the system sheet's colors as <i>inherited</i>, and the name box is filled with the next free <i>name-user</i>, such as <i>Roles-user</i> or <i>Roles-user2</i>.</td>
   </tr>
   <tr>
-    <td><b>Default</b></td>
-    <td>The same, at the top level: all built-in sheets come on. Your sheets are not touched, so to reset to the factory colors, uncheck your sheets too.</td>
+    <td>The name of a <b>folder</b></td>
+    <td>Opens or closes it, like its arrow.</td>
   </tr>
 </table>
 <p>To use one sheet alone, click <i>Default</i> and then untick the ones you do not want, or tick just the one you want. Several sheets can be on together: the lower rows win.
@@ -4557,7 +4553,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td><b>Rename</b></td>
-    <td>Renames the selected sheet of yours to the name in the box. Every Section, Look and the Song DEFAULTS that used the old name are updated. Built-in sheets cannot be renamed, and the name must be free.</td>
+    <td>Renames the selected sheet of yours to the name in the box. Every Section, Look and the Song DEFAULTS that used the old name are updated. System sheets cannot be renamed, and the name must be free.</td>
   </tr>
   <tr>
     <td><b>From Section</b></td>
@@ -4640,7 +4636,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td><b>Copy sheets from another Song</b></td>
-    <td>With the destination Song open, check <span class="GUIReferenceInline">File</span> &gt; <i>Append stylesheets to current song</i>, then use <i>Open Song from Local Files</i> to choose the source Song's file. Every one of the source's own sheets is copied in, and any sheet of yours <b>with the same name is replaced</b> without asking. Built-in sheets are not affected. Sections are only appended if <i>Append sections to current song</i> is also checked, so you do not have to delete Sections first. This works with a file you choose, not from the Song Library list. Uncheck the box when you are done, or the next file you open will append, too.</td>
+    <td>With the destination Song open, check <span class="GUIReferenceInline">File</span> &gt; <i>Append stylesheets to current song</i>, then use <i>Open Song from Local Files</i> to choose the source Song's file. Every one of the source's own sheets is copied in, and any sheet of yours <b>with the same name is replaced</b> without asking. System sheets are not affected. Sections are only appended if <i>Append sections to current song</i> is also checked, so you do not have to delete Sections first. This works with a file you choose, not from the Song Library list. Uncheck the box when you are done, or the next file you open will append, too.</td>
   </tr>
   <tr>
     <td><b>Use different sheets in different Sections</b></td>
@@ -4689,11 +4685,11 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 
 <a name="paletteStylesheetSections"></a>
 <h4>Stylesheets in Sections and Songs</h4>
-<p><b>In the file.</b> A Song saves your own Stylesheets, whether each is on, and their order. Open the Song and the stack is put back together, with the built-in sheets underneath.
+<p><b>In the file.</b> A Song saves your own Stylesheets, whether each is on, and their order. Open the Song and the stack is put back together, with the system sheets underneath.
 </p>
 <p><b>Per Section.</b> A Section stores, in <i>currentColorDict</i>, either a <b>recipe</b> or the name of a <a href="#paletteLooks">Look</a>. It is a <a href="#displayOptionsTopic">Display Option</a> in the <i>Color</i> group, and the View page lists it below the Save/Clear buttons as <i>currentColorDict: [ value ]</i>. Like <i>autoColor</i> (also in that group), you store it in a Section with <span class="GUIReferenceInline">SAVE Diff</span> on the View page, and it cascades from Section to Section like every Display Option (see <a href="#displayOptionsMatrixTopic">Display Options Matrix</a>).
 </p>
-<p>A recipe is the <b>highest built-in sheet that is on</b>, then <b>+</b> and the names of your ticked sheets in list order, for example <i>Default+user+mine</i>. When the Song reaches a Section, the Palette sets the ticked sheets to <b>exactly</b> that recipe: built-ins up to the named level, and only the listed sheets of yours. So Sections no longer add up: Section 1 can say <i>Default+A</i> and Section 2 <i>Default+B</i>, and each shows only its own sheet, in either direction of travel. An older value such as <i>user</i> or <i>mojo</i> (a plain sheet name) is read as <i>Default+</i> that name.
+<p>A recipe is a list of sheet names joined with <b>+</b>: <b>your</b> ticked sheets first, then the system sheets, each group with the last-applied (lowest in the table) first, for example <i>mine+MoodLight+Default</i>. The word <i>Default</i> stands for the system sheets that are on when a Song opens; when you have turned one of those off, the recipe lists the system sheets that <i>are</i> on instead, such as <i>mine+Highlights+Fingerings+CycleOfColors+All-Clear</i>. The order of the words does not matter when a Song is read: the order in the table decides which sheet wins. You can type a recipe yourself, for example <i>b+a+MoodLight+Default</i>. When the Song reaches a Section, the Palette sets the ticked sheets to <b>exactly</b> that recipe: the system sheets it names (All-Clear is always on), and only the listed sheets of yours. So Sections do not add up: Section 1 can say <i>A+Default</i> and Section 2 <i>B+Default</i>, and each shows only its own sheet, in either direction of travel. An older value such as <i>user</i> or <i>mojo</i> (a plain sheet name) is read as <i>Default</i> plus that name. A long recipe wraps after each <b>+</b> in the Display Options Matrix and the View listing.
 </p>
 <p>The Section value follows the Stylesheets as you change them, so Save on the View page records what you see. A Section that names a sheet that no longer exists leaves the colors as they are; the <a href="#displayOptionsMatrixTopic">Display Options Matrix</a> strikes through such a <i>currentColorDict</i> cell (Section, DEFAULTS or LIVE row), and hovering shows the missing name.
 </p>
@@ -4702,7 +4698,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 
 <a name="paletteLooks"></a>
 <h4>Looks: named combinations of Stylesheets</h4>
-<p>A <b>Look</b> is a name for a recipe, kept in the Song (<i>colorLooks</i> in the file). A Look is not a Stylesheet: it holds no colors, only which sheets are on. Use one when you want a Section to say <i>Night</i> instead of <i>Default+dim+big-labels</i>, or when several Sections should change together if you re-define the Look.
+<p>A <b>Look</b> is a name for a recipe, kept in the Song (<i>colorLooks</i> in the file). A Look is not a Stylesheet: it holds no colors, only which sheets are on. Use one when you want a Section to say <i>Night</i> instead of <i>dim+big-labels+Default</i>, or when several Sections should change together if you re-define the Look. The first Look, <b>Default</b>, is built in: it is the system sheets that are on when a Song opens. It is always there, cannot be changed or removed, and is not saved in the Song file.
 </p>
 <table class="ExamplesTable">
   <tr>
@@ -4715,11 +4711,11 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td>Name box and <i>Save Look</i></td>
-    <td>Saves the current ticks and built-in level as a Look, and makes it the Song's current value. An existing Look name is updated. A Stylesheet or built-in name is refused. The hint line below says what will happen, and names are cleaned as for Stylesheets.</td>
+    <td>Saves the current ticks as a Look (the system sheets are written out, so the Look keeps meaning the same sheets), and makes it the Song's current value. An existing Look name is updated. A Stylesheet, system sheet or <i>Default</i> name is refused. The hint line below says what will happen, and names are cleaned as for Stylesheets.</td>
   </tr>
   <tr>
     <td>&#x232B; next to the select</td>
-    <td>Removes the selected Look. Sections that stored its name keep the name; the Matrix strikes it through until you re-create it.</td>
+    <td>Removes the selected Look. Sections that stored its name keep the name; the Matrix strikes it through until you re-create it. <i>Default</i> cannot be removed (the button is greyed).</td>
   </tr>
 </table>
 <p>When a Look is applied or a Section stores a recipe that equals a Look's recipe, the Look's name is the value stored, so it is the one the Matrix shows.

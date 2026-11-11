@@ -1800,6 +1800,12 @@ td.note em {
 .noteHatched8 {
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, rgb(249, 201, 98) 20px, rgb(249, 201, 98) 21px );
 }
+/* Sprint 155: the Halftone stylesheet (the "halftone-trippy" image of #dropDownBorderImageWhiteKey). */
+.noteHatchedHalftoneTrippy {
+    background-image: url('img/halftone-trippy.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
 
 td.note {
     /*  width:100%; No.  Makes the .Nut blow up and spread to the width of the screen minus other non-nut notes.*/

@@ -10,7 +10,8 @@ import { applyStylesheetsTo_gUserColorDict } from '../../colorFunctions.js';
 import { gUserColorDict, gUserColorDictOEM } from '../../userColors.js';
 import { Song } from '../../Song.js';
 import { buildSectionRowHtml, buildMatrixHtml } from '../../templates/display-options/displayOptionsMatrixView.js';
-import { setBuiltInLevel, buildRecipe } from '../../templates/palette/stylesheetPlan.js';
+import { setSystemSheetChecked, buildRecipe, wrapRecipeHtml } from '../../templates/palette/stylesheetPlan.js';
+import { shippingIds, systemIds } from '../../templates/palette/systemFolders.js';
 import { validateSongFileSchema } from '../../bin/song-file-schema.js';
 
 // Sprint 150 Iteration 3: Song open/open carry-over, rename repointing, the live dict rebuild, the Matrix strike-through,
@@ -24,19 +25,28 @@ const sheet = (colorClass, checked = true) => ({ readOnly: false, computed: fals
 describe('installDefaultColorDicts (Song open)', () => {
     beforeEach(() => { setupSongTests(); });
 
-    test('a built-in level chosen in an earlier Song does not carry over', () => {
+    test('system ticks chosen in an earlier Song do not carry over: every open starts at the shipping set', () => {
         const song = getSong();
         song.colorDicts = { a: sheet('noteRed1') };
         installDefaultColorDicts();
-        setBuiltInLevel(song.colorDicts, 'All-Clear');
-        expect(song.colorDicts.Default.checked).toBe(false);
+        setSystemSheetChecked(song.colorDicts, 'Roles', false);
+        expect(song.colorDicts.Roles.checked).toBe(false);
 
         const next = getSong();
         next.colorDicts = { b: sheet('noteBlue2', false) };
         installDefaultColorDicts();
-        expect(['All-Clear', 'CycleOfColors', 'Roles', 'Fingerings', 'Highlights', 'Default'].every((k) => next.colorDicts[k].checked)).toBe(true);
+        const shipping = shippingIds();
+        systemIds().forEach((k) => { expect(next.colorDicts[k].checked).toBe(shipping.includes(k)); });
         expect(next.colorDicts.b.checked).toBe(false);
         expect(buildRecipe(next.colorDicts)).toBe('Default');
+        expect(next.colorDicts.Default).toBeUndefined();
+    });
+
+    test('the system sheets come first in layout order, then the user sheets', () => {
+        const song = getSong();
+        song.colorDicts = { a: sheet('noteRed1') };
+        installDefaultColorDicts();
+        expect(Object.keys(song.colorDicts)).toEqual([...systemIds(), 'a']);
     });
 
     test('bad names are cleaned and Section references are repointed', () => {
@@ -46,6 +56,16 @@ describe('installDefaultColorDicts (Song open)', () => {
         installDefaultColorDicts();
         expect(Object.keys(song.colorDicts).slice(-2)).toEqual(['my-sheet', 'Default-user']);
         expect(song.sections[0].displayOptions.currentColorDict).toBe('my-sheet');
+    });
+
+    test('a user sheet named like a system sheet is renamed and its references repointed', () => {
+        const song = getSong();
+        song.colorDicts = { MoodLight: sheet('noteRed1') };
+        song.sections[0].displayOptions = { currentColorDict: 'MoodLight' };
+        installDefaultColorDicts();
+        expect(song.colorDicts['MoodLight-user']).toBeDefined();
+        expect(song.colorDicts.MoodLight.readOnly).toBe(true);
+        expect(song.sections[0].displayOptions.currentColorDict).toBe('MoodLight-user');
     });
 
     test('unsafe classes and unknown roles are dropped on open', () => {
@@ -83,6 +103,26 @@ describe('applyStylesheetsTo_gUserColorDict rebuilds from the OEM base', () => {
         applyStylesheetsTo_gUserColorDict();
         expect(gUserColorDict.dict.note1.colorClass).toBe('noteBlue3');
     });
+
+    test('unticking Roles keeps the frame keys that only Roles supplies (the OEM seed) and the column order', () => {
+        const song = getSong();
+        installDefaultColorDicts();
+        applyStylesheetsTo_gUserColorDict();
+        const keysBefore = Object.keys(gUserColorDict.dict);
+        setSystemSheetChecked(song.colorDicts, 'Roles', false);
+        applyStylesheetsTo_gUserColorDict();
+        expect(Object.keys(gUserColorDict.dict)).toEqual(keysBefore);
+        expect(gUserColorDict.dict.noteTransparent).toBeDefined();
+        expect(gUserColorDict.dict.noteAutomatic).toBeDefined();
+    });
+
+    test('an optional system sheet that is ticked wins over the shipping sheets', () => {
+        const song = getSong();
+        installDefaultColorDicts();
+        setSystemSheetChecked(song.colorDicts, 'MoodLight', true);
+        applyStylesheetsTo_gUserColorDict();
+        expect(gUserColorDict.dict.note1.colorClass).toBe(song.colorDicts.MoodLight.dict.note1.colorClass);
+    });
 });
 
 describe('Matrix: a Color value naming a missing stylesheet is struck through', () => {
@@ -92,7 +132,11 @@ describe('Matrix: a Color value naming a missing stylesheet is struck through', 
         if (colorDicts) song.colorDicts = colorDicts;
         return song;
     };
-    const built = (users = {}) => ({ 'All-Clear': { readOnly: true, dict: {} }, Default: { readOnly: false, computed: true, dict: {} }, ...users });
+    const built = (users = {}) => ({
+        'All-Clear': { readOnly: true, dict: {} },
+        Roles: { readOnly: true, checked: true, dict: {} },
+        ...users
+    });
 
     test('missing member gets dmMissingSheet and an explanatory title', () => {
         const html = buildSectionRowHtml(mk(built({ a: sheet('noteRed1') }), 'mojo'), 0);
@@ -102,23 +146,42 @@ describe('Matrix: a Color value naming a missing stylesheet is struck through', 
     test('present sheets, recipes and Looks are not flagged', () => {
         const colorDicts = built({ a: sheet('noteRed1') });
         expect(buildSectionRowHtml(mk(colorDicts, 'a'), 0)).not.toContain('dmMissingSheet');
-        expect(buildSectionRowHtml(mk(colorDicts, 'Default+a'), 0)).not.toContain('dmMissingSheet');
-        expect(buildSectionRowHtml(mk(colorDicts, 'Pretty', { colorLooks: { Pretty: 'Default+a' } }), 0)).not.toContain('dmMissingSheet');
-        expect(buildSectionRowHtml(mk(colorDicts, 'Pretty', { colorLooks: { Pretty: 'Default+zz' } }), 0)).toContain('dmMissingSheet');
+        expect(buildSectionRowHtml(mk(colorDicts, 'a+Default'), 0)).not.toContain('dmMissingSheet');
+        expect(buildSectionRowHtml(mk(colorDicts, 'Default'), 0)).not.toContain('dmMissingSheet');
+        expect(buildSectionRowHtml(mk(colorDicts, 'Pretty', { colorLooks: { Pretty: 'a+Default' } }), 0)).not.toContain('dmMissingSheet');
+        expect(buildSectionRowHtml(mk(colorDicts, 'Pretty', { colorLooks: { Pretty: 'zz+Default' } }), 0)).toContain('dmMissingSheet');
     });
     test('a Song without colorDicts (tests, Legend) is never flagged; the Song-DEFAULTS and LIVE rows are flagged too', () => {
         expect(buildSectionRowHtml(mk(null, 'whatever'), 0)).not.toContain('dmMissingSheet');
         const song = mk(built(), '', { displayOptionsDefault: { currentColorDict: 'gone' } });
         const html = buildMatrixHtml(song, { live: { currentColorDict: 'gone2' } });
-        expect(html).toMatch(/dmSongDefaultsRow[\s\S]*dmSpecialCell dmMissingSheet/);
+        expect(html).toMatch(/dmSongDefaultsRow[\s\S]*dmSpecialCell[^']*dmMissingSheet/);
         expect(html).toContain('missing stylesheet: gone2');
+    });
+});
+
+describe('Matrix: a long Color recipe wraps after each plus sign', () => {
+    const mk = (value) => {
+        const song = new Song({ sections: [{ displayOptions: { currentColorDict: value } }] });
+        song.setHeadless(true, true);
+        return song;
+    };
+    test('wrapRecipeHtml escapes each token and adds a <wbr> after each plus', () => {
+        expect(wrapRecipeHtml('b+a+MoodLight+Default')).toBe('b+<wbr>a+<wbr>MoodLight+<wbr>Default');
+        expect(wrapRecipeHtml('<i>+x')).toBe('&lt;i&gt;+<wbr>x');
+        expect(wrapRecipeHtml('')).toBe('');
+    });
+    test('the Color cell of a Section row gets dmWrapCell and the breakable text; other cells do not', () => {
+        const html = buildSectionRowHtml(mk('b+a+MoodLight+Default'), 0);
+        expect(html).toContain('b+<wbr>a+<wbr>MoodLight+<wbr>Default');
+        expect(html.match(/dmWrapCell/g)).toHaveLength(1);
     });
 });
 
 describe('Song file schema and glyph contract', () => {
     test('colorLooks is a string map in the schema', () => {
         const base = JSON.parse(read('songs/tests/empty-song.json'));
-        expect(validateSongFileSchema({ ...base, colorLooks: { Pretty: 'Default+a' } }).valid).toBe(true);
+        expect(validateSongFileSchema({ ...base, colorLooks: { Pretty: 'a+Default' } }).valid).toBe(true);
         const bad = validateSongFileSchema({ ...base, colorLooks: { Pretty: 5 } });
         expect(bad.valid).toBe(false);
     });

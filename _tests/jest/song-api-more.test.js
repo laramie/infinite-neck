@@ -16,6 +16,7 @@ import { Section } from '../../Section.js';
 import { SectionNotes } from '../../SectionNotes.js';
 import { Note } from '../../Note.js';
 import { Wiring } from '../../Wiring.js';
+import { systemIds } from '../../templates/palette/systemFolders.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -109,7 +110,7 @@ describe('Headless tuning bootstrap contracts', () => {
         expect(song.myTunings[0].baseID).toBe('S6_1');
     });
 
-    test('installDefaultColorDicts appends user-authored stylesheets after Default', () => {
+    test('installDefaultColorDicts appends user-authored stylesheets after the system sheets', () => {
         const song = createFreshHeadlessSong();
         song.colorDicts = {
             lar4: {
@@ -124,15 +125,8 @@ describe('Headless tuning bootstrap contracts', () => {
 
         installDefaultColorDicts();
 
-        expect(Object.keys(song.colorDicts)).toEqual([
-            'All-Clear',
-            'CycleOfColors',
-            'Roles',
-            'Fingerings',
-            'Highlights',
-            'Default',
-            'lar4'
-        ]);
+        expect(Object.keys(song.colorDicts)).toEqual([...systemIds(), 'lar4']);
+        expect(song.colorDicts.Default).toBeUndefined();
     });
 
     test('resolveLoadedThemeId preserves the saved active theme when userTheme also exists', () => {

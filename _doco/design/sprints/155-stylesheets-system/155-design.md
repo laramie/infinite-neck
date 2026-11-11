@@ -339,4 +339,67 @@ Q1 to Q3 block coding. Recommendation in italics.
 - ANSWER: OK.
 
 
+# Iteration 4 : Tweaks
+
+Please tweak the implementation slightly.
+
+We have already changed the color a little bit on 
+`#palette tr.ssRowFolder > td.userColorResultLinks`
+
+You don't need to run the tests.  We will kick those off on our end.
+
+
+## Add Default breakdown to div.ActiveStylesheets output
+
+`#divColorDicts div.ActiveStylesheets` already shows `Active Stylesheets: MoodLight+Fingerings+Roles+CycleOfColors+All-Clear (Look: MoodLight-no-highliths)` so we don't need `#selColorLooks` to use this long name as the select text.  It should just have the look name.  The one piece of info that is hidden is when Default is the select value, then `div.ActiveStylesheets` just says "Default".  If we add informational text to that one case: `Active Stylesheets: Default (Highlights+Fingerings+Roles+CycleOfColors+All-Clear)` then we'd have everything shown one way or the other.
+
+Thus cleaning up the SELECT. Where it now has: 
+```
+<select id="selColorLooks" title="Apply a saved Look (a named recipe)">
+    <option value="">(Looks)</option>
+    <option value="Default">Default = Highlights+Fingerings+Roles+CycleOfColors+All-Clear</option>
+    <option value="letty">letty = Letterpress+Highlights+Fingerings+Roles+CycleOfColors+All-Clear</option>
+    <option value="MoodLight-no-highliths">MoodLight-no-highliths = MoodLight+Fingerings+Roles+CycleOfColors+All-Clear</option>
+    <option value="MojoDefault">MojoDefault = Highlights+Fingerings+Roles+CycleOfColors+All-Clear</option>
+    <option value="Defminusfing">Defminusfing = Highlights+Roles+CycleOfColors+All-Clear</option>
+    <option value="mojodef">mojodef = Highlights+Fingerings+Roles+CycleOfColors+All-Clear</option>
+</select>
+```
+We'd instead like it to have: 
+```
+<select id="selColorLooks" title="Apply a saved Look (a named recipe)">
+    <option value="">(Looks)</option>
+    <option value="Default">Default</option>
+    <option value="letty">letty</option>
+    <option value="MoodLight-no-highliths">MoodLight-no-highliths</option>
+    <option value="MojoDefault">MojoDefault</option>
+    <option value="Defminusfing">Defminusfing</option>
+    <option value="mojodef">mojodef</option>
+</select>
+```
+
+## Simplify ssName
+
+We'd like to simplify `ssName` so it just shows the folder name always.
+That is, here is the location: 
+```
+<span class="ssName"><a href="#" class="ssFolderLink" id="ssFolderLink-NoteFunctions" title="Open the folder">NoteFunctions : CycleOfColors</a></span>
+```
+- what is now: `NoteFunctions : CycleOfColors` 
+- should instead be: `NoteFunctions`
+
+In 
+```
+<span class="ssName"><a href="#" class="ssFolderLink" id="ssFolderLink-Moods" title="Close the folder">Moods : MoodLight</a></span>
+```
+- what is now: `Moods : MoodLight`
+- should instead be: `Moods`
+
+We can see the children titles by opening the folder.
+The cell color previews in closed folder rows is working well and should be retained.  We are just talking about gluing the titles together in `ssName`.
+
+
+
+
+
 
