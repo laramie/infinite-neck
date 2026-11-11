@@ -186,8 +186,12 @@ function resolveLookupContext(lookupContext = {}) {
 				keepMissing: true
 			});
 		}
-		const lookName = hasOwn(allLooks(song), song.currentColorDict) ? song.currentColorDict : '';
-		$('.ActiveStylesheets').html('Active Stylesheets: ' + wrapRecipeHtml(recipe)
+		const looks = allLooks(song);
+		const lookName = hasOwn(looks, song.currentColorDict) ? song.currentColorDict : '';
+		// The Looks select shows only Look names, so this line carries the detail.  The one case that would otherwise hide
+		// the sheets is the Default Look, so it is spelled out: "Default (Highlights+Fingerings+Roles+CycleOfColors+All-Clear)".
+		const shown = recipe === 'Default' ? 'Default (' + wrapRecipeHtml(looks.Default) + ')' : wrapRecipeHtml(recipe);
+		$('.ActiveStylesheets').html('Active Stylesheets: ' + shown
 			+ (lookName && lookName !== recipe ? '  (Look: ' + wrapRecipeHtml(lookName) + ')' : ''));
 
 		// The strip names the Look (Default included) when the selection is one, else shows the recipe; the title has the recipe.
@@ -304,7 +308,7 @@ function resolveLookupContext(lookupContext = {}) {
 			.attr('aria-expanded', String(desc.open));
 		const link = $('<a href="#" class="ssFolderLink">')
 			.attr({ id: 'ssFolderLink-' + slug, title: desc.open ? 'Close the folder' : 'Open the folder' })
-			.text(desc.label)
+			.text(desc.name)
 			.on('click', function (e) {
 				e.preventDefault();
 				toggle();
@@ -697,8 +701,9 @@ function resolveLookupContext(lookupContext = {}) {
 		if (!song || !sel.length) return;
 		const looks = allLooks(song);
 		sel.empty().append($('<option>').attr('value', '').text('(Looks)'));
+		// Only the Look name is the text (Active Stylesheets shows the recipe); the recipe is the tooltip.
 		Object.keys(looks).forEach((name) => {
-			sel.append($('<option>').attr('value', name).text(name + '  =  ' + looks[name]));
+			sel.append($('<option>').attr({ value: name, title: looks[name] }).text(name));
 		});
 		sel.val(hasOwn(looks, song.currentColorDict) ? song.currentColorDict : '');
 		// Default is built in: it can be chosen but never removed.
