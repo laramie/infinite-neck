@@ -391,13 +391,14 @@
                                 title="Save the current selection as a Look">Save Look</button>
                             <button id="btnRemoveColorLook" type="button" tabindex="-1" class="MenuButton BtnPunchedOut btnRemoveTuning"
                                 title="Remove the selected Look">&#x232B;</button>
-                            <div id="divHintAndMessageContainer">
-                                <div id="divColorLookHint" class="ssHint"></div>
-                                <div id="divStylesheetMessage" class="ssMessage"></div>
-                            </div>
+                            
                         </div>
                         <div id="divStylesheetLegendRow" class="ssRow">
                             <div id="divStylesheetLegend" class="ssLegend" style="display:none;">
+                                <div id="divHintAndMessageContainer">
+                                    <div id="divColorLookHint" class="ssHint"></div>
+                                    <div id="divStylesheetMessage" class="ssMessage"></div>
+                                </div>
                                 <div id="divStylesheetLegendBuiltIns"><b>System sheets</b> (no buttons): tick any combination; the order down the table is the order they are applied, so lower rows win. <span class="ssKeyGlyph">&#x2713;</span> All-Clear is always on. Click a name to load it into the editor without changing what is ticked. A folder (<span class="ssKeyGlyph">&#x25B6;</span>) is only a view: open it to tick its sheets; closed, it shows the colors of its ticked sheets. A folder marked exclusive allows one sheet at a time. <b>All</b> shows the colors of unticked rows too.</div>
                                 <div id="divStylesheetLegendUser"><b>Your sheets</b> (below the system sheets, never in a folder): tick any of them; click the name to select and edit it. <span class="ssKeyGlyph">&#x2191;</span> <span class="ssKeyGlyph">&#x2193;</span> change the order (later sheets win); <span class="ssKeyGlyph">&#x232B;</span> deletes to the Graveyard.</div>
                                 <div id="divStylesheetLegendRecipe"><b>Active Stylesheets</b> is the recipe: your ticked sheets, then the system sheets, last applied first, e.g. <code>mine+MoodLight+Default</code>. <code>Default</code> stands for the sheets ticked when a Song opens, and is also the first Look (it cannot be changed or removed). A Look is a named recipe; a Section can store either.</div>

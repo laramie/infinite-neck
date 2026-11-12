@@ -429,8 +429,9 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     min-width: 1.4em;
     text-align: center;
 }
-/* Sprint 155: the first cell is three fixed slots (glyph | mark | name) so names line up in every kind of row.
-   Rows in a folder are tinted, not indented. */
+/* Sprint 155: the first cell is glyph | mark | name.  Folder rows use the glyph slot for the arrow; rows inside a folder
+   (ssRowChild) keep the empty slot, so they are indented under the folder.  Every other row (All-Clear, Roles, Fingerings,
+   Highlights, your sheets) drops the slot, so its checkbox lines up with the folder arrows at the left. */
 #palette .ssFirstCell {
     display: flex;
     align-items: center;
@@ -439,6 +440,9 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 #palette .ssGlyphSlot {
     flex: 0 0 1.6em;
     text-align: center;
+}
+#palette tr:not(.ssRowFolder):not(.ssRowChild) .ssGlyphSlot {
+    display: none;
 }
 #palette .ssMark {
     flex: 0 0 1.6em;
