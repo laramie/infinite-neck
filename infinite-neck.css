@@ -299,11 +299,14 @@ table {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 1.9em;
+    height: 1.2em;
     min-width: 2em;
     padding: 0 0.4em;
     line-height: 1;
     vertical-align: middle;
+}
+.btnRemoveTuning {
+    font-weight: bold;
 }
 
 .moveyButton{

@@ -3277,16 +3277,16 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 <p><b>10. See what Auto-apply does.</b>  Auto-apply shows only when the Current Section <i>inherits</i> a value that differs from the control, and nothing else has re-applied it.  Set up once on a Song with a Show MIDI Number cell nowhere:
     <ol>
         <li>Press <b>Clear Song-DEFAULTS</b> if it is enabled.</li>
-        <li>Click Section number 3, tick <b>Show MIDI Number</b>, press SAVE Diff.  Press <b>&sect;3 &rarr; Song-DEFAULTS</b>.</li>
-        <li>Click Section number 2.  Show MIDI Number is ticked, Section 2 stores nothing for it, and SAVE Diff is not highlighted.</li>
+        <li>Click Section number 3, check <b>Show MIDI Number</b>, press SAVE Diff.  Press <b>&sect;3 &rarr; Song-DEFAULTS</b>.</li>
+        <li>Click Section number 2.  Show MIDI Number is checked, Section 2 stores nothing for it, and SAVE Diff is not highlighted.</li>
     </ol>
     Then, re-doing step 3 first each time (click 3, press <b>&sect;3 &rarr; Song-DEFAULTS</b>, click 2), and never navigating between the edit and your observation:
     <ul>
-        <li><b>Auto-apply off.</b>  Press <b>Clear Song-DEFAULTS</b>.  The row empties, the status line shows the hint, but Show MIDI Number is still ticked.  Press <b>Apply from Model</b> and it unticks.</li>
-        <li><b>Auto-apply on.</b>  Press <b>Clear Song-DEFAULTS</b>.  It unticks at once and the status says <i>Applied: controls re-applied from the model.</i></li>
-        <li><b>Auto-apply on, controls changed.</b>  First untick another control, such as Show Left Subscript, so SAVE Diff is highlighted.  Press <b>Clear Song-DEFAULTS</b>: you get the SaveDiff warning, Show MIDI Number stays ticked, and your edit is protected.  SAVE Diff then press <b>Apply from Model</b> (or just Apply to discard your edit).</li>
+        <li><b>Auto-apply off.</b>  Press <b>Clear Song-DEFAULTS</b>.  The row empties, the status line shows the hint, but Show MIDI Number is still checked.  Press <b>Apply from Model</b> and it unchecks.</li>
+        <li><b>Auto-apply on.</b>  Press <b>Clear Song-DEFAULTS</b>.  It unchecks at once and the status says <i>Applied: controls re-applied from the model.</i></li>
+        <li><b>Auto-apply on, controls changed.</b>  First uncheck another control, such as Show Left Subscript, so SAVE Diff is highlighted.  Press <b>Clear Song-DEFAULTS</b>: you get the SaveDiff warning, Show MIDI Number stays checked, and your edit is protected.  SAVE Diff then press <b>Apply from Model</b> (or just Apply to discard your edit).</li>
         <li><b>An edit that cannot matter.</b>  Choose <b>Section w</b> and click Section number 4.  No <i>Applied</i>, no hint, and nothing changes.  Click it again to remove the block.</li>
-        <li><b>Navigation re-applies regardless.</b>  With Auto-apply off, press <b>Clear Song-DEFAULTS</b> (hint shown, still ticked), then choose Inspect and click Section number 2, or use the Transport's Next and Previous: the control unticks.  That was navigation, not Auto-apply.</li>
+        <li><b>Navigation re-applies regardless.</b>  With Auto-apply off, press <b>Clear Song-DEFAULTS</b> (hint shown, still checked), then choose Inspect and click Section number 2, or use the Transport's Next and Previous: the control unchecks.  That was navigation, not Auto-apply.</li>
     </ul>
     Pressing <b>&sect;3 &rarr; Song-DEFAULTS</b> with Section 3 as the Current Section shows nothing in the controls, because the Section's own cells beat Song-DEFAULTS.  That is why the example uses <b>Clear Song-DEFAULTS</b> from Section 2.
 </p>
@@ -3871,7 +3871,7 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
   </tr>
   <tr>
     <td><b>Clear Table Theme</b></td>
-    <td>Removes the Table Theme stored on the Current Section for the picked Instrument. It is greyed out unless the Current Section itself stores one (an inherited one from an earlier Section does not count). Earlier Sections are never touched, so after a Clear the Instrument falls back to the nearest earlier Table Theme, or to the Song Theme if there is none.</td>
+    <td>Removes the Table Theme stored on the Current Section for the picked Instrument. It is grayed out unless the Current Section itself stores one (an inherited one from an earlier Section does not count). Earlier Sections are never touched, so after a Clear the Instrument falls back to the nearest earlier Table Theme, or to the Song Theme if there is none.</td>
   </tr>
   <tr>
     <td><b>Copy Table Theme to Table / Section</b> and <b>Copy to Section</b></td>
@@ -4239,7 +4239,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
     <td><a href="#paletteStylesheets">Stylesheets</a>, <a href="#paletteCustomize">Customize</a>, <a href="#paletteStylesheetTasks">Creating, changing and deleting Stylesheets</a></td>
   </tr>
 </table>
-<p>The usual routine is: pick a note type, pick a color (or leave AutoColor on), and click cells. The Palette is a set of <i>modes</i> and <i>choices</i>, so what you click stays selected until you change it.
+<p>The usual routine is: pick a note type, pick a color (or leave AutoColor on), and click cells. The Palette is a set of <i>choices</i>, so what you click stays selected until you change it.
 </p>
 
 <a name="paletteNoteTypes"></a>
@@ -4266,21 +4266,21 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
     <td><span class="key">7</span></td>
     <td>One note, in the cell you clicked. It floats over NamedNotes, so it can have its own color. See <a href="#glossarySingleNote">SingleNote</a>.</td>
     <td>A PlayedNote in the Section. While <span class="GUIReferenceInline">REC</span> is on, a RecordedNote in the current Beat.</td>
-    <td>As Named. Click again with the same color to remove it.</td>
+    <td>Same as <b>Named</b>. Click again with the same color to remove it.</td>
   </tr>
   <tr>
     <td><b>Tiny</b></td>
     <td><span class="key">8</span></td>
     <td>A smaller note that stays on top of Named and Single notes. It follows the LeadKey for its color and Function. See <a href="#glossaryTinyNote">TinyNote</a>.</td>
-    <td>As Single.</td>
-    <td>As Named.</td>
+    <td>Same as <b>Single</b>.</td>
+    <td>Same as <b>Named</b>.</td>
   </tr>
   <tr>
     <td><b>Bend</b></td>
     <td><span class="key">9</span></td>
     <td>A Tiny-style note that shows a string bend. The dropdown under the button chooses the kind (1, 2 or 3 semitones; prebend 1, 2 or 3; up-down 1, 2 or 3), and the kind in the dropdown is used when you click. Choosing from the dropdown selects Bend. A Bend cannot be placed on the nut. A cell can hold a Tiny or a Bend, not both. See <a href="#glossaryBend">Bend</a>.</td>
-    <td>As Single.</td>
-    <td>As Named.</td>
+    <td>Same as <b>Single</b>.</td>
+    <td>Same as <b>Named</b>.</td>
   </tr>
   <tr>
     <td><b>Pitch</b></td>
@@ -4293,7 +4293,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
     <td><b>Multi</b></td>
     <td><span class="key">]</span></td>
     <td>A glowing outline on just the cell you clicked, so you can click several cells to highlight a group. See <a href="#glossaryMulti">Multi</a>.</td>
-    <td>As Pitch.</td>
+    <td>Same as <b>Pitch</b>.</td>
     <td>Multi remembers its own color, separately from the other note types. It starts as <b>H2</b>, which is the Theme's <i>System Multi Color</i>. Check <span class="GUIReferenceInline">Multi AC</span> to have Multi follow AutoColor instead.</td>
   </tr>
 </table>
@@ -4310,7 +4310,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
     <th>Key</th>
     <th>Finger</th>
   </tr>
-  <tr><td><b>0</b></td><td><span class="key">o</span> (the letter, not the zero, because <span class="key">0</span> changes the nut width)</td><td>Open string</td></tr>
+  <tr><td><b>0</b></td><td><span class="key">o</span> (the letter o, not the number zero, because <span class="key">0</span> changes the nut width)</td><td>Open string</td></tr>
   <tr><td><b>1</b></td><td><span class="key">1</span></td><td>Index</td></tr>
   <tr><td><b>2</b></td><td><span class="key">2</span></td><td>Middle</td></tr>
   <tr><td><b>3</b></td><td><span class="key">3</span></td><td>Ring</td></tr>
@@ -4318,9 +4318,9 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   <tr><td><b>T</b></td><td><span class="key">5</span></td><td>Thumb</td></tr>
 </table>
 <ul>
-  <li>Choosing a finger also selects that finger's own color (<i>Finger0</i> to <i>Finger4</i> and <i>Thumb</i>), so each finger looks different. Those colors come from the <i>Fingerings</i> Stylesheet and are customized like any other (see <a href="#paletteCustomize">Customize</a>).</li>
-  <li>Click a cell to place the finger number in it. Click the same cell again with the same finger to remove it. To <i>change</i> a finger, remove the old one first (click again, or use CLEAR), then place the new one.</li>
-  <li><b>With AutoColor on, a finger number takes the AutoColor of its note, as every other note type does.</b> Uncheck AutoColor to see the finger colors.</li>
+  <li>Choosing a finger also selects that finger's own color (<i>Finger0</i> to <i>Finger4</i> and <i>Thumb</i>), so each fingering mark looks different. Those colors come from the <i>Fingerings</i> Stylesheet and are customized like any other (see <a href="#paletteCustomize">Customize</a>).</li>
+  <li>Click a cell to place the fingering number in it. Click the same cell again with the same fingering to remove it. To <i>change</i> a fingering, remove the old one first (click again, or use CLEAR), then place the new one.</li>
+  <li><b>With AutoColor on, a fingering number takes the AutoColor of its note, as every other note type does.</b> Uncheck AutoColor to see the fingering colors.</li>
   <li>The number's size and position are set on the View page (<span class="GUIReferenceInline">Fingering Font Size</span> and <span class="GUIReferenceInline">Fingering Position</span>). <span class="GUIReferenceInline">HIDE Fingering</span> on the View page hides them. See <a href="#glossaryFingering">Fingering</a>.</li>
   <li>Fingerings are saved as PlayedNotes in the Section, or recorded in the Beat while <span class="GUIReferenceInline">REC</span> is on.</li>
 </ul>
@@ -4336,25 +4336,26 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
     <th>Pointer</th>
   </tr>
   <tr>
-    <td><b>Color: <i>name</i></b><br>(paint)</td>
-    <td>Places the chosen note type in the chosen color. The button's text shows the <i>last color you picked</i>, for example <i>Color: Chord</i>, and a &#x2713; appears when painting is active. Pressing it returns you to painting after CLEAR, KEEP or Find Color, restoring your last note type. This is the normal state.</td>
-    <td>Pointing hand</td>
-  </tr>
-  <tr>
     <td><b>CLEAR</b></td>
     <td>Removes notes from the cell you clicked: the NamedNote for that Note Name (and so from every cell with that name), and any Single, Tiny, Bend or Fingering in that cell. While CLEAR is active none of the note type buttons is selected. To remove just one kind of note, choose that kind and click the note again with the same color instead. CLEAR works on the notes on the neck. To take a note out of a recorded Beat, turn <span class="GUIReferenceInline">REC</span> on and click the note again.</td>
     <td>Crosshair</td>
   </tr>
   <tr>
     <td><b>KEEP</b></td>
-    <td>Nothing is placed or changed. Use it to click around safely, for example when teaching. The click still reports the cell (note name, Instrument, position, MIDI number, note type and color) in the Instrument's Caption row. If the Caption is not showing, press <span class="key">ESC</span> then <span class="key">SHIFT-A</span>. Pitch and Multi highlights still work in KEEP, if one of them was the selected note type when you pressed KEEP, because they are not stored notes. Choosing a note type takes you out of KEEP.</td>
+    <td>Nothing is placed or changed. Use it to click around safely, for example when teaching. The click still reports the cell (note name, Instrument, position, MIDI number, note type and color) in the Instrument's Caption row. If the Instrument Caption is not showing, press <span class="key">ESC</span> then <span class="key">SHIFT-A</span>. Pitch and Multi highlights still work in KEEP, if one of them was the selected note type when you pressed KEEP, because they are not stored notes. Choosing a note type takes you out of KEEP.</td>
     <td>"No drop" sign</td>
   </tr>
   <tr>
     <td><b>Find Color</b></td>
-    <td>Click a note on the neck, of the note type currently selected (Named, Single, Tiny, Bend or Fingering), to find out what color it is. AutoColor is turned off, the matching color button is selected and given a big cyan glow (<span class="GUIReferenceInline">More...</span> opens if the color lives there), the <i>Color:</i> button names the color, and the Caption row lists it. The Palette stays in Find Color until you click a color button or the <i>Color:</i> button. Click the glowing button to remove the glow and start painting with that color. The color found is the color <i>stored on the note</i>. For a note placed while AutoColor was on, that is whichever color button was selected at the time, often <b>Emboss</b>, since AutoColor works out the shown color when drawing.</td>
+    <td>Click a note on the neck, of the note type currently selected (Named, Single, Tiny, Bend or Fingering), to find out what color it is. AutoColor is turned off, the matching color button is selected and given a big cyan glow (<span class="GUIReferenceInline">More...</span> opens if the color lives there), the <i>Color:</i> button names the color, and the Instrument Caption row (has buttons like MiniPalette, Wiring, Float, Tuning, Note, and Tonal) lists it after the little <b>Note</b> button (if you don't see something like <b>"E   P46_1[2,4] midi:64 Named:noteTransparent"</b> after the <b>Note</b> button, click the button once, then try clicking a note again). The Palette stays in Find Color until you click a color button or the <i>Color:</i> button. Click the glowing button to remove the glow and start painting with that color. The color found is the color <i>stored on the note</i>. For a note placed while AutoColor was on, that is whichever color button was selected at the time, often <b>Emboss</b>, since that is the default.  If you chose another color, you won't see that color on the neck if AutoColor is on.</td>
     <td>Magnifier</td>
   </tr>
+  <tr>
+    <td><b>Color: <i>name</i></b></td>
+    <td>Places the chosen note type in the chosen color. The button's text shows the <i>last color you picked</i>, for example <i>Color: Chord</i>, and a &#x2713; appears when painting is active. Pressing it returns you to painting after CLEAR, KEEP or Find Color, restoring your last note type. This is the normal state.</td>
+    <td>Pointing hand</td>
+  </tr>
+  
 </table>
 <p><b>Getting back to painting.</b> From CLEAR, KEEP or Find Color, you go back to painting by pressing the <i>Color:</i> button, or by choosing any note type or any color button. Pressing a note type shortcut (<span class="key">6</span> <span class="key">7</span> <span class="key">8</span> <span class="key">9</span> <span class="key">[</span> <span class="key">]</span> or a finger key) does the same. In Strict Tutorials the Palette is locked to KEEP.
 </p>
@@ -4363,14 +4364,16 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 <h4>Choosing colors</h4>
 
 <p><b><i>AutoColor</i></b></p>
-<p>The <span class="GUIReferenceInline">AutoColor</span> checkbox (key <span class="key">c</span>, and the <span class="GUIReferenceInline">AutoColor</span> button on the Quick menu) colors every note by its <i>Note Function</i> in the Section's Key (the LeadKey for Tiny and Bend), using the colors <i>note1</i> to <i>note12</i> from the current Stylesheet. It is on in a new Song. A V is always the same color whatever the key, so a chord looks the same wherever you find it. AutoColor applies to Named, Single, Tiny, Bend and Fingering notes. Pitch never uses it, and Multi follows <i>Multi AC</i> instead. While AutoColor is on the color buttons are hidden, because a color you pick would be ignored.
+<p>The <span class="GUIReferenceInline">AutoColor</span> checkbox (key <span class="key">c</span>, and the <span class="GUIReferenceInline">AutoColor</span> button on the Quick menu) colors every note by its <i>Note Function</i> in the Section's Key (the LeadKey for Tiny and Bend), using the colors <i>note1</i> to <i>note12</i> from the current Stylesheet. It is on in a new Song. For example, a <b>V</b> note (the Five) is always the same color whatever the key, so a chord looks the same wherever you find it. AutoColor applies to Named, Single, Tiny, Bend and Fingering notes. Pitch never uses it, and Multi follows <i>Multi AC</i> instead. While AutoColor is on the color buttons are hidden, because a color you pick would be ignored.
 </p>
 <p><b><i>Multi AC</i></b></p>
 <p>The small <span class="GUIReferenceInline">Multi AC</span> checkbox (key <span class="key">y</span>) lets Multi highlights follow AutoColor. It is independent of AutoColor. Its background shows the color Multi would use.
 </p>
 
 <p><b><i>The color buttons</i></b></p>
-<p>With AutoColor unchecked, the color buttons appear. They are <i>Roles</i>. Every button shows the color it has in the current Stylesheet, so when you Customize or choose another Stylesheet, the buttons change with it. In order they are: <b>Emboss</b> and <b>Auto</b>; the Roles <b>Root, Scale, Chord, Ch2, Ch3, Colornote, C2, C3, Chromatic, Passing, Avoid, Avoid, Avoid, Bass, Lead, Lead 2</b>; the six finger colors; the twelve Note Function colors <b>I</b> to <b>&Delta;</b>; and the highlight colors <b>H1, H2, H3</b>. Some have special meaning:
+<p>With AutoColor unchecked, the color buttons appear. They are <b><i>Roles</i></b> (or raw colors with <b><i>More...</i></b> also clicked). Every button shows the color it has in the current Stylesheet, so when you Customize or choose another Stylesheet, the buttons change with it. In order they are: <b>Emboss</b> and <b>Auto</b>; the Roles <b>Root, Scale, Chord, Ch2, Ch3, Colornote, C2, C3, Chromatic, Passing, Avoid, Avoid, Avoid, Bass, Lead, Lead 2</b>; the six finger colors; the twelve Note Function colors <b>I</b> to <b>&Delta;</b>; and the highlight colors <b>H1, H2, H3</b>. </p>
+<p>
+    Some have special meaning:
 </p>
 <table class="ExamplesTable">
   <tr>
@@ -4379,7 +4382,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td><b>Emboss</b></td>
-    <td>A see-through note with a border. It is the starting choice. It is useful when you only want to see the Named Notes' positions up the neck, then use color to draw attention to Single Notes. It also makes notes obvious when AutoColor is off, since they have no color of their own.</td>
+    <td>A see-through note with a border. It is the default, starting choice. It is useful when you only want to see the Named Notes' positions up the neck, then use color to draw attention to Single Notes. It also makes notes obvious when AutoColor is off, since they have no color of their own.</td>
   </tr>
   <tr>
     <td><b>Auto</b></td>
@@ -4387,7 +4390,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td><b>Root</b></td>
-    <td>The <a href="#glossarynoteRoot">noteRoot</a>: it has its own hatch pattern, and it sets the apparent root for the TonalPicker. The <a href="#divFillNotes">Fill</a> menu uses this color when it places a root.</td>
+    <td>The <a href="#glossarynoteRoot">noteRoot</a>: it has its own hatch pattern, and it sets the apparent root for the TonalPicker, so it changes the meaning of the chord spelling and which chords are suggested. The <a href="#divFillNotes">Fill</a> menu uses this color when it places a root.</td>
   </tr>
   <tr>
     <td><b>Scale</b>, <b>Chord</b></td>
@@ -4403,8 +4406,8 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
 </table>
 
-<p><b><i>More...</i></b></p>
-<p>The <span class="GUIReferenceInline">More...</span> button shows the full set of raw color swatches (pinks, blues, greens, yellows, reds, browns, grays, black and highlight colors). It changes to <span class="GUIReferenceInline">Less...</span> when open. These are plain colors, not Roles: they always look the same whatever Stylesheet is in effect. Use them when you just want a color of your own, or to give a color to a Role in <a href="#paletteCustomize">Customize</a>.
+<p><b><i>The "More..."" button</i></b></p>
+<p>The <span class="GUIReferenceInline">More...</span> button shows the full set of raw color swatches (pinks, blues, greens, yellows, reds, browns, grays, black and highlight colors). It changes to <span class="GUIReferenceInline">Less...</span> when open. These are plain colors, not Roles: they always look the same whatever Stylesheet is in effect. Use them when you just want a color of your own. See also: <a href="#paletteCustomize">Customize</a>.
 </p>
 
 <a name="paletteMiniPalette"></a>
@@ -4415,47 +4418,49 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   <li><b>The status line</b>: the note type selected (with a blue &#x2713;), then the active paint button or color (with a green &#x2713;; it takes on the color itself in paint mode), then a red <i>Hiding &#x2713;</i> if something is hidden on the View page (hover to see which). The Quick menu shows the same line.</li>
   <li><b>A row of swatches</b>: the name of the active Stylesheets, then <i>Emboss</i>, <i>Auto</i> and one swatch for every Role, finger, Note Function and highlight in the current Result.</li>
 </ul>
-<p>Click a swatch to choose that color, just as if you had clicked its button in the Palette. The Result row of the Stylesheets table works the same way. A color chosen from a swatch returns you to painting, but does not turn AutoColor off.
+<p>Click a swatch to choose that color, just as if you had clicked its button in the Palette. The Result row of the Stylesheets table works the same way. A color chosen from a swatch returns you to painting, but does not turn AutoColor off. So even if you see a chosen color in the button left of the MiniPalette, with AutoColor on, on the neck you'll see the Automatic color chosen by Note Function instead.
 </p>
 
 <a name="paletteStylesheets"></a>
 <h4>Stylesheets</h4>
-<p>A <b>Stylesheet</b> is a named set of colors (and hatch patterns) for the Roles, Fingerings, Note Functions and highlights. The Palette always uses a <i>stack</i> of Stylesheets: the sheets that are switched on are merged from the top of the list to the bottom, and a later sheet wins for any color it defines. A sheet only has to define the colors it wants to change, so a small sheet can override just the II and the &Delta; and leave everything else to the sheets underneath. The merged answer, shown on the bottom row, is what you see and what the color buttons show.
+<p>A <b>Stylesheet</b> is a named set of colors (and hatch patterns) for the Roles, Fingerings, Note Functions and Highlights. The Palette always uses a <i>stack</i> of Stylesheets, which you can see if you click the <button class="BtnPunchedOut" type="button">Stylesheets</button> button on the Palette page: the sheets that are switched on are merged from the top of the list to the bottom, and a later sheet wins for any color it defines. A sheet only has to define the colors it wants to change.  So for example, a small sheet could override just the II and the &Delta; and leave everything else to the sheets underneath. The merged answer, shown on the bottom row, is what you see and what the color buttons show.
 </p>
-<p>Press <span class="GUIReferenceInline">Stylesheets</span> to show or hide the list. Press the button again to close it. Above the table, <i>Active Stylesheets:</i> shows the <b>recipe</b> in effect: your sheets that are on, then the system sheets that are on, last applied first, for example <i>mine+MoodLight+Default</i>. The word <i>Default</i> stands for the system sheets that are on when a Song opens. Under the table are the <a href="#paletteLooks">Looks</a> controls and a <span class="GUIReferenceInline">Legend</span> button that explains every mark on this page.
+<p>Press <button class="BtnPunchedOut" type="button">Stylesheets</button> to show the list. Press the button again to hide it. Below the list, <i>Active Stylesheets:</i> shows the <b>recipe</b> in effect: your sheets that are on, then the system sheets that are on, last applied first, for example <i>mine+MoodLight+Default</i>. The word <i>Default</i> stands for the system sheets that are on when a Song opens. Under the table are the <a href="#paletteLooks">Looks</a> controls and a <span class="GUIReferenceInline">Legend</span> button that opens the Legend which explains every mark on this page, and also contains a hint line where messages are shown while you click the controls to help you learn them and understand what is happening. At startup, the Legend is closed so as to be unobtrusive.
 </p>
 
 <p><b><i>Reading the table</i></b></p>
-<p>Each row is one Stylesheet. The first cell holds a checkbox or mark and the name (a link); a folder row adds its arrow at the left, and the sheets inside an open folder are indented under it. After it comes one cell for every Role, finger, Note Function (<b>1</b> to <b>12</b>) and highlight (<b>H1</b> to <b>H3</b>), headed by its name written sideways. A cell shows the color that sheet gives it, and is <i>empty</i> where the sheet says nothing. A row that is <i>not</i> ticked is blank, so only what is in effect is drawn; tick <b>All</b> (the checkbox at the top left) to see the colors of the unticked rows too. The order down the table is the order the sheets are applied: <b>lower rows win</b>.
+<p><img src="img/help/context/palette-stylesheets.png" width="1200"></p>
+<p>Each row is one Stylesheet. The first cell holds a checkmark or checkbox and the name (a link); a folder row adds its arrow at the left, and the sheets inside an open folder are indented under it. After it comes one cell for every Role, Fingering, Note Function (<b>1</b> to <b>12</b>) and Highlight (<b>H1</b> to <b>H3</b>).  On top of the table, all the cell names are shown (written sideways). A cell shows the color that sheet gives it, and is <i>empty</i> where the sheet says nothing. A row that is <i>not</i> checked is blank, so only what is in effect is drawn; check the <b>All</b> button/checkbox at the top left to see the colors of the un-checked rows too. The order down the table is the order the sheets are applied: <b>lower rows win</b>.
 </p>
 <table class="ExamplesTable">
   <tr>
-    <th>At the left of the name</th>
+    <th>Controls</th>
     <th>Row</th>
     <th>Meaning</th>
   </tr>
   <tr>
-    <td>a checkbox</td>
+    <td>&#x2713;</td>
+    <td><i>All-Clear</i></td>
+    <td>Always on: it has no checkbox. It is the first layer, so every Role has a default display (white background, black text) even when everything else is off.</td>
+  </tr>
+  <tr>
+    <td><nobr><input type="checkbox" checked>checkbox</nobr></td>
     <td>A system sheet, or one of <i>your</i> sheets</td>
     <td>Checked: switched on, and in the stack. Uncheck it to switch it off. The sheet is still in the Song and still in the list. System sheets are independent: any combination may be on.</td>
   </tr>
   <tr>
-    <td>&#x2713;</td>
-    <td><i>All-Clear</i></td>
-    <td>Always on: it has no checkbox. It is the bottom layer, so every Role has a color even when everything else is off.</td>
-  </tr>
-  <tr>
     <td>&#x25B6; &#x25BC;</td>
     <td>A <b>folder</b> (<i>NoteFunctions</i>, <i>Moods</i>, <i>Printing</i>)</td>
-    <td>Opens or closes the folder. A folder is only a way of grouping the list: it has no checkbox and is not a Stylesheet. Closed, it shows its name and the merged colors of its sheets that are on (blank when none is). Open, its sheets appear, tinted and indented, and you tick them there. Whether the folders are open is not saved. A folder whose sheets are <i>exclusive</i> (<i>Moods</i>, <i>Printing</i>) allows one sheet on at a time: ticking one unticks the others.</td>
+    <td>Opens or closes the folder. A folder is only a way of grouping the list: it has no checkbox and is not a Stylesheet. Closed, it shows its name and the merged colors of its sheets that are on (blank when none is). Open, its sheets appear, tinted and indented, and you check them there. Whether the folders are open is not saved. A folder whose sheets are <i>exclusive</i> (<i>Moods</i>, <i>Printing</i>) allows one sheet on at a time: checking one unchecks the others.</td>
   </tr>
   <tr>
-    <td>&#x2191; &#x2193; &#x232B;</td>
-    <td>One of <i>your</i> sheets, at the right end of its row</td>
-    <td><b>&#x2191;</b> and <b>&#x2193;</b> move the sheet up or down among <i>your</i> sheets (a sheet lower in the list wins; they are greyed at the ends, and your sheets always stay below the system ones). <b>&#x232B;</b> deletes the sheet to the Graveyard. System rows have no buttons. Your sheets are never in a folder and are never exclusive. See <a href="#paletteStylesheetTasks">Creating, changing and deleting Stylesheets</a>.</td>
+    <!--td>&#x2191; &#x2193; &#x232B;</td-->
+    <td>&#x2B06; &#x2B07; &#x232B;</td>
+    <td>One of <i>your</i> sheets (controls are at the right end of the row)</td>
+    <td>&#x2B06; and &#x2B07; move the sheet up or down among <i>your</i> sheets (a sheet lower in the list wins; they are grayed at the ends, and your sheets always stay below the system ones). &#x232B; deletes the sheet to the Graveyard. System rows do not have these editing buttons. Your sheets are never in a folder and are never exclusive. See <a href="#paletteStylesheetTasks">Creating, changing and deleting Stylesheets</a>.</td>
   </tr>
 </table>
-<p>The row of the sheet shown in the editor is marked with a gold bar at the left of its name. The last row, <b>&rArr; Result</b>, is the merged result of everything switched on. It is what the Instruments use. Click any swatch in any row to choose that color as your paint color.
+<p>The row of the sheet shown in the editor is marked with a tiny gold bar at the left of its name. The last row, <b>&rArr; Result</b>, is the merged result of everything switched on. It is what the Instruments use. Click any swatch in any row to choose that color as your paint color.
 </p>
 
 <p><b><i>The system sheets</i></b></p>
@@ -4464,13 +4469,13 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
     <th>Sheet</th>
     <th>Contains</th>
   </tr>
-  <tr><td><b>All-Clear</b></td><td>Every Role, finger, Note Function and highlight set to white. Always on, at the bottom of the stack.</td></tr>
-  <tr><td><b>NoteFunctions</b> folder: <b>CycleOfColors</b></td><td>The twelve Note Function colors that AutoColor uses. On when a Song opens.</td></tr>
+  <tr><td><b>All-Clear</b></td><td>Every Role, finger, Note Function and highlight set to white background, black text. Always on, at the top of the list (therefore the bottom of the stack order).</td></tr>
+  <tr><td><b>NoteFunctions</b> <i>(folder)</i></td><td>The twelve Note Function colors that AutoColor uses. On when a Song opens. Defaults to <b>CycleOfColors</b></td></tr>
   <tr><td><b>Roles</b></td><td>Emboss, Auto, Root, Scale, Chord, Ch2, Ch3, Colornote, C2, C3, Chromatic, Passing, the three Avoids, Bass, Lead and Lead 2. On when a Song opens.</td></tr>
-  <tr><td><b>Fingerings</b></td><td>The finger colors: Finger0 to Finger4 and Thumb. On when a Song opens.</td></tr>
+  <tr><td><b>Fingerings</b></td><td>The Fingering colors: Finger0 to Finger4 and Thumb. On when a Song opens.</td></tr>
   <tr><td><b>Highlights</b></td><td>H1, H2 and H3. On when a Song opens.</td></tr>
-  <tr><td><b>Moods</b> folder: <b>MoodLight</b>, <b>MoodMinor</b></td><td>Note Function colors for the major and the natural-minor lights. Off when a Song opens; they are below CycleOfColors in the table, so they win and ticking one changes the Note Functions. They do not color the Root.</td></tr>
-  <tr><td><b>Printing</b> folder: <b>Letterpress</b>, <b>Gradient</b>, <b>Halftone</b></td><td>Complete sheets for printing (they set every Role), at the bottom of the stack so they win. Off when a Song opens. They start out all white; <i>Gradient</i> and <i>Halftone</i> show one finished cell (the I) as a pattern for editing.</td></tr>
+  <tr><td><b>Moods</b> <i>(folder)</i></td><td>Contains stylesheets like <b>MoodLight</b> and <b>MoodMinor</b>. Note Function colors for major and minor moods. Off when a Song opens; they are below CycleOfColors in the table, so they win and checking one changes the Note Functions. They do not color the Root note.</td></tr>
+  <tr><td><b>Printing</b> <i>(folder)</i></td><td>Complete sheets (they set every Role), which are designed to work well with grayscale printing. They are placed at the bottom of the stack so they override colorful stylesheets when chosen. Off when a Song opens. Contains sheets such as <b>Letterpress</b>, <b>Gradient</b>, and <b>Halftone</b>.</td></tr>
 </table>
 <p>The system sheets are not saved in the Song file: they are always supplied, and <b>every Song you open starts with the same ones on</b> (CycleOfColors, Roles, Fingerings and Highlights, plus All-Clear): a choice you made in an earlier Song does not carry over. That starting set is what the Look and recipe word <i>Default</i> means. Your own sheets are saved, with whether each is switched on, and in their order. Names are cleaned when a Song is opened: a name with spaces or symbols is renamed (<i>my sheet</i> becomes <i>my-sheet</i>), a name that matches a system sheet or <i>Default</i> gets <i>-user</i>, and each rename is reported in the User Log and followed by every Section that used the old name. Folder names are not reserved.
 </p>
@@ -4483,7 +4488,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td>The name of <b>one of your sheets</b></td>
-    <td>Switches it on and loads it into the <a href="#paletteCustomize">editor</a> (its name goes in the <i>Stylesheet name</i> box and its colors show in the editor cells). <b>Nothing is reordered</b>: your other sheets that were on are still on, and the order only changes with the &#x2191; &#x2193; buttons.</td>
+    <td>Switches it on and loads it into the <a href="#paletteCustomize">editor</a> (its name goes in the <i>Stylesheet name</i> box and its colors show in the editor cells). <b>Nothing is reordered</b>: your other sheets that were on are still on, and the order only changes with the &#x2B06; and &#x2B07; buttons.</td>
   </tr>
   <tr>
     <td>The name of a <b>system sheet</b> (<i>All-Clear</i>, <i>CycleOfColors</i>, <i>Roles</i>, <i>MoodLight</i>, ...)</td>
@@ -4494,12 +4499,12 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
     <td>Opens or closes it, like its arrow.</td>
   </tr>
 </table>
-<p>To use one sheet alone, click <i>Default</i> and then untick the ones you do not want, or tick just the one you want. Several sheets can be on together: the lower rows win.
+<p>To use one sheet alone, click <i>Default</i> and then uncheck the ones you do not want, or check just the one you want. Several sheets can be on together: the lower rows win.
 </p>
 
 <a name="paletteCustomize"></a>
 <h4>Customize</h4>
-<p>Press <span class="GUIReferenceInline">Customize ...</span> to open the editor. The button changes to <span class="GUIReferenceInline">Customize Less ...</span>. The editor has two parts.
+<p>Press <button class="BtnPunchedOut" type="button">Customize &#x25B6;</button> to open the editor. The button changes to <button class="BtnPunchedOut" type="button">Customize &#x25BC;</button>. The editor has two parts.
 </p>
 
 <p><b><i>The color editor</i></b></p>
@@ -4526,7 +4531,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   <tr><td>faded, dotted outline</td><td><b>inherited</b> from the built-in sheet you selected. Save writes only the cells you changed, not these.</td></tr>
   <tr><td>blank</td><td>The sheet says nothing for this role.</td></tr>
 </table>
-<p>Your pending changes <b>survive</b> ticking or unticking a checkbox, moving a sheet, applying a Section, and anything else that rebuilds the lists. They are discarded when you click another sheet's name, press <i>New</i>, delete the selected sheet, or open a Song.
+<p>Your pending changes <b>survive</b> checking or unchecking a checkbox, moving a sheet, applying a Section, and anything else that rebuilds the lists. They are discarded when you click another sheet's name, press <i>New</i>, delete the selected sheet, or open a Song.
 </p>
 
 <p><b><i>The buttons</i></b></p>
@@ -4536,16 +4541,16 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
     <th>What it does</th>
   </tr>
   <tr>
-    <td><b>Stylesheet name:</b> (box)</td>
-    <td>The name of the sheet to save. It is cleaned when you save (each run of characters other than letters and digits becomes <i>-</i>), and the line under the buttons shows what Save will do <i>before</i> you press it. Pressing <span class="key">ENTER</span> in this box is the same as pressing <i>Save Stylesheet</i>.</td>
+    <td><b>Stylesheet name:</b> (edit box)</td>
+    <td>The name of the sheet to save. It is cleaned when you save (each run of characters other than letters and digits becomes <i>-</i>), and the hint line after the buttons shows what Save will do. Pressing <span class="key">ENTER</span> in this edit box is the same as pressing <i>Save Stylesheet</i>.</td>
   </tr>
   <tr>
     <td><b>New</b></td>
-    <td>Empties the editor and the name box, ready for a new sheet. Nothing is deleted or changed.</td>
+    <td>Empties the editor and the name edit box, ready for a new sheet. Nothing is deleted or changed.</td>
   </tr>
   <tr>
     <td><b>Save Stylesheet</b></td>
-    <td>Creates or updates the sheet with the name in the box, from the editor. It is greyed when there is nothing to do, and the line under the buttons says why. See <a href="#paletteStylesheetRecordRules">How Save decides</a>.</td>
+    <td>Creates or updates the sheet with the name in the edit box, from the editor. It is grayed when there is nothing to do, and the hint line after the buttons says why. See <a href="#paletteStylesheetRecordRules">How Save decides</a>.</td>
   </tr>
   <tr>
     <td><b>Copy</b></td>
@@ -4560,7 +4565,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
     <td>Loads the colors of the NamedNotes painted on the first visible Instrument into the editor as pending changes. Nothing is saved until you press <i>Save Stylesheet</i>. See below.</td>
   </tr>
 </table>
-<p>Saving, copying and renaming select the sheet, switch it on, and refresh the Stylesheets list (open it with <span class="GUIReferenceInline">Stylesheets</span> to see it).
+<p>Saving, copying and renaming a sheet will switch it on, select it, and refresh the Stylesheets list.
 </p>
 
 <p><b><i>Loading from the neck (From Section)</i></b></p>
@@ -4568,14 +4573,14 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 </p>
 <ol>
   <li>Place NamedNotes on the <b>first Instrument</b> in the Song, in the Section you are on, using the colors you want. You can use any color button, including Roles (a Role is loaded as the color it currently has).</li>
-  <li>Press <span class="GUIReferenceInline">From Section</span>. The editor cells show the loaded colors as <i>edited</i>. Change any of them, then type a name and press <span class="GUIReferenceInline">Save Stylesheet</span>.</li>
+  <li>Press <button class="BtnPunchedOut" type="button">From Section</button>. The editor cells show the loaded colors as <i>edited</i>. Change any of them, then type a name and press <button class="BtnPunchedOut" type="button">Save Stylesheet</button>.</li>
 </ol>
-<p>Each NamedNote becomes the color for its <i>Note Function</i>, which is worked out from the Section's Key. So in the key of D, painting a D sets the color of function <b>1</b> (I), and in the key of C, painting a D sets function <b>3</b> (II). It only loads Note Functions (<b>1</b> to <b>12</b>) for notes you painted, and nothing for the others, so you could override only the II and the &Delta;. <b>With AutoColor on</b>, the colors loaded are the ones AutoColor works out, not the colors you picked, and a note under the buttons tells you so; uncheck AutoColor first to load your own.
+<p>Each NamedNote becomes the color for its <i>Note Function</i>, which is worked out from the Section's Key. So in the key of D, painting a D sets the color of function <b>1</b> (I), and in the key of C, painting a D sets function <b>3</b> (II). It only loads Note Functions (<b>1</b> to <b>12</b>) for notes you painted, and nothing for the others, so you could, for example, override just the notes II and &Delta;. <b>With AutoColor on</b>, the colors loaded are the ones AutoColor works out, not the colors you picked (and a hint after the buttons tells you so). Uncheck AutoColor first to load your own.
 </p>
 
 <a name="paletteStylesheetTasks"></a>
 <h4>Creating, changing and deleting Stylesheets</h4>
-<p>The Stylesheets controls are small on purpose: the checkboxes, the name links, the &#x2191; &#x2193; &#x232B; buttons, and the five buttons in Customize (<i>New</i>, <i>Save Stylesheet</i>, <i>Copy</i>, <i>Rename</i>, <i>From Section</i>). Everything you can do with a sheet is a combination of them. Here are the combinations:
+<p>The Stylesheets controls are compact: the checkboxes, the name links, the &#x2B06; and &#x2B07;  &#x232B; buttons, and the five buttons in Customize (<i>New</i>, <i>Save Stylesheet</i>, <i>Copy</i>, <i>Rename</i>, <i>From Section</i>). Everything you can do with a sheet is a combination of them. Here are the combinations:
 </p>
 <table class="ExamplesTable">
   <tr>
@@ -4612,7 +4617,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td><b>Change which sheet wins</b></td>
-    <td>Use the &#x2191; and &#x2193; buttons: a sheet lower in the list wins where two sheets color the same role.</td>
+    <td>Use the &#x2B06; and &#x2B07;  buttons: a sheet lower in the list wins where two sheets color the same role.</td>
   </tr>
   <tr>
     <td><b>Switch a sheet off without deleting it</b></td>
@@ -4628,11 +4633,11 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td><b>Get the factory colors back</b></td>
-    <td>Click <b>Default</b> and uncheck your sheets.</td>
+    <td>Choose <b>Default</b> in the "Look" dropdown, and uncheck your sheets.</td>
   </tr>
   <tr>
     <td><b>Use just one of my sheets</b></td>
-    <td>Tick that one and untick the others. Use <i>Default</i> (or another built-in) to choose what is under it.</td>
+    <td>Check that one and uncheck the others. Use <i>Default</i> (or another built-in) to choose what is under it.</td>
   </tr>
   <tr>
     <td><b>Copy sheets from another Song</b></td>
@@ -4646,7 +4651,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 
 <a name="paletteStylesheetRecordRules"></a>
 <p><b><i>How Save decides what to do</i></b></p>
-<p>It is the <b>name</b> in the name box that decides whether <i>Save Stylesheet</i> creates or updates. The line under the buttons says, <b>before</b> you press anything, what Save would do, and why a button is greyed. <i>Save Stylesheet</i> is greyed when there is nothing to save, and <i>Copy</i> and <i>Rename</i> are greyed when they would do nothing or clash with a name. Pressing Enter in the name box is the same as pressing <i>Save Stylesheet</i>.
+<p>It is the <b>name</b> in the name box that decides whether <i>Save Stylesheet</i> creates or updates. The hint line after the buttons says, <b>before</b> you press anything, what Save would do, and why a button is grayed. <i>Save Stylesheet</i> is grayed when there is nothing to save, and <i>Copy</i> and <i>Rename</i> are grayed when they would do nothing or clash with a name. Pressing Enter in the name box is the same as pressing <i>Save Stylesheet</i>.
 </p>
 <table class="ExamplesTable">
   <tr>
@@ -4689,7 +4694,7 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 </p>
 <p><b>Per Section.</b> A Section stores, in <i>currentColorDict</i>, either a <b>recipe</b> or the name of a <a href="#paletteLooks">Look</a>. It is a <a href="#displayOptionsTopic">Display Option</a> in the <i>Color</i> group, and the View page lists it below the Save/Clear buttons as <i>currentColorDict: [ value ]</i>. Like <i>autoColor</i> (also in that group), you store it in a Section with <span class="GUIReferenceInline">SAVE Diff</span> on the View page, and it cascades from Section to Section like every Display Option (see <a href="#displayOptionsMatrixTopic">Display Options Matrix</a>).
 </p>
-<p>A recipe is a list of sheet names joined with <b>+</b>: <b>your</b> ticked sheets first, then the system sheets, each group with the last-applied (lowest in the table) first, for example <i>mine+MoodLight+Default</i>. The word <i>Default</i> stands for the system sheets that are on when a Song opens; when you have turned one of those off, the recipe lists the system sheets that <i>are</i> on instead, such as <i>mine+Highlights+Fingerings+CycleOfColors+All-Clear</i>. The order of the words does not matter when a Song is read: the order in the table decides which sheet wins. You can type a recipe yourself, for example <i>b+a+MoodLight+Default</i>. When the Song reaches a Section, the Palette sets the ticked sheets to <b>exactly</b> that recipe: the system sheets it names (All-Clear is always on), and only the listed sheets of yours. So Sections do not add up: Section 1 can say <i>A+Default</i> and Section 2 <i>B+Default</i>, and each shows only its own sheet, in either direction of travel. An older value such as <i>user</i> or <i>mojo</i> (a plain sheet name) is read as <i>Default</i> plus that name. A long recipe wraps after each <b>+</b> in the Display Options Matrix and the View listing.
+<p>A recipe is a list of sheet names joined with <b>+</b>: <b>your</b> checked sheets first, then the system sheets, each group with the last-applied (lowest in the table) first, for example <i>mine+MoodLight+Default</i>. The word <i>Default</i> stands for the system sheets that are on when a Song opens; when you have turned one of those off, the recipe lists the system sheets that <i>are</i> on instead, such as <i>mine+Highlights+Fingerings+CycleOfColors+All-Clear</i>. The order of the words does not matter when a Song is read: the order in the table decides which sheet wins.  A long recipe wraps after each <b>+</b> in the Display Options Matrix and the View listing.
 </p>
 <p>The Section value follows the Stylesheets as you change them, so Save on the View page records what you see. A Section that names a sheet that no longer exists leaves the colors as they are; the <a href="#displayOptionsMatrixTopic">Display Options Matrix</a> strikes through such a <i>currentColorDict</i> cell (Section, DEFAULTS or LIVE row), and hovering shows the missing name.
 </p>
@@ -4707,15 +4712,15 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
   </tr>
   <tr>
     <td>The Looks select</td>
-    <td>Choose a Look to set the ticked sheets to its recipe. The select shows the Look that the Song currently uses, if any.</td>
+    <td>Choose a Look to set the checked sheets to its recipe. The select shows the Look that the Song currently uses, if any.</td>
   </tr>
   <tr>
     <td>Name box and <i>Save Look</i></td>
-    <td>Saves the current ticks as a Look (the system sheets are written out, so the Look keeps meaning the same sheets), and makes it the Song's current value. An existing Look name is updated. A Stylesheet, system sheet or <i>Default</i> name is refused. The hint line below says what will happen, and names are cleaned as for Stylesheets.</td>
+    <td>Saves the current checks as a Look (the system sheets are written out, so the Look keeps meaning the same sheets), and makes it the Song's current value. An existing Look name is updated. A Stylesheet, system sheet or <i>Default</i> name is refused. The hint line below says what will happen, and names are cleaned as for Stylesheets.</td>
   </tr>
   <tr>
     <td>&#x232B; next to the select</td>
-    <td>Removes the selected Look. Sections that stored its name keep the name; the Matrix strikes it through until you re-create it. <i>Default</i> cannot be removed (the button is greyed).</td>
+    <td>Removes the selected Look. Sections that stored its name keep the name; the Matrix strikes it through until you re-create it. <i>Default</i> cannot be removed (the button is grayed).</td>
   </tr>
 </table>
 <p>When a Look is applied or a Section stores a recipe that equals a Look's recipe, the Look's name is the value stored, so it is the one the Matrix shows.

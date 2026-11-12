@@ -103,8 +103,8 @@ function resolveLookupContext(lookupContext = {}) {
 
 //================== colorDicts ================================================
 
-	const GLYPH_UP = '\u2191';
-	const GLYPH_DOWN = '\u2193';
+	const GLYPH_UP = '\u2B06';//'\u2191';
+	const GLYPH_DOWN = '\u2B07';//'\u2193';
 	const GLYPH_DELETE = '\u232B';
 
 	// The Stylesheet editor's pending state (what the Customize panel shows). Module-level, so

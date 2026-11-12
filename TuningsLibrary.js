@@ -539,8 +539,9 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             isPianoTuning ? 'Divider is unavailable for Piano layouts.' : ''
         );
         var removeDisabled = sInMemCount && sInMemCount.trim().length > 0 ? ' disabled title="Delete Sections/Notes first"' : '';
-        var moveButtonHtml = '<button type="button" class="btnMoveTuningUp" data-baseid="' + tun.baseID + '"' + disableMoveUp + '>&uarr;</button>'
-            + '<button type="button" class="btnMoveTuningDown" data-baseid="' + tun.baseID + '"' + disableMoveDown + '>&darr;</button>'
+        // replaced &uarr; with &#x2B06; &darr; with &#x2B07;
+        var moveButtonHtml = '<button type="button" class="btnMoveTuningUp" data-baseid="' + tun.baseID + '"' + disableMoveUp + '>&#x2B06;</button>'
+            + '<button type="button" class="btnMoveTuningDown" data-baseid="' + tun.baseID + '"' + disableMoveDown + '>&#x2B07;</button>'
             + '<button type="button" class="btnRemoveTuning" data-baseid="' + tun.baseID + '"' + removeDisabled + '>&#x232B;</button>';
 
         // For myTunings (visibility mode), make ID editable; for allTunings (clone mode), show as text

@@ -158,6 +158,10 @@
 #divDisplayOptionsMatrix .dmSectionHeader { background: #ddd; font-weight: bold; }
 #divDisplayOptionsMatrix .dmSectionLink { color: inherit; text-decoration: underline; }
 
+ #divDisplayOptionsMatrix .dmCell[data-key="currentColorDict"] {
+    min-width: 8em;
+}
+
 /* cell state */
 #divDisplayOptionsMatrix .dmAbsent  { background-color: #303030; }
 #divDisplayOptionsMatrix .dmStored  { background-color: white; }
