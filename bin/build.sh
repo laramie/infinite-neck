@@ -1,5 +1,5 @@
 ## Adjust the date after you run this to the date you ran it: 
-bin/update-git-log.bash --since "2026-09-21" > _doco/lifecycle/CHANGELOG-new.md
+bin/update-git-log.bash --since "2026-11-12" > _doco/lifecycle/CHANGELOG-new.md
 
 cat _doco/lifecycle/CHANGELOG-new.md
 
@@ -7,7 +7,7 @@ vi _doco/lifecycle/CHANGELOG.md
 
 node bin/version-update.js ./version.json
 
-# Add version to version.js instead of generated value.  (Used v2.1-beta-18 on 20261109)
+# Add version to version.js instead of generated value.  (Used v2.1-beta-19 on 20261112)
 
 vi ./version.json
 

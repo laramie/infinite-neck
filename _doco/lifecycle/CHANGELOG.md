@@ -1,9 +1,18 @@
 # ChangeLog
 
-### 20261109
+### 20261112
 
-Tag: v2.1-beta-18
+Tag: v2.1-beta-19
 
+- 67c8341 **2026-11-12** Fixed palette and stylesheet help to be more readable after a number of AI generations. Added palette/stylesheets screenshot. Tweaked up/down buttons.  Made currentColorDict have a min-width in DisplayOptionsMatrix so it doesn't wrap so tightly.
+- 6703aed **2026-11-11** Changed identation on non-folder rows versus keeping indentation for folder child rows. Moved hints inside Legend.
+- c4d2b3b **2026-11-11** Made child row yellow
+- 27aacbd **2026-11-11** Tweaks: Iteration 4
+- cbe8c5c **2026-11-11** Iteration 3 coded.
+- a73d06e **2026-11-10** Ready for Iteration 3
+- 4c56913 **2026-11-10** sprint-155 it2
+- 3b45aaa **2026-11-10** Ready for Iteration 2
+- c04aa46 **2026-11-09** Ready for build v2.1-beta-18 20261109
 - 78ff740 **2026-11-08** Only turn on MIDI when checkbox atop MIDI Tab page is checked, or when this was done in a Song then saved.
 - 26deece **2026-11-07** Iteration 1 complete
 - 4d55cb6 **2026-11-07** Ready for sprint-155 Iteration 1.
