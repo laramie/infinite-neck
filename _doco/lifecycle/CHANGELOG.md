@@ -1,5 +1,18 @@
 # ChangeLog
 
+
+
+### 20261115
+
+Tag: v2.1-beta-20
+
+- d49b4bf **2026-11-15** Increased beat counts for each Section to 2x number of SingleNotes, because extra beat doubles it.  Also, having correct number of beats (including 2x) makes the full candidate deck of notes work correctly.
+- c297eae **2026-11-15** removed name-that-note-placed* because name-that-note-fret-flavors.json replaces them.
+- 5d3fa42 **2026-11-15** Updated song file format, and added macro and link to use entire first octave as a position.
+- 4de8b3e **2026-11-15** Instituted a draw-from-deck behavior for flashcard mode for ArpeggioPlugin so that across Beat Looping and Section Looping, unused cards carry over, and all cards are used before wrapping around.  Some songs will still need to adjust beat counts in Sections for best behavior.
+- 8207aec **2026-11-12** v2.1-beta-19
+- 168a324 **2026-11-12** v2.1-beta-18
+
 ### 20261112
 
 Tag: v2.1-beta-19
