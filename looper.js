@@ -493,8 +493,7 @@ import { applyLoopSectionFilterToSong } from './SongNavigationHooks.js';
             } else {
                 song.incBeatLoop();
 				emitSectionBeginForCurrentSong(song, {
-					transportAction: 'LoopBeatsWrap',
-					reuseRandomSequence: true
+					transportAction: 'LoopBeatsWrap'
 				});
                 showBeats();
             }

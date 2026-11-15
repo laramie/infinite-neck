@@ -372,6 +372,47 @@ describe('ArpeggioPlugin sequencing', () => {
 		randomSpy.mockRestore();
 	});
 
+	test('style=random deals a persistent deck across regenerations: every candidate once before any repeats', () => {
+		const { plugin, song } = makeContext({ beats: 3, rowRange: [40, 45], frets: 1 });
+		const section = song.getCurrentSection();
+		const candidates = [0, 1, 2, 3, 4, 5, 6].map((col) => ({ noteName: 'C', midinum: 40 + col, row: 0, col }));
+		const drawn = [];
+		for (let pass = 0; pass < 7; pass += 1) {
+			const sequence = plugin.getCachedRandomSequence(candidates, 3, {
+				section,
+				tableID: 'tblARP',
+				sourceType: 'placed',
+				regenerateRandomSequence: true
+			});
+			drawn.push(...sequence.map((candidate) => candidate.col));
+		}
+		// 21 draws from 7 cards = exactly 3 full decks
+		for (let deckStart = 0; deckStart < 21; deckStart += 7) {
+			expect(new Set(drawn.slice(deckStart, deckStart + 7)).size).toBe(7);
+		}
+		for (let i = 1; i < drawn.length; i += 1) {
+			expect(drawn[i]).not.toBe(drawn[i - 1]);
+		}
+	});
+
+	test('style=random with beats >= candidates shows every candidate in every pass', () => {
+		const { plugin, song } = makeContext({ beats: 10, rowRange: [40, 45], frets: 1 });
+		const section = song.getCurrentSection();
+		const cardCount = 7;
+		const beatCount = 10;
+		const makeCandidates = () => Array.from({ length: cardCount }, (_, col) => ({ noteName: 'C', midinum: 40 + col, row: 0, col }));
+		for (let pass = 0; pass < 6; pass += 1) {
+			const sequence = plugin.getCachedRandomSequence(makeCandidates(), beatCount, {
+				section,
+				tableID: 'tblARP',
+				sourceType: 'mode',
+				regenerateRandomSequence: true
+			});
+			expect(sequence).toHaveLength(beatCount);
+			expect(new Set(sequence.map((candidate) => candidate.col)).size).toBe(cardCount);
+		}
+	});
+
 	test('flashcard one-mode with random reveals the exact previous highlighted cell', () => {
 		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 1 });
 		plugin.setPropertyValue('style', 'random', { song });
@@ -429,14 +470,23 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(sectionNotes.recordedNotes).toEqual(beforeRestartSection);
 		expect(randomSpy.mock.calls.length).toBe(randomCallsAfterGenerate);
 
-		plugin.handleEvent('DaCapo:OnSectionBegin', {
-			transportAction: 'LoopBeatsWrap',
-			reuseRandomSequence: true
-		}, { song });
-		expect(sectionNotes.recordedNotes).toEqual(beforeRestartSection);
-		expect(randomSpy.mock.calls.length).toBe(randomCallsAfterGenerate);
-
 		randomSpy.mockRestore();
+	});
+
+	test('LoopBeatsWrap continues the random deck so a looping section walks through every candidate', () => {
+		const { plugin, song, sectionNotes } = makeContext({ beats: 3, rowRange: [40], frets: 5, currentBeat: 3 });
+		plugin.setPropertyValue('style', 'random', { song });
+
+		const seen = [];
+		plugin.handleEvent('DaCapo:OnSectionBegin', { transportAction: 'StartLoopBeats', reuseRandomSequence: true }, { song });
+		seen.push(...getBeatMidinums(sectionNotes, 3));
+		for (let wrap = 0; wrap < 1; wrap += 1) {
+			plugin.handleEvent('DaCapo:OnSectionBegin', { transportAction: 'LoopBeatsWrap' }, { song });
+			seen.push(...getBeatMidinums(sectionNotes, 3));
+		}
+
+		// 6 candidates (frets 0..5), 2 passes of 3 beats = one full deck, no repeats
+		expect(new Set(seen).size).toBe(6);
 	});
 
 	test('style=alternate uses odd positions up, then even positions down', () => {

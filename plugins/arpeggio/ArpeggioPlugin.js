@@ -62,6 +62,7 @@ export class ArpeggioPlugin {
     this.skipNextSongUiShowBeats = false;
     this.songLoopCountForPositionPair = 0;
     this.randomSequenceCacheBySection = new Map();
+    this.randomDeckBySection = new Map();
     this.sectionRuntimeIdentityCounter = 1;
     this.debugRandomSequence = false;
   }
@@ -1258,13 +1259,20 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       return true;
     }
 
+    const transportAction = `${payload?.transportAction || payload?.action || ''}`.trim();
+    const action = transportAction.toLowerCase();
+
+    // Each beat-loop wrap deals the next cards from the persistent deck, regardless of the
+    // transport's reuse hint, so a looping section walks through the whole set.
+    if (action === 'loopbeatswrap') {
+      return this.getStyle() === STYLE_RANDOM;
+    }
+
     if (payload?.reuseRandomSequence === true) {
       return false;
     }
 
-    const transportAction = `${payload?.transportAction || payload?.action || ''}`.trim();
-    const action = transportAction.toLowerCase();
-    if (action === 'restartsection' || action === 'startloopsections' || action === 'startloopbeats' || action === 'loopbeatswrap') {
+    if (action === 'restartsection' || action === 'startloopsections' || action === 'startloopbeats') {
       return false;
     }
     if (action === 'loopsectionstransition' || action === 'gofirstsection') {
@@ -1279,6 +1287,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   clearRandomSequenceCache() {
     this.randomSequenceCacheBySection.clear();
+    this.randomDeckBySection.clear();
   }
 
   getSectionRuntimeIdentity(section) {
@@ -1344,6 +1353,39 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return sequence.slice(0, beatCount);
   }
 
+  /**
+   * Draws beatCount cards from a persistent shuffled deck. The deck survives sequence
+   * regenerations (each section pass), so every candidate is seen once before any repeats,
+   * even when beatCount is smaller than the number of candidates.
+   * When beatCount covers the whole set, each pass instead starts a fresh full deck, so every
+   * pass shows every candidate at least once; only the surplus beats repeat cards.
+   */
+  drawFromPersistentDeck(sectionKey, deckKey, candidates, beatCount) {
+    let deck = this.randomDeckBySection.get(sectionKey);
+    if (!deck || deck.deckKey !== deckKey) {
+      deck = { deckKey, remaining: [], lastDrawn: null };
+      this.randomDeckBySection.set(sectionKey, deck);
+    }
+    if (beatCount >= candidates.length) {
+      deck.remaining = [];
+    }
+
+    const drawn = [];
+    while (drawn.length < beatCount) {
+      if (deck.remaining.length === 0) {
+        deck.remaining = this.buildRandomizedCycle(candidates);
+        const last = deck.lastDrawn;
+        const lastIdx = deck.remaining.length - 1;
+        if (candidates.length > 1 && last && this.getCandidatePositionKey(deck.remaining[0]) === this.getCandidatePositionKey(last)) {
+          [deck.remaining[0], deck.remaining[lastIdx]] = [deck.remaining[lastIdx], deck.remaining[0]];
+        }
+      }
+      deck.lastDrawn = deck.remaining.shift();
+      drawn.push(deck.lastDrawn);
+    }
+    return drawn;
+  }
+
   getCachedRandomSequence(candidates, beatCount, context = {}) {
     const uniqueCandidates = this.dedupeCandidatesByPosition(candidates);
     const cacheKey = this.buildRandomSequenceCacheKey({
@@ -1367,14 +1409,21 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       return cached.sequence;
     }
 
-    const sequence = this.buildRandomSequenceForBeatCount(uniqueCandidates, beatCount);
+    const deckKey = [
+      context.tableID || '',
+      context.sourceType || '',
+      uniqueCandidates.map((candidate) => this.getCandidatePositionKey(candidate)).join('|')
+    ].join('~');
+    const sequence = beatCount > 0 && uniqueCandidates.length > 0
+      ? this.drawFromPersistentDeck(sectionKey, deckKey, uniqueCandidates, beatCount)
+      : [];
     this.randomSequenceCacheBySection.set(sectionKey, {
       cacheKey,
       sequence
     });
 
     if (this.debugRandomSequence) {
-      console.log(`Arpeggio random sequence regenerated: section=${sectionKey} beats=${beatCount} candidates=${uniqueCandidates.length}`);
+      console.log(`Arpeggio random sequence regenerated: section=${sectionKey} beats=${beatCount} candidates=${uniqueCandidates.length} all candidates:${uniqueCandidates}`);
     }
 
     return sequence;
