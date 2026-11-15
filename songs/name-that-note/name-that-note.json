@@ -154,19 +154,31 @@
   "noteTablesLayout": [
     {
       "tableID": "tblS6_1",
-      "visible": true
+      "visible": true,
+      "anchorage": {
+        "floated": false
+      }
     },
     {
       "tableID": "tblDropD_1",
-      "visible": false
+      "visible": false,
+      "anchorage": {
+        "floated": false
+      }
     },
     {
       "tableID": "tblP46_1",
-      "visible": false
+      "visible": false,
+      "anchorage": {
+        "floated": false
+      }
     },
     {
       "tableID": "tblP48_1",
-      "visible": false
+      "visible": false,
+      "anchorage": {
+        "floated": false
+      }
     }
   ],
   "colorDicts": {},
@@ -219,7 +231,8 @@
         "type": "AutoChartMode",
         "showNoteName": "one",
         "colorNotes": true,
-        "flashcard": true
+        "flashcard": true,
+        "extraClearBeat": true
       }
     }
   },
@@ -307,6 +320,14 @@
         "/fpaIi \"P48_1\"",
         "/rsR"
       ]
+    },
+    "position-octave": {
+      "lines": [
+        "/snf",
+        "/fpapC",
+        "/fpapv \"0,12\"",
+        "/rsR"
+      ]
     }
   },
   "activeStylesheets": "Default",
@@ -343,6 +364,7 @@
       "<td><a href=\"#macro=position-7\">Seventh</a></td>",
       "<td><a href=\"#macro=position-9\">Ninth</a></td>",
       "<td><a href=\"#macro=position-12\">Twelth</a></td>",
+      "<td><a href=\"#macro=position-octave\">1st Octave</a></td>",
       "</tr>",
       "</tbody></table>",
       "<br>",
@@ -363,6 +385,7 @@
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": false,
+  "allowThemeAutomation": false,
   "pluginFiringOrder": [
     "t",
     "f",
@@ -792,7 +815,7 @@
           "caption": "transpose / chromatic"
         },
         "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"chromatic\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            1,\n            2,\n            3,\n            4,\n            5,\n            6,\n            7,\n            8,\n            9,\n            10,\n            11\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
-        "lastRevived": null
+        "lastRevived": 1794735065477
       },
       {
         "timestamp": 1782370008573,
@@ -810,9 +833,9 @@
         "lastRevived": null
       },
       {
-        "timestamp": 1783184823958,
-        "date": "7/4/2026",
-        "time": "10:07:03 AM",
+        "timestamp": 1794735065465,
+        "date": "11/15/2026",
+        "time": "1:31:05 AM",
         "type": "PLUGIN",
         "context": {
           "pluginId": "transpose",
@@ -826,5 +849,58 @@
       }
     ]
   },
-  "currentColorDict": ""
+  "currentColorDict": "",
+  "midiDevice": {
+    "name": "",
+    "mode": "Programmer",
+    "colorMap": "LaunchpadCycleOfColors",
+    "orientation": "normal",
+    "triggerMode": "Latch",
+    "tableID": "",
+    "channel": 0,
+    "enabled": false,
+    "connected": false,
+    "forwardName": "",
+    "forwardChannel": 0
+  },
+  "layout": {
+    "screenList": {
+      "fullscreen": {
+        "name": "fullscreen",
+        "CaptionRow": true,
+        "Caption": true,
+        "SongTitle": true,
+        "SongWidgets": true,
+        "PracticeList": false,
+        "WidgetRow": true,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      },
+      "escaped": {
+        "name": "escaped",
+        "CaptionRow": true,
+        "Caption": true,
+        "SongTitle": true,
+        "SongWidgets": true,
+        "PracticeList": false,
+        "WidgetRow": true,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      }
+    },
+    "screen": {
+      "name": "escaped",
+      "CaptionRow": true,
+      "Caption": true,
+      "SongTitle": true,
+      "SongWidgets": true,
+      "PracticeList": false,
+      "WidgetRow": true,
+      "InstrumentCaptions": false,
+      "LeftRails": true,
+      "CaptionLooperLayout": "column"
+    }
+  }
 }
