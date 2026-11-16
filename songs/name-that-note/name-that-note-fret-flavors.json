@@ -182,9 +182,7 @@
       "visible": true,
       "anchorage": {
         "floated": false
-      },
-      "CaptionLeft": true,
-      "SectionStatusLeft": true
+      }
     },
     {
       "tableID": "tblP48_1",
@@ -245,7 +243,7 @@
         "upOnly": false,
         "style": "random",
         "type": "PlacedSingleNote",
-        "showNoteName": "played",
+        "showNoteName": "named",
         "colorNotes": true,
         "flashcard": true,
         "extraClearBeat": true
@@ -3171,168 +3169,7 @@
         },
         "tblP46_1": {
           "namedNotes": {},
-          "recordedNotes": {
-            "1": [
-              {
-                "noteName": "Ab",
-                "styleNum": 4,
-                "midinum": "56",
-                "row": "2",
-                "col": "1",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "3": [
-              {
-                "noteName": "Eb",
-                "styleNum": 4,
-                "midinum": "51",
-                "row": "3",
-                "col": "1",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "5": [
-              {
-                "noteName": "Eb",
-                "styleNum": 4,
-                "midinum": "63",
-                "row": "1",
-                "col": "3",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "7": [
-              {
-                "noteName": "Db",
-                "styleNum": 4,
-                "midinum": "49",
-                "row": "4",
-                "col": "4",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "9": [
-              {
-                "noteName": "Db",
-                "styleNum": 4,
-                "midinum": "61",
-                "row": "1",
-                "col": "1",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "11": [
-              {
-                "noteName": "Gb",
-                "styleNum": 4,
-                "midinum": "66",
-                "row": "2",
-                "col": "11",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "13": [
-              {
-                "noteName": "Ab",
-                "styleNum": 4,
-                "midinum": "56",
-                "row": "3",
-                "col": "6",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "15": [
-              {
-                "noteName": "Eb",
-                "styleNum": 4,
-                "midinum": "63",
-                "row": "2",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "16": [
-              {
-                "noteName": "Bb",
-                "styleNum": 4,
-                "midinum": "58",
-                "row": "3",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "18": [
-              {
-                "noteName": "Ab",
-                "styleNum": 4,
-                "midinum": "68",
-                "row": "1",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "20": [
-              {
-                "noteName": "Db",
-                "styleNum": 4,
-                "midinum": "61",
-                "row": "2",
-                "col": "6",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "22": [
-              {
-                "noteName": "Gb",
-                "styleNum": 4,
-                "midinum": "42",
-                "row": "5",
-                "col": "2",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "24": [
-              {
-                "noteName": "Ab",
-                "styleNum": 4,
-                "midinum": "68",
-                "row": "0",
-                "col": "3",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "26": [
-              {
-                "noteName": "Eb",
-                "styleNum": 4,
-                "midinum": "51",
-                "row": "3",
-                "col": "1",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "28": [
-              {
-                "noteName": "Eb",
-                "styleNum": 4,
-                "midinum": "51",
-                "row": "4",
-                "col": "6",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "30": [
-              {
-                "noteName": "Db",
-                "styleNum": 4,
-                "midinum": "49",
-                "row": "4",
-                "col": "4",
-                "owner": "ArpeggioPlugin"
-              }
-            ]
-          },
+          "recordedNotes": {},
           "chord": "",
           "mode": "",
           "tonalSourceSet": "",
@@ -8593,7 +8430,7 @@
           "caption": "transpose / chromatic"
         },
         "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"chromatic\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            1,\n            2,\n            3,\n            4,\n            5,\n            6,\n            7,\n            8,\n            9,\n            10,\n            11\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
-        "lastRevived": null
+        "lastRevived": 1794737412182
       },
       {
         "timestamp": 1782370008573,
@@ -8608,12 +8445,12 @@
           "caption": "transpose / no-transposition"
         },
         "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"no-transposition\",\n    \"properties\": {\n        \"intervals\": [\n            0\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
-        "lastRevived": 1794736342470
+        "lastRevived": 1794800101013
       },
       {
-        "timestamp": 1794736342457,
+        "timestamp": 1794800101000,
         "date": "11/15/2026",
-        "time": "1:52:22 AM",
+        "time": "7:35:01 PM",
         "type": "PLUGIN",
         "context": {
           "pluginId": "transpose",
@@ -8622,7 +8459,7 @@
           "schemaVersion": 1,
           "caption": "transpose / USER"
         },
-        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            1,\n            2,\n            3,\n            4,\n            5,\n            6,\n            7,\n            8,\n            9,\n            10,\n            11\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": false,\n        \"TinyNotes\": false,\n        \"BendNotes\": false,\n        \"FingeringNotes\": false,\n        \"RecordedNotes\": false,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            1,\n            2,\n            3,\n            4,\n            5,\n            6,\n            7,\n            8,\n            9,\n            10,\n            11\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
         "lastRevived": null
       }
     ]
