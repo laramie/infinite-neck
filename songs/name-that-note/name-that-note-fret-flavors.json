@@ -366,7 +366,7 @@
   },
   "activeStylesheets": "user+Default",
   "captionsRowShowing": false,
-  "defaultBPM": "30",
+  "defaultBPM": "20",
   "info": {
     "lines": [
       "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a><br>",
@@ -4835,22 +4835,6 @@
               "colorClass": "noteTransparent"
             },
             {
-              "noteName": "Gb",
-              "styleNum": 2,
-              "midinum": "54",
-              "row": "4",
-              "col": "9",
-              "colorClass": "noteTransparent"
-            },
-            {
-              "noteName": "Db",
-              "styleNum": 2,
-              "midinum": "49",
-              "row": "5",
-              "col": "9",
-              "colorClass": "noteTransparent"
-            },
-            {
               "noteName": "B",
               "styleNum": 2,
               "midinum": "59",
@@ -8482,14 +8466,15 @@
     "screenList": {
       "fullscreen": {
         "name": "fullscreen",
-        "CaptionRow": true,
+        "CaptionRow": false,
         "SongTitle": false,
         "SongWidgets": true,
         "WidgetRow": false,
         "InstrumentCaptions": false,
         "LeftRails": true,
         "CaptionLooperLayout": "column",
-        "PracticeList": false
+        "PracticeList": false,
+        "Caption": false
       },
       "escaped": {
         "name": "escaped",
@@ -8501,7 +8486,7 @@
         "LeftRails": true,
         "CaptionLooperLayout": "column",
         "PracticeList": false,
-        "Caption": false
+        "Caption": true
       }
     },
     "screen": {
@@ -8514,7 +8499,7 @@
       "LeftRails": true,
       "CaptionLooperLayout": "column",
       "PracticeList": false,
-      "Caption": false
+      "Caption": true
     }
   },
   "userTheme": {
@@ -8526,7 +8511,7 @@
     "notePadding": "0",
     "cellSpacing": "0.1pt",
     "instrumentBackground": "#311900",
-    "instrumentMargins": "0",
+    "instrumentMargins": "12em",
     "nutColor": "brown",
     "rootColor": "green",
     "diamondsSize": "1.5rem",
