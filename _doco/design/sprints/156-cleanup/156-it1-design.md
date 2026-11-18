@@ -47,6 +47,42 @@
 
 Please produce a report `156-it1-report.md` with findings about the current state of the menus, which menus fall into the candidate list, recommendations for preserving access by macros and songs yet allowing these new menus, and presentation of options for laying out menu pick list columns.
 
+# Iteration 1 Round 2
+
+## Open questions from report section 6 ANSWERED
+
+1. Rows 7-9 (`/fpfI`, `/fpmI`, `/fpoaI`) and 14-15 (`/seiI`, `/tsl`, `/thl`) were not on the design's candidate list but share the same cap.  Include them?  (Recommended: yes for 7-9, 15; yes for 14.)
+
+- ANSWER: Accept the Recommendation.
+
+2. `/fmm` and `/seiI` have no `i)d` route.  Leave them capped at the key limit, or add `i)d`?  (Recommended: leave; a Song with more than 33 macros or unwired Instruments is far past practical.)
+
+- ANSWER:  Accept the Recommendation: "leave".
+
+3. Should `/vml` and `/vmc` persist (`localStorage`, like scaling prefs) or stay session-only like `/vms /vmo /vmt`?
+
+- ANSWER: session-only.
+
+4. Default for `/vml`: 9 (recommended; matches the design's example and leaves current lists unchanged) or an auto value from viewport height?
+
+- ANSWER:  Accept the Recommendation.
+
+5. Tonal suggestions (row 13) use `a` for "accept 1" in the same list as `1`.  Letter picks would collide.  Move "accept 1" out of the pick range, or leave that list at 9?
+
+- ANSWER: leave that list at 9.  
+
+6. Sprint 151's `x` collision: fold the fix into this sprint via R1 (recommended), or fix separately?
+
+- ANSWER:  Accept the Recommendation: fold the fix into this sprint.
+
+
+
+## Request 
+
+Also, RE: "Menu pick-list column layout options", we choose recommended Option A: "A. CSS grid, column flow (recommended)".
+
+Please proceed to APPROVED coding with the above ANSWERs.
+
     
 
 
