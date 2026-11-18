@@ -26,8 +26,8 @@ const { Note: TonalNote } = globalThis.Tonal?.Note
 
 import { linkToSectionChangedTonal, linkToSectionTableTonalSourceSet } from '../../infinite-neck.js';
 import { modeNotesFromStoredMode, parseScaleBestEffort } from  '../chart/chart-tonal-resolver.js';
+import { buildInstrumentPickOptions } from '../../pick-triggers.js';
 
-const TARGET_TABLE_OPTION_LIMIT = 9;
 const SOURCE_NOTE_TYPE_OPTIONS = Object.freeze([
   { trigger: 'n', label: 'named', value: TonalSourceSet.NAMEDNOTE },
   { trigger: 's', label: 'single', value: TonalSourceSet.SINGLENOTE },
@@ -216,13 +216,10 @@ export class TonalPlugin {
   }
 
   buildTargetTableOptions(song = getSong()) {
-    return this.getEligibleTargetTunings(song)
-      .slice(0, TARGET_TABLE_OPTION_LIMIT)
-      .map((tuning, index) => ({
-        value: `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`,
-        caption: `${index + 1}) ${tuning.baseID}`,
-        trigger: `${index + 1}`
-      }));
+    return buildInstrumentPickOptions(
+      this.getEligibleTargetTunings(song),
+      (tuning) => `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`
+    );
   }
 
   getEligibleTargetTunings(song = getSong()) {

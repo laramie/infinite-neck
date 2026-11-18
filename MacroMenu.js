@@ -3,15 +3,21 @@ import * as Globals from './globals.js';
 import {
 	getSongMacroIds,
 } from './MacroExecutor.js';
+import { buildPickCaption, getPickTriggers } from './pick-triggers.js';
 
-
+// Macro ids are validated to letters, digits, _ and -, so they are safe to show as HTML.
+function getPickedMacroIds() {
+    const macroIds = getSongMacroIds(Globals.getSong());
+    const triggers = getPickTriggers(macroIds.length);
+    return macroIds.slice(0, triggers.length).map((macroId, index) => ({ macroId, trigger: triggers[index] }));
+}
 
 export function getMacroNumberOptions(actionName) {
-    const song = Globals.getSong();
-    return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
+    return getPickedMacroIds().map(({ macroId, trigger }) => ({
         name: `${actionName}:${macroId}`,
-        caption: `<b>${index + 1}</b>) ${macroId}`,
-        trigger: `${index + 1}`,
+        caption: buildPickCaption(trigger, macroId),
+        trigger,
+        pick: true,
         action: actionName,
         value: macroId,
         popOnBang: true
@@ -19,11 +25,11 @@ export function getMacroNumberOptions(actionName) {
 }
 
 export function getMacroDeleteNumberOptions() {
-    const song = Globals.getSong();
-    return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
+    return getPickedMacroIds().map(({ macroId, trigger }) => ({
         name: `macroDeleteConfirm:${macroId}`,
-        caption: `<b>${index + 1}</b>) ${macroId}`,
-        trigger: `${index + 1}`,
+        caption: buildPickCaption(trigger, macroId),
+        trigger,
+        pick: true,
         children: [
             {
                 caption: `<b>Y</b>es: delete ${macroId}`,
@@ -43,11 +49,11 @@ export function getMacroDeleteNumberOptions() {
 }
 
 export function getMacroMoveNumberOptions() {
-    const song = Globals.getSong();
-    return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
+    return getPickedMacroIds().map(({ macroId, trigger }) => ({
         name: `macroMove:${macroId}`,
-        caption: `<b>${index + 1}</b>) ${macroId}`,
-        trigger: `${index + 1}`,
+        caption: buildPickCaption(trigger, macroId),
+        trigger,
+        pick: true,
         action: 'macroMoveById',
         value: macroId,
         popOnBang: true,

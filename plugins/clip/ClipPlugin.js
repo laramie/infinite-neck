@@ -6,6 +6,7 @@ import { getSong } from '../../infinite-neck.js';
 import { GraveType } from '../../graveyard.js';
 import { Note } from '../../Note.js';
 import { emitUserLog } from '../emitUserLog.js';
+import { buildInstrumentPickOptions } from '../../pick-triggers.js';
 import { USER_LOG_LEVEL_VERBOSE, USER_LOG_LEVEL_WARNING, formatMidiNumbersByString } from '../userLogLevels.js';
 import { allTunings } from '../../tunings.js';
 import {
@@ -21,7 +22,6 @@ import {
   resolveMidiPasteMap
 } from './midiPasteMaps.js';
 import {
-  TARGET_TABLE_OPTION_LIMIT,
   canMidiPasteBetweenTunings,
   createTuningLayout,
   getCellByRowCol,
@@ -216,13 +216,7 @@ export class ClipPlugin {
   }
 
   buildTargetTableOptions(song = getSong()) {
-    return this.getEligibleTargetTunings(song)
-      .slice(0, TARGET_TABLE_OPTION_LIMIT)
-      .map((tuning, index) => ({
-        value: getTableID(tuning),
-        caption: `${index + 1}) ${tuning.baseID}`,
-        trigger: `${index + 1}`
-      }));
+    return buildInstrumentPickOptions(this.getEligibleTargetTunings(song), getTableID);
   }
 
   ensureTargetTableSelection(song = getSong()) {
@@ -429,6 +423,7 @@ export class ClipPlugin {
         name: `midiPasteMapSelect:${map.id}`,
         caption: `<b>${MAP_CHOICE_TRIGGERS[index]}</b>) ${escapeHtml(map.id)}${map.id === activeId ? ' &#x2713;' : ''}`,
         trigger: MAP_CHOICE_TRIGGERS[index],
+        pick: true,
         action: 'pluginAction:invoke',
         pluginId: this.id,
         actionName: `selectMidiPasteMap:${encodeURIComponent(map.id)}`,
@@ -459,6 +454,7 @@ export class ClipPlugin {
         name: `midiPasteMapDelete:${map.id}`,
         caption: `<b>${MAP_CHOICE_TRIGGERS[index]}</b>) ${escapeHtml(map.id)}`,
         trigger: MAP_CHOICE_TRIGGERS[index],
+        pick: true,
         children: [
           new MenuItemProxy(this, {
             name: `midiPasteMapDeleteYes:${map.id}`,

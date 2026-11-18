@@ -7,6 +7,7 @@ import * as Constants from '../../Constants.js';
 import { Note } from '../../Note.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
 import EventBus from '../../event-bus.js';
+import { buildInstrumentPickOptions } from '../../pick-triggers.js';
 import { getSong } from '../../infinite-neck.js';
 import {
   chordNotesFromStoredChord,
@@ -29,7 +30,7 @@ const SHOW_NOTE_NAME_ONE = 'one';
 const SHOW_NOTE_NAME_ALL = 'all';
 const SHOW_NOTE_NAME_PLAYED = 'played';
 const SHOW_NOTE_NAME_NAMED = 'named';
-const TARGET_TABLE_OPTION_LIMIT = 9;
+
 const POSITIONS_VALUE_TOKEN = 'positionsCurrentSection';
 const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
 const STRINGS_SUMMARY_TOKEN = 'stringsSummary';
@@ -1169,12 +1170,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   buildTargetTableOptions(song = getSong()) {
-    const tunings = this.getEligibleTargetTunings(song).slice(0, TARGET_TABLE_OPTION_LIMIT);
-    return tunings.map((tuning, index) => ({
-      value: this.getTableID(tuning),
-      caption: `${index + 1}) ${tuning.baseID}`,
-      trigger: `${index + 1}`
-    }));
+    return buildInstrumentPickOptions(this.getEligibleTargetTunings(song), (tuning) => this.getTableID(tuning));
   }
 
   getEligibleTargetTunings(song = getSong()) {

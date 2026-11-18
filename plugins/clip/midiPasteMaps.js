@@ -4,17 +4,16 @@
 //   "1:1, 2:4, 3:2"
 // Strings not named in a map are not pasted (source) or receive nothing (dest).
 import { BUILTIN_MIDI_PASTE_MAPS } from './midiPasteMapBuiltins.js';
+import { getPickTriggers } from '../../pick-triggers.js';
 
 export const MAX_STRING_NUMBER = 99;
 export const MAX_SPEC_LENGTH = 400;
 export const MAX_ID_LENGTH = 60;
 export const MAX_USER_MAPS = 100;
 
-// Menu trigger keys for choosing a map: 1-9 then a-z.  'n' is reserved for the n)one entry.
-export const MAP_CHOICE_TRIGGERS = Object.freeze([
-  ...'123456789',
-  ...'abcdefghijklmopqrstuvwxyz'
-]);
+// Menu trigger keys for choosing a map: 1-9 then a-z, never 'x' (the command line's exit key).
+// 'n' is also reserved for the n)one entry.
+export const MAP_CHOICE_TRIGGERS = Object.freeze(getPickTriggers(Infinity, { reserved: ['n'] }));
 
 function toInt(value) {
   const parsed = Number.parseInt(value, 10);

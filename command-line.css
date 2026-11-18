@@ -41,6 +41,26 @@
     font-style: normal;
     font-weight: bold;
 }
+/* Generated pick-lists (sprint 156): fill column by column, --pick-lines rows per column (/vml, /vmc). */
+.CmdPickGrid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(var(--pick-lines, 9), auto);
+    grid-auto-columns: max-content;
+    column-gap: 1.5em;
+    max-width: 100%;
+    overflow-x: auto;
+}
+.CmdPickGrid.CmdPickGridOneColumn {
+    grid-auto-flow: row;
+    grid-template-rows: none;
+}
+@media (max-width: 640px) {
+    .CmdPickGrid {
+        grid-auto-flow: row;
+        grid-template-rows: none;
+    }
+}
 .commandCheckmark {
     display: inline-block;
     margin-left: 0.2em;

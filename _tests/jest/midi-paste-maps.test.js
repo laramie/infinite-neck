@@ -182,11 +182,13 @@ describe('invertPairs', () => {
 });
 
 describe('map choice triggers', () => {
-  test('are 1-9 then a-z with no 0 and no n', () => {
+  test('are 1-9 then a-z with no 0, no n and no x (x is the exit key)', () => {
     expect(MAP_CHOICE_TRIGGERS.slice(0, 9)).toEqual(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
     expect(MAP_CHOICE_TRIGGERS).not.toContain('0');
     expect(MAP_CHOICE_TRIGGERS).not.toContain('n');
+    expect(MAP_CHOICE_TRIGGERS).not.toContain('x');
     expect(MAP_CHOICE_TRIGGERS).toContain('z');
+    expect(MAP_CHOICE_TRIGGERS.length).toBe(33);
     expect(new Set(MAP_CHOICE_TRIGGERS).size).toBe(MAP_CHOICE_TRIGGERS.length);
   });
 });

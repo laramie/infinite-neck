@@ -9,6 +9,7 @@ export class MenuItemProxy {
     this.input = spec.input || null;
     this.vars = Array.isArray(spec.vars) ? spec.vars : [];
     this.popOnBang = !!spec.popOnBang;
+    this.pick = spec.pick === true;
 
     this.pluginId = spec.pluginId;
     this.propertyName = spec.propertyName;

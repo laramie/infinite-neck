@@ -1,8 +1,8 @@
 import * as Constants from './Constants.js';
 import { Note } from './Note.js';
 import { lookupClassForNote } from './colorFunctions.js';
+import { buildInstrumentPickOptions } from './pick-triggers.js';
 
-export const TARGET_TABLE_OPTION_LIMIT = 9;
 export const ListenerProjection = Object.freeze({
   ROW_MIDI: 'row-midi',
   MIDI_LOW_TO_HIGH: 'midi-low-to-high',
@@ -64,14 +64,8 @@ export function getEligibleTargetTunings(song = {}) {
   return song.myTunings.filter((tuning) => !wiredTableNames.has(getTableID(tuning)));
 }
 
-export function buildTargetTableOptions(song = {}, limit = TARGET_TABLE_OPTION_LIMIT) {
-  return getEligibleTargetTunings(song)
-    .slice(0, limit)
-    .map((tuning, index) => ({
-      value: getTableID(tuning),
-      caption: `${index + 1}) ${tuning.baseID}`,
-      trigger: `${index + 1}`
-    }));
+export function buildTargetTableOptions(song = {}) {
+  return buildInstrumentPickOptions(getEligibleTargetTunings(song), getTableID);
 }
 
 export function createTuningLayout(tuning = {}) {

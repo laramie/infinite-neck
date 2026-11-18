@@ -40,6 +40,13 @@ import {
 import {
 	toInt
 } from './utils.js';
+import { buildPickCaption, getPickTriggers } from './pick-triggers.js';
+import {
+	getPickColumns,
+	getPickLines,
+	setPickColumns,
+	setPickLines
+} from './menu-pick-prefs.js';
 import {
 	showDisplayOptions,
 	getVersionString,
@@ -245,12 +252,15 @@ function getSectionEditInstrumentOptions(){
 	if (!song || typeof song.getVisibleUnwiredTunings !== 'function') {
 		return [];
 	}
-	return song.getVisibleUnwiredTunings().slice(0, 9).map((tuning, index) => {
+	const visibleTunings = song.getVisibleUnwiredTunings();
+	const triggers = getPickTriggers(visibleTunings.length);
+	return visibleTunings.slice(0, triggers.length).map((tuning, index) => {
 		const tableID = `tbl${tuning.baseID}`;
 		return {
 			name: `sectionEditInstrument:${tableID}`,
-			caption: `${index + 1}) ${tuning.baseID}`,
-			trigger: `${index + 1}`,
+			caption: `${triggers[index]}) ${tuning.baseID}`,
+			trigger: triggers[index],
+			pick: true,
 			action: 'sectionEditInstrumentSelect',
 			value: tableID,
 			popOnBang: true
@@ -313,10 +323,12 @@ function refreshSectionEditRuntimeChildren(menu){
 
 function getMyTuningOptions(actionName) {
 	const tunings = Array.isArray(getMyTunings()) ? getMyTunings() : [];
-	return tunings.slice(0, 9).map((tuning, index) => ({
+	const triggers = getPickTriggers(tunings.length);
+	return tunings.slice(0, triggers.length).map((tuning, index) => ({
 		name: `${actionName}:${tuning.baseID}`,
-		caption: `<b>${index + 1}</b>) ${tuning.baseID}`,
-		trigger: `${index + 1}`,
+		caption: buildPickCaption(triggers[index], tuning.baseID),
+		trigger: triggers[index],
+		pick: true,
 		action: actionName,
 		value: tuning.baseID,
 		popOnBang: true
@@ -1356,6 +1368,19 @@ export function performCmdAction(menuItem, args){
 				actionResult.result = 'menu prefs: one-line';
 			}
 			break;
+		case "setMenuLines": {
+			const lines = setPickLines(argByInputID);
+			if (lines === null) {
+				actionResult.result = 'lines must be a whole number, 0 to 99';
+				actionResult.suppressBang = true;
+			} else {
+				actionResult.result = lines === 0 ? 'menu pick lines: no limit' : `menu pick lines: ${lines}`;
+			}
+			break;
+		}
+		case "toggleMenuColumns":
+			actionResult.result = `menu pick columns: ${setPickColumns(!getPickColumns())}`;
+			break;
 		case "setPluginFiringOrder": {
 			const normalizedOrder = pluginManager.setSongPluginFiringOrder(argByInputID || pluginManager.getPluginFiringOrderInput());
 			actionResult.result = `plugin firing order [${normalizedOrder.join(',')}]`;
@@ -2170,6 +2195,12 @@ export function getValue(what){
 	}
 	if (what === 'macroVerbose') {
 		return `${macroVerbose}`;
+	}
+	if (what === 'menuPickLines') {
+		return `${getPickLines()}`;
+	}
+	if (what === 'menuPickColumns') {
+		return `${getPickColumns()}`;
 	}
 	if (what === 'userLogLevel') {
 		return UserLog.getLevelCaption();

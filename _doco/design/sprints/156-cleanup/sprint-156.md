@@ -20,3 +20,4 @@ Purpose of this sprint is to:
   - increase number of items listable in numbered command-line menus using alphanumeric keys, like sprint-151. 
   - [Iteration 1 design document](156-it1-design.md) 
   - [Copilot Iteration 1 report](156-it1-report.md)
+  - Implemented.  UA testing PASS.

@@ -1225,6 +1225,7 @@
                         <ul class="LinkList">
                             <li><a href="#short-vs-tall-CommandLine">short vs. tall</a></li>
                             <li><a href="#one-line-CommandLine">one-line</a></li>
+                            <li><a href="#pick-lists-CommandLine">long pick-lists</a></li>
                         </ul>
                         <li><a href="#keysInCommandLine">Keys</a></li>
                         <li><a href="#commandLineUsefulCommands">Useful Commands</a></li>
@@ -6633,6 +6634,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <ul class="LinkList">
             <li><a href="#short-vs-tall-CommandLine">short vs. tall Command-line</a></li>
             <li><a href="#one-line-CommandLine">one-line Command-line</a></li>
+            <li><a href="#pick-lists-CommandLine">Long pick-lists</a></li>
         </ul>
         <li><a href="#keysInCommandLine">Keys Used in the Command-line</a></li>
         <li><a href="#commandLineUsefulCommands">Useful Commands</a></li>
@@ -6724,6 +6726,30 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         </p>
         <p>See also: <a href="#command-line-overview">Command-line Overview</a>.  
         <p>See also: <a href="#short-vs-tall-CommandLine">short vs. tall Command-line</a>.  
+        
+<a name="pick-lists-CommandLine"></a>
+<h5>Long pick-lists</h5>
+        <p>Some menus build a list of choices from your Song: the macros in <span class="menuExampleLine">/fmen</span>, <span class="menuExampleLine">/fmrn</span>,
+            <span class="menuExampleLine">/fmdn</span> and <span class="menuExampleLine">/fmm</span>; the Instruments in the plugin <b>Instrument</b> menus (for example <span class="menuExampleLine">/fpaI</span>,
+            <span class="menuExampleLine">/fpcI</span>, <span class="menuExampleLine">/fpfI</span>, <span class="menuExampleLine">/fpmI</span>, <span class="menuExampleLine">/fpoaI</span>),
+            <span class="menuExampleLine">/seiI</span>, <span class="menuExampleLine">/tsl</span> and <span class="menuExampleLine">/thl</span>; the saved snapshots in each plugin's
+            <b>raise</b> menu (for example <span class="menuExampleLine">/fpagr</span>); and the MIDI Paste maps.</p>
+        <p>Each item is picked with one key: <span class="key">1</span> to <span class="key">9</span>, then <span class="key">a</span> to <span class="key">z</span>.
+            The key <span class="key">x</span> is never used for a pick because it closes the command-line, so there are up to 34 picks.
+            Where a menu also has an <b>i</b>d item, <span class="key">i</span> is skipped as well, so there are up to 33 picks.
+            The <b>i</b>d item is always listed last, below the picks.  If the Song has more Instruments than there are keys, the extra ones are listed as "N more: use i)d" and you pick them by typing their id.</p>
+        <p>The picks fill columns, top to bottom, then left to right, if the screen is wide enough.  On a narrow screen (a phone) they become one column.
+            Two View menu settings, in <span class="menuExampleLine">/vm</span>, control the layout.  They last until you reload the page.</p>
+        <table class="CheatSheet" cellspacing="0" border="1">
+            <tr><th>command</th><th>what it does</th></tr>
+            <tr><td><span class="menuExampleLine">/vml</span></td>
+                <td><b>l</b>ines per column.  Type a whole number from 0 to 99 at the prompt, then ENTER.  The default is 9, so items <span class="key">1</span> to <span class="key">9</span> are the first column and <span class="key">a</span> starts the second.
+                    <b>0</b> means no limit: one long column.</td></tr>
+            <tr><td><span class="menuExampleLine">/vmc</span></td>
+                <td>Turn <b>c</b>olumns on or off.  When off, pick-lists are one column.  Your lines setting is kept for when you turn columns back on.</td></tr>
+        </table>
+        <p>These settings only change how the list looks.  They never change which key picks which item.</p>
+        <p>See also: <a href="#macros">Macros</a>.</p>
         
 <a name="keysInCommandLine"></a>
 <h4>Keys Used in the Command-line</h4>
@@ -7676,6 +7702,12 @@ add macros, delete, reorder, edit,and run them.  Turn on verbose mode with <span
  <p class="codeExample">
  command-line-path JSON</p>
 <h4>Macro Examples</h4>
+<p>Picking from a list by key is for typing at the command-line.  The keys depend on the order of the list, which changes when you add, delete or reorder macros, bury a plugin snapshot, or add an Instrument.  
+    In a saved macro, use the <b>id</b> form instead, which names the item and always finds it: 
+    <span class="menuExampleLine">/fmri</span> (run a macro), <span class="menuExampleLine">/fmei</span> (edit), <span class="menuExampleLine">/fmdi</span> (delete), 
+    <span class="menuExampleLine">/tsi</span> and <span class="menuExampleLine">/thi</span> (show or hide a Tuning), 
+    <span class="menuExampleLine">/fpaIi</span>, <span class="menuExampleLine">/fpfIi</span> (plugin Instruments), and <span class="menuExampleLine">/fpfgri</span> (raise a plugin snapshot).  
+    See <a href="#pick-lists-CommandLine">Long pick-lists</a>.</p>
 <p>There are examples you can see in the Song Library in 
     <span class="GUIReferenceInline">name-that-note > name-that-note-bass-ALL.json</span>
     and 

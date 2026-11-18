@@ -10,6 +10,7 @@ import {
   modeTypeFromStoredMode
 } from '../chart/chart-tonal-resolver.js';
 import { Note } from '../../Note.js';
+import { buildInstrumentPickOptions } from '../../pick-triggers.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
 import { PalettePresentation } from '../../presentation.js';
 import { getSong, getTransportController } from '../../infinite-neck.js';
@@ -24,7 +25,6 @@ const MODE_NONE = 'none';
 const MODE_KEEP = 'keep';
 const MODE_ROLE = 'role';
 const TINY_NONE = 'none';
-const TARGET_TABLE_OPTION_LIMIT = 9;
 
 const FAMILY_CONFIG = {
   named: {
@@ -1596,12 +1596,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   buildTargetTableOptions(song = getSong()) {
-    const tunings = this.getEligibleTargetTunings(song).slice(0, TARGET_TABLE_OPTION_LIMIT);
-    return tunings.map((tuning, index) => ({
-      value: `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`,
-      caption: `${index + 1}) ${tuning.baseID}`,
-      trigger: `${index + 1}`
-    }));
+    return buildInstrumentPickOptions(
+      this.getEligibleTargetTunings(song),
+      (tuning) => `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`
+    );
   }
 
   getEligibleTargetTunings(song = getSong()) {

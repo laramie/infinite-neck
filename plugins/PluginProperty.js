@@ -184,7 +184,11 @@ export class PluginProperty {
     }
 
     if (this.datatype === 'org.dynamide.Select') {
-      const children = this.options.map((option) => new MenuItemProxy(plugin, {
+      // The Instrument select is a generated pick-list: its options hold every Instrument, but only those
+      // with a pick key become menu items.  The rest are reached by the i)d item below.
+      const isInstrumentPick = supportsSelectByBaseID(this);
+      const pickableOptions = isInstrumentPick ? this.options.filter((option) => option.trigger) : this.options;
+      const children = pickableOptions.map((option) => new MenuItemProxy(plugin, {
         name: `${this.name}:${option.value}`,
         caption: buildCaption(option.caption, option.trigger),
         trigger: option.trigger,
@@ -192,9 +196,17 @@ export class PluginProperty {
         pluginId,
         propertyName: this.name,
         value: option.value,
+        pick: isInstrumentPick,
         popOnBang: true
       }));
-      if (supportsSelectByBaseID(this)) {
+      if (isInstrumentPick) {
+        const unpickedCount = this.options.length - pickableOptions.length;
+        if (unpickedCount > 0) {
+          children.push(new MenuItemProxy(plugin, {
+            name: `${this.name}:more`,
+            caption: `... ${unpickedCount} more: use i)d`
+          }));
+        }
         children.push(new MenuItemProxy(plugin, {
           name: `${this.name}:id`,
           caption: buildCaption('id', 'i'),

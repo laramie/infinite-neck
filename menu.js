@@ -1,3 +1,5 @@
+import { getPickColumns, getPickLines } from './menu-pick-prefs.js';
+
 let gMenuValueResolver = function () {
   return undefined;
 };
@@ -1175,6 +1177,32 @@ export var gMenuFile =    {
             {
               "caption": "<b>t</b>all",
               "trigger": "t"
+            },
+            {
+              "name": "menuPickLines",
+              "caption": "<b>l</b>ines per pick column [${menuPickLines}]",
+              "trigger": "l",
+              "action": "setMenuLines",
+              "vars": [
+                "menuPickLines"
+              ],
+              "input": {
+                "type": "input",
+                "caption": "lines (0 = no limit)",
+                "default": "menuPickLines",
+                "datatype": "int",
+                "id": "value"
+              },
+              "popOnBang": true
+            },
+            {
+              "name": "menuPickColumns",
+              "caption": "<b>c</b>olumns for pick lists [${menuPickColumns}]",
+              "trigger": "c",
+              "action": "toggleMenuColumns",
+              "vars": [
+                "menuPickColumns"
+              ]
             },
             {
               "caption": "<b>b</b>ackground opacity",
@@ -2605,6 +2633,12 @@ export function buildChildMenuCaptionsRow(menu){
         vert = true;
     }
 
+    const exit = "e<b>x</b>it";
+    const pickChildren = children.filter(child => child && child.pick === true);
+    if (pickChildren.length > 0){
+        return buildPickListRow(children, pickChildren, vert, exit);
+    }
+
       children.forEach(child => {
         var bang = "";
         if (child && child.bang && child.bang == true){
@@ -2617,13 +2651,36 @@ export function buildChildMenuCaptionsRow(menu){
           result = result+"<td>"+bang+theCaption+"</td>";
         }
       });
-    const exit = "e<b>x</b>it";
     if (vert){
          result = "<td>"+result+"<br>"+exit+"</td>";
      } else {
          result = result+"<td width='100%'>"+exit+"</td>";
      }
     return result;
+}
+
+function buildChildItemHtml(child){
+    const bang = (child && child.bang == true) ? "!&nbsp;" : "";
+    return bang+expandCaption(child);
+}
+
+// Generated pick-lists (children flagged pick:true) go in a CSS grid that fills column by column, so
+// 1-9 are column one and a-... continue in column two.  Other children (i)d, n)one, notes) follow the
+// grid in their original order.  Layout never changes a child's trigger.
+function buildPickListRow(children, pickChildren, vert, exit){
+    const lines = getPickLines();
+    const oneColumn = !getPickColumns() || lines === 0;
+    const gridClass = oneColumn ? "CmdPickGrid CmdPickGridOneColumn" : "CmdPickGrid";
+    const items = pickChildren.map(child => "<div class='CmdPickItem'>"+buildChildItemHtml(child)+"</div>").join("");
+    const grid = "<div class='"+gridClass+"' style='--pick-lines:"+(lines || 1)+"'>"+items+"</div>";
+    const otherChildren = children.filter(child => !(child && child.pick === true));
+
+    if (vert){
+        const footer = otherChildren.map(child => buildChildItemHtml(child)+"<br />").join("");
+        return "<td>"+grid+(footer ? "<br />"+footer : "")+"<br>"+exit+"</td>";
+    }
+    const footerCells = otherChildren.map(child => "<td>"+buildChildItemHtml(child)+"</td>").join("");
+    return "<td>"+grid+"</td>"+footerCells+"<td width='100%'>"+exit+"</td>";
 }
 
 export function printMenuStack(){

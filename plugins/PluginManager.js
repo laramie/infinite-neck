@@ -4,6 +4,9 @@ import { clearBeatAndSectionLooping, beatsLooping, sectionsLooping } from '../lo
 import { MenuItemProxy } from './MenuItemProxy.js';
 import { buildCaption, buildValueReference } from './PluginProperty.js';
 import { buildPluginAuditHtml } from './PluginAudit.js';
+import { getPickTriggers, INSTRUMENT_PICK_RESERVED } from '../pick-triggers.js';
+
+const GRAVEYARD_RAISE_RESERVED = INSTRUMENT_PICK_RESERVED;
 
 const DEFAULT_GRAVEYARD_KEY = 'USER';
 const PLUGIN_GRAVEYARD_KEY_PATTERN = /^[A-Za-z_][A-Za-z0-9_-]*$/;
@@ -142,6 +145,7 @@ function reconcileMenuNode(targetNode, sourceNode) {
   targetNode.input = sourceNode.input || null;
   targetNode.vars = Array.isArray(sourceNode.vars) ? sourceNode.vars : [];
   targetNode.popOnBang = !!sourceNode.popOnBang;
+  targetNode.pick = sourceNode.pick === true;
   targetNode.pluginId = sourceNode.pluginId;
   targetNode.propertyName = sourceNode.propertyName;
   targetNode.actionName = sourceNode.actionName;
@@ -598,9 +602,11 @@ export class PluginManager {
   }
 
   buildManagedGraveyardRaiseNode(pluginId) {
-    const records = this.getPluginGraveyardRecords(pluginId, 9);
+    // 'i' stays free for the i)d item that follows the picks.
+    const triggers = getPickTriggers(Infinity, { reserved: GRAVEYARD_RAISE_RESERVED });
+    const records = this.getPluginGraveyardRecords(pluginId, triggers.length);
     const children = records.length > 0
-      ? records.map(({ record, graveyardIndex }, index) => this.buildManagedGraveyardRaiseRecordNode(pluginId, record, graveyardIndex, index + 1))
+      ? records.map(({ record, graveyardIndex }, index) => this.buildManagedGraveyardRaiseRecordNode(pluginId, record, graveyardIndex, triggers[index]))
       : [new MenuItemProxy(this, {
         name: 'noPluginSnapshots',
         caption: 'no plugin snapshots',
@@ -632,13 +638,13 @@ export class PluginManager {
     });
   }
 
-  buildManagedGraveyardRaiseRecordNode(pluginId, record, graveyardIndex, ordinal) {
-    const ordinalText = `${ordinal}`;
+  buildManagedGraveyardRaiseRecordNode(pluginId, record, graveyardIndex, trigger) {
     const captionText = this.getPluginGraveyardRecordCaption(record);
     return new MenuItemProxy(this, {
       name: `raise:${graveyardIndex}`,
-      caption: `<b>${ordinalText}</b> ${captionText}`,
-      trigger: ordinalText,
+      caption: `<b>${trigger}</b> ${captionText}`,
+      trigger,
+      pick: true,
       action: 'pluginAction:graveyardRaise',
       pluginId,
       value: graveyardIndex,
