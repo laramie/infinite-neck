@@ -87,3 +87,17 @@ Not decide yet are issues around how to load in a Workbook from local disk:
 ## Iteration 1 Round 1 Request
 
 Copilot, please analyze the above feature wishlist and discussion, and propose a first version plan.  This would be a design plan so we can check features, work-scope, and make UI decisions.  This is not an implementation plan.  Please discuss options of safe and scalable Browser storage and file format.  
+
+# Iteration 1 Round 2 : implementation
+
+We like the analysis very much.  
+
+We like the proposed UI layout.  Proceed to create the UI as proposed.
+
+All the recommendations, especially in the `Questions for the Design Team (with recommendations)` section, are ACCEPTED. (Including the most important choice of Accepting the recommendation to use IndexedDB.)  Coding of v1 including core files is APPROVED.
+
+The way we read the questions and recommendations, v1a and v1b are APPROVED to implement now and together.
+
+We will wait for version v2 for all v2 choices and options deferred to v2.  None of the v2 choices need to be implemented.  This way, we can evaluate v1 and decide which persisted features we will need.  We like that all the v1 recommendations are safe and sensible.  Thus, the primary things that are not saved today will continue to be unsaved in v1, which is good: No autosave, no Workbook merge, no override of scaling prefs, no Practice List persistence, no tutorial progress other than the step `v1 binds progress to workbook/<path>` which seems good and simple.  As we work on v2 we will no doubt decide on regular Song persistence of these things for the same sprint iteration.
+
+
