@@ -20,8 +20,9 @@ Purpose of this sprint is to:
 ## Sprint document locations
 
 - [design document](157-design.md) 
+- [iteration 1 analysis](157-it1-analysis.md)
 
 ## Iterations
 
-  - "Iteration 1": 
+  - "Iteration 1": Wishlist and discussion; Copilot analysis of storage, file format and UI. Report: [157-it1-analysis.md](157-it1-analysis.md). 
 
