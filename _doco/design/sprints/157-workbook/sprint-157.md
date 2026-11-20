@@ -28,5 +28,5 @@ Purpose of this sprint is to:
   - "Iteration 1 Round 2": Analysis approved; v1a + v1b implemented (IndexedDB store, Workbook block on the File page, Save to Workbook, Download/Open Workbook, help section). Design recorded in [157-design.md](157-design.md). Code: [Workbook.js](../../../../Workbook.js), [WorkbookStorage.js](../../../../WorkbookStorage.js), [WorkbookUI.js](../../../../WorkbookUI.js). Tests: [workbook.test.js](../../../../_tests/jest/workbook.test.js), [workbook-render.test.js](../../../../_tests/jest/workbook-render.test.js).
   - [Iteration 1 UA Test Report](157-design.md#iteration-1-ua-test-report) ALL PASS.
 
-  - "Iteration 2": UX changes that add session-only list sorting, persisted list-order management, and persistence in Workbook only of `Include in Looping`, `Bookmark` and `Done` for Tutorials.
+  - "Iteration 2": UX changes that add session-only list sorting, persisted list-order management, and persistence in Workbook only of `Include in Looping`, `Bookmark` and `Done` for Tutorials. Detailed in [Iteraion 2 UX changes](157-design.md#iteraion-2-ux-changes)
 

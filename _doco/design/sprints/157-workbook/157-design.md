@@ -149,7 +149,7 @@ Claude Comment from UA recipe: The "Open Workbook" confirm always appears when t
 
 # Iteration 2
 
-## UX changes
+## Iteraion 2 UX changes
 
 For Iteration 2 we would like the following APPROVED changes:
 
