@@ -209,8 +209,22 @@
     font-size: 90%;
 }
 
+/* One visual box around all Workbook controls */
+.workbookToolbox {
+    border: 1px solid black;
+    padding: 0.4em 1em 0.4em 2em;
+    background-color: #ffe869;
+    margin: 0 0 1em 3.4em;
+}
+
 .workbookToolbar {
-    margin: 0.3em 0 0.3em 1.2em;
+    margin: 0 0 0.3em 2.4em;    
+}
+
+.workbookToolbox .workbookToolbar,
+.workbookToolbox .workbookStatus,
+.workbookToolbox .workbookMessage {
+    margin-left: 0;
 }
 
 .workbookOpenLabel {
@@ -253,11 +267,19 @@
     gap: 0.3em;
 }
 
+/* Folder control row: a plain block (not a .songLibraryRow), so it does not look like a Song */
+.workbookFolderToolRow {
+    margin: 0 0 0.8em 2.4em;
+}
+
 .workbookFolderTools {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.3em;
+    border: 1px solid black;
+    padding: 0.4em 1em 0.4em 2em;
+    background-color: #ffe869;
 }
 
 .workbookSortLabel {

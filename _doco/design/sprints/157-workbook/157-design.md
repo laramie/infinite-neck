@@ -199,5 +199,18 @@ Please tweak the control areas for Workbook, and for each Folder:
 - Folder:
   - Style the existing control row a little different than how it is now appearing to be just another (first) Song.  Its current style is in `song-library.css` and its specifier seems to be `songLibraryCell workbookCellTools workbookFolderTools`.  However, it seems `.workbookFolderTools` targets the controls box well.  (If this is not unique enough to just target the controls, let the controls specifier be something like `workbookFolderControls`.)  Let it have an initial CSS of `border: 1px black; padding 1em; background-color: #ffe869;`  This looks OK in the browser, but it shows that it has `.songLibraryRow` and thus picks up a blue background of `background-color: rgb(177, 255, 255);` which is what makes it look like a Song (this small blue background is visible around the controls that we target with `.workbookFolderTools`), which we don't want.  Either suppress the styling for the first row, since it will always have the folder controls, or move it out of the songLibraryRow rows, which might be more structural change than we want, given that it works functionally now.
 
+### Copilot Changes: 
+
+Both control areas now have the yellow box. The Workbook tests pass (2 suites, 38 tests, including two new render tests). I haven't looked at it in a browser, and I only ran the Workbook suites this time, not the full Jest run.
+
+**Workbook:** all the top controls now sit in one `.workbookToolbox` box. That covers Download/Open, the status line and messages, New Folder, and the sort row. The style is in song-library.css. The Songs and folders list stays outside the box.
+
+**Folder:** the control row is no longer a `.songLibraryRow`, so it loses the blue/yellow Song-row stripe. It now has the classes `workbookFolderTools workbookFolderControls`. `.workbookFolderTools` carries the box style, and I added `.workbookFolderControls` as a free hook for later CSS. The structure is in WorkbookUI.js.
+
+Both boxes use `border: 1px solid black; padding: 1em; background-color: #ffe869;`. I wrote `solid` because `border: 1px black` isn't valid CSS and browsers ignore it. Song-row striping should not shift, because that selector counts all sibling divs.
+
+Made changes.
+
+
 
 

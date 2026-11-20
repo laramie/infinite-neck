@@ -102,7 +102,7 @@ function renderFolder(folder, ui) {
     let html = `<details class='songLibraryDirectoryDetails workbookFolderDetails' name='workbookFolderGroup' data-wb-folder='${name}'${isOpen ? ' open' : ''}>`;
     html += `<summary class='songLibrarySummary songLibraryDirectorySummary'>${escapeHtml(folder.name)} <span class='workbookCounts'>(${plural(folder.songs.length, 'song')})</span></summary>`;
     html += "<div class='songLibraryDirectoryBody'><div class='songLibraryRows'>";
-    html += "<div class='songLibraryRow workbookFolderToolRow'><div class='songLibraryCell workbookCellTools workbookFolderTools'>";
+    html += "<div class='workbookFolderToolRow'><div class='workbookFolderTools workbookFolderControls'>";
     html += `<input type='text' class='workbookRenameInput' size='18' maxlength='${MAX_NAME_LENGTH}' value='${name}' aria-label='New name for folder ${name}'> `;
     html += `<button type='button' data-wb-action='renameFolder' data-wb-folder='${name}'>Rename folder</button> `;
     html += renderMoveButtons('folder', `data-wb-folder='${name}'`, folder, ui);
@@ -126,6 +126,7 @@ export function renderWorkbookHtml(view, ui = {}) {
     if (ui.persistent === false) {
         html += "<div class='workbookNotice'>The Workbook is not saved in this browser (storage is unavailable).  Use Download Workbook to keep your work.</div>";
     }
+    html += "<div class='workbookToolbox'>";
     html += "<div class='workbookToolbar'>";
     html += "<button type='button' data-wb-action='download'>Download Workbook</button> ";
     html += "<label class='workbookOpenLabel'>Open Workbook: <input type='file' id='workbookFileInput' accept='.json,application/json'></label>";
@@ -139,6 +140,7 @@ export function renderWorkbookHtml(view, ui = {}) {
     html += "<button type='button' data-wb-action='addFolder'>+ New Folder</button>";
     html += '</div>';
     html += renderSortBar(ui.sort);
+    html += '</div>';
 
     html += "<div class='songLibraryRows'>";
     if (view.songCount === 0 && view.folderCount === 0) {

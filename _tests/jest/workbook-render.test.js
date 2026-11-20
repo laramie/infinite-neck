@@ -77,6 +77,30 @@ describe('renderWorkbookHtml', () => {
     });
 });
 
+describe('control boxes (Iteration 2 Round 2)', () => {
+    test('all Workbook controls sit in one workbookToolbox before the rows', () => {
+        const html = renderWorkbookHtml({ rootSongs: [song('r.json')], folders: [], songCount: 1, folderCount: 0, totalBytes: 1, meta: META });
+        const boxStart = html.indexOf("class='workbookToolbox'");
+        const boxEnd = html.indexOf("<div class='songLibraryRows'>");
+        expect(boxStart).toBeGreaterThan(-1);
+        for (const marker of ["data-wb-action='download'", "id='workbookFileInput'", "class='workbookStatus", "data-wb-action='addFolder'", "data-wb-action='sort'"]) {
+            const at = html.indexOf(marker);
+            expect(at).toBeGreaterThan(boxStart);
+            expect(at).toBeLessThan(boxEnd);
+        }
+    });
+
+    test('folder control row is not a songLibraryRow', () => {
+        const html = renderWorkbookHtml({
+            rootSongs: [],
+            folders: [{ name: 'F', seq: 1, songs: [song('F/a.json')] }],
+            songCount: 1, folderCount: 1, totalBytes: 1, meta: META
+        }, { openFolders: new Set(['F']) });
+        expect(html).toContain("<div class='workbookFolderToolRow'><div class='workbookFolderTools workbookFolderControls'>");
+        expect(html).not.toContain('songLibraryRow workbookFolderToolRow');
+    });
+});
+
 describe('sort bar and move buttons (Iteration 2)', () => {
     const folderView = (extra = {}) => ({
         rootSongs: [{ ...song('a.json'), canUp: false, canDown: true }, { ...song('b.json'), canUp: true, canDown: false }],
