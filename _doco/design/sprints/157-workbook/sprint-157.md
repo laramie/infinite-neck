@@ -25,4 +25,5 @@ Purpose of this sprint is to:
 ## Iterations
 
   - "Iteration 1": Wishlist and discussion; Copilot analysis of storage, file format and UI. Report: [157-it1-analysis.md](157-it1-analysis.md). 
+  - "Iteration 1 Round 2": Analysis approved; v1a + v1b implemented (IndexedDB store, Workbook block on the File page, Save to Workbook, Download/Open Workbook, help section). Design recorded in [157-design.md](157-design.md). Code: [Workbook.js](../../../../Workbook.js), [WorkbookStorage.js](../../../../WorkbookStorage.js), [WorkbookUI.js](../../../../WorkbookUI.js). Tests: [workbook.test.js](../../../../_tests/jest/workbook.test.js), [workbook-render.test.js](../../../../_tests/jest/workbook-render.test.js).
 

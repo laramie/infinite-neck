@@ -130,6 +130,8 @@ import { installFillPageSelects } from './fillPageSelectBuilder.js';
 
 import { installLoopTimingModeControls } from './looper-timing-select-handler.js';
 import * as SongLibrary from './SongLibrary.js';
+import { initializeWorkbook } from './WorkbookUI.js';
+import { WORKBOOK_FILE_TYPE } from './Workbook.js';
 import { escapeHtml, renderSongInstrumentBadges } from './InstrumentRoleBadges.js';
 
 import * as WiringBuilder from './templates/WiringBuilder.js';
@@ -162,6 +164,7 @@ import { TutorialPromptBuilder, buildTutorialPromptModel, renderPracticeList } f
 import {
 	applyPromptToSectionTutorial,
 	canEditTutorialPrompt,
+	deriveTutorialStorageKeyFromHref,
 	filterIncludedLoopSectionIndex,
 	getLoopCaptionModel,
 	isLoopSubsetInEffect,
@@ -219,6 +222,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	let gFullscreenChartVisible = false;
 	let gCurrentSongLibraryHref = '';
 	let gPendingSongLibraryHref = '';
+	let gCurrentWorkbookPath = '';   //Sprint 157: the Workbook path the current Song was opened from or saved to, else ''
+	let gPendingWorkbookPath = '';
 	let chartInputController = null;
 	export function getSong(){
 		return Globals.getSong();
@@ -570,16 +575,21 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	};
 
 	function getTutorialStorageEntry(song = getSong()){
-		return {
+		const entry = {
 			...song,
 			href: gCurrentSongLibraryHref || $("#txtFilename").val() || song?.songName || '',
 			SectionCount: Array.isArray(song?.sections) ? song.sections.length : 0
 		};
+		if (gCurrentWorkbookPath){
+			//Sprint 157: a Workbook Song keeps its own progress, even when it is a copy of a Library tutorial with an explicit storageKey
+			entry.tutorial = { ...song?.tutorial, storageKey: deriveTutorialStorageKeyFromHref(`workbook/${gCurrentWorkbookPath}`) };
+		}
+		return entry;
 	}
 
 	function getTutorialFallbackStorageEntry(song = getSong()){
 		const fallbackHref = $("#txtFilename").val() || song?.songName || '';
-		if (!fallbackHref || !gCurrentSongLibraryHref || fallbackHref === gCurrentSongLibraryHref){
+		if (gCurrentWorkbookPath || !fallbackHref || !gCurrentSongLibraryHref || fallbackHref === gCurrentSongLibraryHref){
 			return null;
 		}
 		return {
@@ -2245,11 +2255,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function openSong(str, append=false){
 		var jsonObj = JSON.parse(str);
+		if (jsonObj?.fileType === WORKBOOK_FILE_TYPE){
+			alert('This file is a Workbook, not a Song.  Use "Open Workbook" in the Workbook section of the File page.');
+			return;
+		}
 		const importOptions = normalizeOpenSongImportOptions(append);
 		const hasSelectiveImport = importOptions.sections || importOptions.stylesheets || importOptions.replaceUserTheme || importOptions.graveyardRecords;
 		if (!hasSelectiveImport) {
 			gCurrentSongLibraryHref = gPendingSongLibraryHref;
 			gPendingSongLibraryHref = '';
+			gCurrentWorkbookPath = gPendingWorkbookPath;
+			gPendingWorkbookPath = '';
 		}
 		if (Globals.getSong() && hasSelectiveImport){
 			let newSong = new Song(jsonObj);
@@ -2534,6 +2550,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function songLibrary(){
 		SongLibrary.initializeSongLibrary('#divSongList');
+	}
+
+	/** Sprint 157: opens a Song from the Workbook (text comes from the Workbook store).  Same "did you save?" guard as loadSong().
+	 *  Returns false when the User cancels. */
+	export function openWorkbookSong(path, text){
+		if (!getSong().isEmpty(getSong().getCurrentSection())){
+			if (!confirm("Did you save the current Song with File | Download or Save to Workbook already? ( 'Cancel' cancels, otherwise 'OK' forgets the current song and opens the new one.")){
+				return false;
+			}
+		}
+		gPendingWorkbookPath = path;
+		try {
+			openSong(text);
+		} finally {
+			gPendingWorkbookPath = '';
+		}
+		return true;
 	}
 
 	export function showGraveyard(){
@@ -5170,6 +5203,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divQuick").hide();
 		$("#CmdMenu").hide();
 		SongLibrary.initializeSongLibrary('#divSongList');
+		initializeWorkbook({
+			getPersistentSongFile,
+			getLibraryHref: () => gCurrentSongLibraryHref,
+			getFilenameBoxValue: () => $("#txtFilename").val(),
+			getCurrentWorkbookPath: () => gCurrentWorkbookPath,
+			setCurrentWorkbookPath: (path) => { gCurrentWorkbookPath = path || ''; },
+			openWorkbookSong
+		});
 		setLoopSectionFilter((candidateIndex, context = {}) => filterIncludedLoopSectionIndex(candidateIndex, {
 			...context,
 			tutorialActive: isTutorialSong(getSong()),

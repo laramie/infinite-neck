@@ -1093,6 +1093,7 @@
                         <li><a href="#divFileControls">File</a>
                             <ul class="LinkList">
                                 <li><a href="#fileSongLibrary">Song Library</a></li>
+                                <li><a href="#fileWorkbook">Workbook</a></li>
                             </ul>
                         </li>
                         <li><a href="#songfileInfo">Info (Song)</a>
@@ -2050,6 +2051,31 @@ not used.  The Menu buttons are hidden, as is the command-line.  Authoring Menu 
     <span class="songLibraryInstrument instrumentMain">S6</span> <span
         class="songLibraryInstrument instrumentListener">P46</span> <span
         class="songLibraryInstrument instrumentObserver">S6</span>
+</p>
+<a name="fileWorkbook"></a>
+<h4>Workbook</h4>
+
+<p>The <b>Workbook</b> is your own list of Songs, below the Song Library on the <span class="GUIReferenceInline">File</span> page.  Use it to keep the Songs you practice, each set up the way you like it, with a note about your progress.  Songs are saved in your browser, and the whole Workbook can be downloaded as one file to back it up, share it, or open it on another computer.</p>
+
+<p><b>Setting up a Workbook Song.</b>  You do this with features the program already has:
+    <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp; Open a Song from the Song Library (or from a file).
+    <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp; Make it yours: change the Song with the usual features, such as cell sizes with <a href="#startup-sizes">Presentation Mode</a>, Themes, Stylesheets, the Instruments, or raise a setting from the Graveyard to transpose.  To hide Sections or chords when you loop, use wizard mode and the Practice List (<span class="menuExampleLine"><b>/vptw</b></span> then <span class="menuExampleLine"><b>/vtwp</b></span>).  Keep reminders in the <a href="#songfileInfo">Info</a> page.
+    <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp; On the <span class="GUIReferenceInline">File</span> page, click <b>Save to Workbook...</b> next to <b>Download Song</b>, choose a folder, check the name, and click <b>Save</b>.
+</p>
+
+<p><b>Using it.</b>
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; Click a Song name in the Workbook to open it and practice.  Saving it again to the same name just saves.  Saving to a name already in the Workbook asks before it replaces that Song.
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; Type a progress note in the comment box of a Song.  It is kept when you leave the box.
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; <b>+ New Folder</b> adds a folder.  Open a folder to <b>Add current Song here</b>, <b>Rename folder</b>, or <b>Delete folder</b> (only when it has no Songs).  Songs and folders stay in the order you added them.
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; Names have no spaces (use <i>-</i>), use only letters, digits, <i>-</i> and <i>_</i>, and are not case-sensitive, so a Workbook can move between Windows, Mac and Linux.  The Library folder is dropped: <i>practice/All-Chords.json</i> is offered as <i>All-Chords.json</i>.
+</p>
+
+<p><b>Backup.</b>  Your browser can lose its stored data (clearing site data, a different address such as <i>localhost</i> versus the web site, or a browser that cleans up unused sites).  Use <b>Download Workbook</b> now and then; the line under the buttons tells you when you last did and how many changes you have made since.  <b>Open Workbook</b> reads a downloaded file and <b>replaces</b> the Workbook in this browser, after asking.  There is one Workbook per browser.  Only open Workbook files from people you trust.</p>
+
+<p><b>Things to know.</b>
+    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; Saved Browser <i>Scaling Prefs</i> win over the cell sizes stored in a Song (see <a href="#startup-sizes">Cell sizes when you start up or open a song</a>).  If a Workbook Song does not open at the size you saved, clear the Scaling Prefs and open it again.
+    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; The Practice List choices are not saved yet, and neither is autosave.  Tutorial Bookmarks and done-marks are kept in the browser separately for each Workbook Song, and are not in the downloaded file.
+    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; A Workbook file is a different file from a Song file.  Each opener refuses the other with a message.
 </p>
 <a name="songfileInfo"></a>
 <h3>Info (Song)</h3>

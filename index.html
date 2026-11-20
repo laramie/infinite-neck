@@ -149,6 +149,7 @@
                     <br>
                     <div class="sectionPageControlsGroup">
                         <div id="divSongList"></div>
+                        <div id="divWorkbook"></div>
                     </div>
                     <br>
                     <div class="sectionPageControlsGroup">
@@ -160,6 +161,16 @@
                         <br />
                         <button id="btnDownload" type="button">Download Song</button>&nbsp;<span
                             class="lblSongName"></span><span style="color: green;">.json</span>
+                        <br />
+                        <button id="btnSaveToWorkbook" type="button">Save to Workbook...</button>
+                        <span id="spanWorkbookSaveMessage" class="workbookMessageInfo"></span>
+                        <div id="divSaveToWorkbook" class="workbookSaveForm" style="display: none;">
+                            <label for="selWorkbookFolder">Folder:&nbsp;<select id="selWorkbookFolder"></select></label>
+                            <label for="txtWorkbookSongName">Name:&nbsp;<input type="text" id="txtWorkbookSongName" size="36" maxlength="70"></label><span style="color: green;">.json</span>
+                            <button id="btnWorkbookSaveConfirm" type="button">Save</button>
+                            <button id="btnWorkbookSaveCancel" type="button">Cancel</button>
+                            <span id="spanWorkbookSaveError" class="workbookMessageError"></span>
+                        </div>
                     </div>
                     <br>
                     <div class="sectionPageControlsGroup">

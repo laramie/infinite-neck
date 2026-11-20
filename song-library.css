@@ -7,7 +7,8 @@
 }
 
 
-#divSongList {
+#divSongList,
+#divWorkbook {
     background-color: white;
     display: block;
     width: 95%;
@@ -16,7 +17,8 @@
     padding: 0.4em;
 }
 
-#divSongList a {
+#divSongList a,
+#divWorkbook a {
     display: inline-block;
     padding: 0.2em 0;
 }
@@ -193,6 +195,73 @@
 
 @media (max-width: 900px) {
     .songLibraryRow {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Sprint 157: Workbook (reuses the Song Library classes above) */
+#divWorkbook:empty {
+    display: none;
+}
+
+.workbookCounts {
+    font-weight: normal;
+    font-size: 90%;
+}
+
+.workbookToolbar {
+    margin: 0.3em 0 0.3em 1.2em;
+}
+
+.workbookOpenLabel {
+    margin-left: 1em;
+}
+
+.workbookStatus {
+    margin: 0.2em 0 0.2em 1.2em;
+    font-size: 90%;
+    color: #444;
+}
+
+.workbookStatusStale {
+    color: #a40000;
+    font-weight: 600;
+}
+
+.workbookNotice,
+.workbookMessageError {
+    color: #a40000;
+    font-weight: 600;
+}
+
+.workbookNotice,
+.workbookMessage {
+    margin: 0.2em 0 0.2em 1.2em;
+}
+
+.workbookMessageInfo {
+    color: rgb(40, 110, 2);
+}
+
+.workbookRow {
+    grid-template-columns: minmax(16em, 32%) minmax(18em, 1fr) minmax(6em, 12%);
+}
+
+.workbookComment {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.workbookCellTools {
+    grid-column: 1 / -1;
+}
+
+.workbookSaveForm {
+    margin-top: 0.4em;
+}
+
+@media (max-width: 900px) {
+    .workbookRow {
         grid-template-columns: 1fr;
     }
 }
