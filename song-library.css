@@ -46,7 +46,6 @@
 }
 
 .songLibraryDirectorySummary {
-    background-color: #ffd39b;
     margin-left: 0.8em;
 }
 
@@ -211,9 +210,9 @@
 
 /* One visual box around all Workbook controls */
 .workbookToolbox {
-    border: 1px solid black;
+    border: 1px solid #663300;
     padding: 0.4em 1em 0.4em 2em;
-    background-color: #ffe869;
+    background-color: #f4a460;
     margin: 0 0 1em 3.4em;
 }
 
@@ -277,9 +276,9 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 0.3em;
-    border: 1px solid black;
+    border: 1px solid #663300;
     padding: 0.4em 1em 0.4em 2em;
-    background-color: #ffe869;
+    background-color: #f4a460;
 }
 
 .workbookSortLabel {
