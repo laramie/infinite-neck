@@ -190,6 +190,73 @@ function byteLength(text) {
     return new TextEncoder().encode(text).length;
 }
 
+//---- Sprint 157 it2: per-Song practice state kept in the Workbook (never in the Song) ----
+
+const MAX_SECTION_INDEX = 100000;
+const MAX_INDEX_LIST = 10000;
+
+/** The ISO form that toISOString() writes, so dates compare correctly as plain text. */
+function isIsoDate(value) {
+    return typeof value === 'string'
+        && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)
+        && !Number.isNaN(Date.parse(value));
+}
+
+function toIndex(value) {
+    const n = Number.parseInt(value, 10);
+    return Number.isInteger(n) && n >= 0 && n <= MAX_SECTION_INDEX ? n : null;
+}
+
+function sanitizeIndexList(list) {
+    if (!Array.isArray(list)) {
+        return null;
+    }
+    const set = new Set();
+    list.slice(0, MAX_INDEX_LIST).forEach((value) => {
+        const n = toIndex(value);
+        if (n !== null) {
+            set.add(n);
+        }
+    });
+    return [...set].sort((a, b) => a - b);
+}
+
+/** Tutorial Done / Bookmark.  null when there is nothing to remember. */
+export function sanitizeProgress(raw) {
+    if (!isPlainObject(raw)) {
+        return null;
+    }
+    const doneSectionIndexes = sanitizeIndexList(raw.doneSectionIndexes) || [];
+    const bookmarkSectionIndex = toIndex(raw.bookmarkSectionIndex);
+    if (doneSectionIndexes.length === 0 && bookmarkSectionIndex === null) {
+        return null;
+    }
+    return { doneSectionIndexes, bookmarkSectionIndex };
+}
+
+/** The Practice List's Include in Looping Sections.  null means "never chosen" (all Sections). */
+export function sanitizeIncludeInLooping(raw) {
+    return sanitizeIndexList(raw);
+}
+
+//---- Sprint 157 it2: session-only display sorting ----
+
+export const SORT_KEYS = Object.freeze(['list', 'date', 'alpha']);
+
+function makeComparator(sortKey, sortDir, keyOf) {
+    return (a, b) => {
+        const ka = keyOf(a);
+        const kb = keyOf(b);
+        let result = 0;
+        if (sortKey === 'alpha') {
+            result = ka.name < kb.name ? -1 : (ka.name > kb.name ? 1 : 0);   // plain comparison: case-sensitive, not locale-aware
+        } else if (sortKey === 'date') {
+            result = ka.date < kb.date ? -1 : (ka.date > kb.date ? 1 : 0);
+        }
+        return (result * sortDir) || (ka.seq - kb.seq);
+    };
+}
+
 /** @param {{folders:string[], songs:{path:string, comment:string, source:string, text:string}[], savedAt?:string}} input
  *  Each Song text is parsed into the file as a plain JSON object, so the file is one valid, editable document. */
 export function buildWorkbookFile({ folders = [], songs = [], savedAt = new Date().toISOString() } = {}) {
@@ -202,6 +269,9 @@ export function buildWorkbookFile({ folders = [], songs = [], savedAt = new Date
             path: entry.path,
             comment: entry.comment || '',
             source: entry.source || '',
+            progress: sanitizeProgress(entry.progress),
+            includeInLooping: sanitizeIncludeInLooping(entry.includeInLooping),
+            updatedAt: entry.updatedAt || '',
             song: JSON.parse(entry.text)
         }))
     };
@@ -299,6 +369,9 @@ export function parseWorkbookFile(text) {
             path,
             comment: typeof entry.comment === 'string' ? entry.comment.slice(0, MAX_COMMENT_LENGTH) : '',
             source: typeof entry.source === 'string' ? entry.source.trim().slice(0, 200) : '',
+            progress: sanitizeProgress(entry.progress),
+            includeInLooping: sanitizeIncludeInLooping(entry.includeInLooping),
+            updatedAt: isIsoDate(entry.updatedAt) ? entry.updatedAt : '',
             text: songText
         });
     }
@@ -317,6 +390,13 @@ export class WorkbookModel {
         this.now = now;
         this.entries = new Map();
         this.meta = { ...DEFAULT_META };
+        this._tail = Promise.resolve();   // writes run one at a time, see the end of this file
+    }
+
+    _serial(task) {
+        const run = this._tail.then(task);
+        this._tail = run.catch(() => {});
+        return run;
     }
 
     async init() {
@@ -348,23 +428,43 @@ export class WorkbookModel {
         return this.entries.size === 0;
     }
 
-    getView() {
+    /** @param {{sortKey?: 'list'|'date'|'alpha', sortDir?: 1|-1}} [sort]  Display order only; nothing stored changes.
+     *  'list' is the stored order of addition (dir ignored).  'date' is last saved or modified (1 = oldest first).
+     *  'alpha' is case-sensitive by name (1 = A-Z).  Folders sort by name, or by their newest content for 'date'.
+     *  Every Song and folder also says whether the stored order lets it move up or down (canUp, canDown). */
+    getView({ sortKey = 'list', sortDir = 1 } = {}) {
         const bySeq = (a, b) => a.seq - b.seq;
         const all = [...this.entries.values()];
         const songs = all.filter((entry) => entry.kind === 'song').sort(bySeq);
-        const folders = all.filter((entry) => entry.kind === 'folder').sort(bySeq).map((folder) => ({
-            name: folder.path,
-            seq: folder.seq,
-            songs: songs.filter((song) => splitPath(song.path).folder === folder.path)
-        }));
+        const folderEntries = all.filter((entry) => entry.kind === 'folder').sort(bySeq);
+        const annotate = (list) => list.map((entry, index) => ({ ...entry, canUp: index > 0, canDown: index < list.length - 1 }));
+        const dir = sortDir < 0 ? -1 : 1;
+        const key = SORT_KEYS.includes(sortKey) ? sortKey : 'list';
+        const sortSongs = (list) => (key === 'list' ? list : [...list].sort(makeComparator(key, dir, (song) => ({ name: splitPath(song.path).filename, date: song.updatedAt || '', seq: song.seq }))));
+
+        const folders = annotate(folderEntries).map((folder) => {
+            const folderSongs = annotate(songs.filter((song) => splitPath(song.path).folder === folder.path));
+            const newest = folderSongs.reduce((latest, song) => ((song.updatedAt || '') > latest ? song.updatedAt : latest), folder.updatedAt || '');
+            return { name: folder.path, seq: folder.seq, canUp: folder.canUp, canDown: folder.canDown, date: newest, songs: sortSongs(folderSongs) };
+        });
+        const sortedFolders = key === 'list' ? folders : [...folders].sort(makeComparator(key, dir, (folder) => ({ name: folder.name, date: folder.date, seq: folder.seq })));
         return {
-            rootSongs: songs.filter((song) => !splitPath(song.path).folder),
-            folders,
+            rootSongs: sortSongs(annotate(songs.filter((song) => !splitPath(song.path).folder))),
+            folders: sortedFolders,
             songCount: songs.length,
             folderCount: folders.length,
             totalBytes: songs.reduce((sum, song) => sum + (song.bytes || 0), 0),
             meta: { ...this.meta }
         };
+    }
+
+    /** The Workbook's remembered practice state for a Song (Tutorial Done / Bookmark, Include in Looping), or null. */
+    getSongState(path) {
+        const entry = this.getEntry(path);
+        if (!entry || entry.kind !== 'song') {
+            return null;
+        }
+        return { progress: entry.progress ?? null, includeInLooping: entry.includeInLooping ?? null };
     }
 
     async getSongText(path) {
@@ -409,7 +509,7 @@ export class WorkbookModel {
 
     /** @param {{folder?:string, baseName:string, text:string, source?:string, comment?:string}} input
      *  @returns {Promise<{ok:true, path:string, replaced:boolean} | {ok:false, error:string, fixable?:boolean}>} */
-    async saveSong({ folder = '', baseName, text, source, comment } = {}) {
+    async saveSong({ folder = '', baseName, text, source, comment, progress, includeInLooping } = {}) {
         const base = validateSongBaseName(baseName);
         if (!base.ok) {
             return base;
@@ -438,6 +538,8 @@ export class WorkbookModel {
             seq: existing ? existing.seq : this.meta.nextSeq,
             comment: comment !== undefined ? `${comment}`.slice(0, MAX_COMMENT_LENGTH) : (existing?.comment || ''),
             source: `${source || existing?.source || ''}`.slice(0, 200),
+            progress: progress !== undefined ? sanitizeProgress(progress) : (existing?.progress ?? null),
+            includeInLooping: includeInLooping !== undefined ? sanitizeIncludeInLooping(includeInLooping) : (existing?.includeInLooping ?? null),
             bytes: byteLength(text),
             updatedAt: this.now()
         };
@@ -533,8 +635,51 @@ export class WorkbookModel {
         if (text === entry.comment) {
             return { ok: true, changed: false };
         }
-        await this._write({ putEntries: [{ ...entry, comment: text }] });
+        await this._write({ putEntries: [{ ...entry, comment: text, updatedAt: this.now() }] });
         return { ok: true, changed: true };
+    }
+
+    /** Remembers practice state for a Song.  Patch keys: progress, includeInLooping (only the keys given are changed).
+     *  Does not touch the Song text or its date. */
+    async setSongState(path, patch = {}) {
+        const entry = this.getEntry(path);
+        if (!entry || entry.kind !== 'song') {
+            return fail(`"${path}" is not in the Workbook.`);
+        }
+        const next = { ...entry };
+        if ('progress' in patch) {
+            next.progress = sanitizeProgress(patch.progress);
+        }
+        if ('includeInLooping' in patch) {
+            next.includeInLooping = sanitizeIncludeInLooping(patch.includeInLooping);
+        }
+        const same = JSON.stringify([next.progress ?? null, next.includeInLooping ?? null]) === JSON.stringify([entry.progress ?? null, entry.includeInLooping ?? null]);
+        if (same) {
+            return { ok: true, changed: false };
+        }
+        await this._write({ putEntries: [next] });
+        return { ok: true, changed: true };
+    }
+
+    /** Moves a Song up or down among the Songs of its folder (or the root), or a folder among the folders.
+     *  This changes the stored order of addition. */
+    async moveEntry(path, direction) {
+        const entry = this.getEntry(path);
+        if (!entry) {
+            return fail(`"${path}" is not in the Workbook.`);
+        }
+        const step = direction < 0 ? -1 : 1;
+        const folder = entry.kind === 'song' ? splitPath(entry.path).folder : '';
+        const group = [...this.entries.values()]
+            .filter((other) => other.kind === entry.kind && (entry.kind === 'folder' || splitPath(other.path).folder === folder))
+            .sort((a, b) => a.seq - b.seq);
+        const index = group.findIndex((other) => other.path === entry.path);
+        const neighbour = group[index + step];
+        if (!neighbour) {
+            return fail(`"${entry.path}" is already ${step < 0 ? 'first' : 'last'}.`);
+        }
+        await this._write({ putEntries: [{ ...entry, seq: neighbour.seq }, { ...neighbour, seq: entry.seq }] });
+        return { ok: true };
     }
 
     async markBackedUp() {
@@ -552,6 +697,9 @@ export class WorkbookModel {
             path: entry.path,
             comment: entry.comment,
             source: entry.source,
+            progress: entry.progress ?? null,
+            includeInLooping: entry.includeInLooping ?? null,
+            updatedAt: entry.updatedAt || '',
             text: texts.get(entry.path)
         }));
         const file = buildWorkbookFile({ folders, songs, savedAt: this.now() });
@@ -568,7 +716,11 @@ export class WorkbookModel {
             putEntries.push({ path: name, kind: 'folder', seq: seq++, comment: '', source: '', bytes: 0, updatedAt });
         }
         for (const song of parsed.songs) {
-            putEntries.push({ path: song.path, kind: 'song', seq: seq++, comment: song.comment, source: song.source, bytes: byteLength(song.text), updatedAt });
+            putEntries.push({
+                path: song.path, kind: 'song', seq: seq++, comment: song.comment, source: song.source,
+                progress: song.progress ?? null, includeInLooping: song.includeInLooping ?? null,
+                bytes: byteLength(song.text), updatedAt: song.updatedAt || updatedAt
+            });
             putTexts.push({ path: song.path, text: song.text });
         }
         await this._write({
@@ -579,4 +731,13 @@ export class WorkbookModel {
             countsAsChange: false
         });
     }
+}
+
+// Every public change runs after the one before it has been committed.  Two quick changes (a Done tick, then an
+// Include in Looping tick) would otherwise both start from the same in-memory entry, and the second would undo the first.
+for (const name of ['saveSong', 'addFolder', 'renameFolder', 'deleteFolder', 'deleteSong', 'setComment', 'setSongState', 'moveEntry', 'markBackedUp', 'replaceFromParsed']) {
+    const original = WorkbookModel.prototype[name];
+    WorkbookModel.prototype[name] = function serialized(...args) {
+        return this._serial(() => original.apply(this, args));
+    };
 }

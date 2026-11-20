@@ -244,7 +244,34 @@
 }
 
 .workbookRow {
-    grid-template-columns: minmax(16em, 32%) minmax(18em, 1fr) minmax(6em, 12%);
+    grid-template-columns: minmax(16em, 32%) minmax(18em, 1fr) minmax(10em, 14%);
+}
+
+.workbookCellActions {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+}
+
+.workbookFolderTools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3em;
+}
+
+.workbookSortLabel {
+    font-weight: 600;
+}
+
+.workbookSortButton {
+    cursor: pointer;
+}
+
+.workbookSortActive {
+    font-weight: bold;
+    background-color: #ffd39b;
+    border: 2px solid #663300;
 }
 
 .workbookComment {

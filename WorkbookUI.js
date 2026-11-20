@@ -39,7 +39,44 @@ export function renderStatusLine(meta = {}) {
     return `<div class='workbookStatus${stale}'>${escapeHtml(describeBackup(meta))}</div>`;
 }
 
-function renderSongRow(song) {
+// The same glyph buttons as Tunings in Song and the Stylesheets table (infinite-neck.css: .btnMoveTuningUp etc.)
+const GLYPH_UP = '&#x2B06;';
+const GLYPH_DOWN = '&#x2B07;';
+const GLYPH_REMOVE = '&#x232B;';
+
+function isListOrder(ui) {
+    return !ui.sort || ui.sort.key === 'list';
+}
+
+/** Up/Down move the stored (list) order, so they only work while the list is shown in that order. */
+function renderMoveButtons(kind, idAttr, entry, ui) {
+    const listOrder = isListOrder(ui);
+    const hint = listOrder ? '' : ' (switch to Default order first)';
+    const up = listOrder && entry.canUp;
+    const down = listOrder && entry.canDown;
+    const what = kind === 'folder' ? 'folder' : 'Song';
+    return `<button type='button' class='ssMoveUp btnMoveTuningUp' data-wb-action='${kind === 'folder' ? 'moveFolderUp' : 'moveUp'}' ${idAttr}${up ? '' : ' disabled'} title='Move ${what} up${hint}' aria-label='Move ${what} up'>${GLYPH_UP}</button>`
+        + `<button type='button' class='ssMoveDown btnMoveTuningDown' data-wb-action='${kind === 'folder' ? 'moveFolderDown' : 'moveDown'}' ${idAttr}${down ? '' : ' disabled'} title='Move ${what} down${hint}' aria-label='Move ${what} down'>${GLYPH_DOWN}</button>`;
+}
+
+const SORT_BUTTONS = [
+    { key: 'list', caption: '&#x2261; Default', titles: { 1: 'Order of addition (the stored order)' } },
+    { key: 'date', caption: '&#x1F552; Date', titles: { [-1]: 'Newest first.  Click to reverse.', 1: 'Oldest first.  Click to reverse.' } },
+    { key: 'alpha', caption: '&#x21C5; A-Z', titles: { 1: 'A to Z, capitals first.  Click to reverse.', [-1]: 'Z to A.  Click to reverse.' } }
+];
+
+export function renderSortBar(sort = { key: 'list', dir: 1 }) {
+    let html = "<div class='workbookToolbar workbookSortBar'><span class='workbookSortLabel'>Sort:</span> ";
+    SORT_BUTTONS.forEach((button) => {
+        const active = sort.key === button.key;
+        const dir = button.key === 'list' ? 1 : (sort.dir < 0 ? -1 : 1);
+        const title = active ? button.titles[dir] : (button.key === 'date' ? 'Newest first' : (button.key === 'alpha' ? 'A to Z' : button.titles[1]));
+        html += `<button type='button' class='workbookSortButton${active ? ' workbookSortActive' : ''}' data-wb-action='sort' data-wb-sort='${button.key}' aria-pressed='${active}' title='${attr(title)}'>${button.caption}</button> `;
+    });
+    return `${html}</div>`;
+}
+
+function renderSongRow(song, ui = {}) {
     const { filename } = splitPath(song.path);
     const path = attr(song.path);
     return (
@@ -51,7 +88,8 @@ function renderSongRow(song) {
         + `<input type='text' class='workbookComment' data-wb-path='${path}' maxlength='${MAX_COMMENT_LENGTH}' value='${attr(song.comment || '')}' placeholder='Progress notes' aria-label='Comment for ${path}'>`
         + '</div>'
         + "<div class='songLibraryCell workbookCellActions'>"
-        + `<button type='button' data-wb-action='removeSong' data-wb-path='${path}' title='Remove ${path} from the Workbook'>Remove</button>`
+        + renderMoveButtons('song', `data-wb-path='${path}'`, song, ui)
+        + `<button type='button' class='ssRemove btnRemoveTuning' data-wb-action='removeSong' data-wb-path='${path}' title='Remove ${path} from the Workbook' aria-label='Remove ${path} from the Workbook'>${GLYPH_REMOVE}</button>`
         + '</div>'
         + '</div>'
     );
@@ -65,20 +103,20 @@ function renderFolder(folder, ui) {
     html += `<summary class='songLibrarySummary songLibraryDirectorySummary'>${escapeHtml(folder.name)} <span class='workbookCounts'>(${plural(folder.songs.length, 'song')})</span></summary>`;
     html += "<div class='songLibraryDirectoryBody'><div class='songLibraryRows'>";
     html += "<div class='songLibraryRow workbookFolderToolRow'><div class='songLibraryCell workbookCellTools workbookFolderTools'>";
-    html += `<button type='button' data-wb-action='addSongHere' data-wb-folder='${name}'>Add current Song here</button> `;
     html += `<input type='text' class='workbookRenameInput' size='18' maxlength='${MAX_NAME_LENGTH}' value='${name}' aria-label='New name for folder ${name}'> `;
     html += `<button type='button' data-wb-action='renameFolder' data-wb-folder='${name}'>Rename folder</button> `;
-    html += `<button type='button' data-wb-action='deleteFolder' data-wb-folder='${name}'${hasSongs ? " disabled title='Remove the Songs first'" : ''}>Delete folder</button>`;
+    html += renderMoveButtons('folder', `data-wb-folder='${name}'`, folder, ui);
+    html += `<button type='button' class='ssRemove btnRemoveTuning' data-wb-action='deleteFolder' data-wb-folder='${name}'${hasSongs ? " disabled title='Remove the Songs first'" : " title='Delete this empty folder'"} aria-label='Delete folder ${name}'>${GLYPH_REMOVE}</button>`;
     html += '</div></div>';
     folder.songs.forEach((song) => {
-        html += renderSongRow(song);
+        html += renderSongRow(song, ui);
     });
     html += '</div></div></details>';
     return html;
 }
 
 /** @param view the result of WorkbookModel.getView()
- *  @param {{rootOpen?:boolean, openFolders?:Set<string>, message?:{text:string, kind?:string}|null, persistent?:boolean}} [ui] */
+ *  @param {{rootOpen?:boolean, openFolders?:Set<string>, message?:{text:string, kind?:string}|null, persistent?:boolean, sort?:{key:string, dir:number}}} [ui] */
 export function renderWorkbookHtml(view, ui = {}) {
     const counts = `${plural(view.songCount, 'song')}, ${plural(view.folderCount, 'folder')}, ${formatBytes(view.totalBytes)}`;
     let html = `<details class='songLibraryRootDetails workbookRootDetails'${ui.rootOpen ? ' open' : ''}>`;
@@ -100,13 +138,14 @@ export function renderWorkbookHtml(view, ui = {}) {
     html += `<input type='text' id='workbookNewFolderName' size='20' maxlength='${MAX_NAME_LENGTH}' placeholder='new-folder-name' aria-label='New folder name'> `;
     html += "<button type='button' data-wb-action='addFolder'>+ New Folder</button>";
     html += '</div>';
+    html += renderSortBar(ui.sort);
 
     html += "<div class='songLibraryRows'>";
     if (view.songCount === 0 && view.folderCount === 0) {
         html += "<div class='songLibraryRow songLibraryIntroRow'><div class='songLibraryCell songLibraryCellIntro'>The Workbook is empty.  Use <b>Save to Workbook</b> next to <b>Download Song</b> to add the current Song.</div></div>";
     }
     view.rootSongs.forEach((song) => {
-        html += renderSongRow(song);
+        html += renderSongRow(song, ui);
     });
     html += '</div>';
     view.folders.forEach((folder) => {
@@ -125,7 +164,8 @@ const ui = {
     openFolders: new Set(),
     message: null,
     persistent: true,
-    lastFolder: ''
+    lastFolder: '',
+    sort: { key: 'list', dir: 1 }   // display only: never stored, back to list order at launch and when a Workbook is opened
 };
 
 function container() {
@@ -172,7 +212,7 @@ function render(capture = true) {
     if (capture) {
         captureOpenState();
     }
-    jq.show().html(renderWorkbookHtml(model.getView(), ui));
+    jq.show().html(renderWorkbookHtml(model.getView({ sortKey: ui.sort.key, sortDir: ui.sort.dir }), ui));
 }
 
 function refreshStatus() {
@@ -208,13 +248,12 @@ function showSaveError(text, fixable = false) {
     }
 }
 
-function showSaveForm({ folder } = {}) {
+function showSaveForm() {
     if (!model) {
         return;
     }
     const current = providers.getCurrentWorkbookPath();
-    const wanted = folder !== undefined ? folder : (current ? splitPath(current).folder : ui.lastFolder);
-    renderSaveFormFolders(wanted);
+    renderSaveFormFolders(current ? splitPath(current).folder : ui.lastFolder);
     $('#txtWorkbookSongName').val(defaultSongBaseName({
         workbookPath: current,
         libraryHref: providers.getLibraryHref(),
@@ -247,11 +286,16 @@ async function saveToWorkbook() {
     if (existing && !sameAsOpened && !askConfirm(`"${existing.path}" is already in the Workbook.  Replace it?`)) {
         return;
     }
+    const state = providers.getSongProgressState();
     const result = await model.saveSong({
         folder,
         baseName: base.value,
         text: providers.getPersistentSongFile(),
-        source: providers.getLibraryHref()
+        source: providers.getLibraryHref(),
+        // Sprint 157 it2: the Workbook takes the Bookmark / Done and Include in Looping the Song has right now, and
+        // from here on is the only place they are read from.  They replace what a Song of that name had.
+        progress: state.progress,
+        includeInLooping: state.includeInLooping
     });
     if (!result.ok) {
         showSaveError(result.error, result.fixable);
@@ -262,7 +306,13 @@ async function saveToWorkbook() {
     setMessage('');
     hideSaveForm();
     $('#spanWorkbookSaveMessage').text(`${result.replaced ? 'Replaced' : 'Saved'} Workbook/${result.path}`);
-    render();
+    // show the Song where it landed: open its folder (the accordion keeps one folder open)
+    captureOpenState();
+    ui.rootOpen = true;
+    if (folder) {
+        ui.openFolders = new Set([folder]);
+    }
+    render(false);
     requestPersistentStorage();
 }
 
@@ -344,6 +394,23 @@ async function deleteFolder(name) {
     render(false);
 }
 
+async function moveEntry(path, direction) {
+    const result = await model.moveEntry(path, direction);
+    setMessage(result.ok ? '' : result.error, 'error');
+    render();
+}
+
+function setSort(key) {
+    if (key === 'list') {
+        ui.sort = { key: 'list', dir: 1 };   // list order never reverses
+    } else if (ui.sort.key === key) {
+        ui.sort = { key, dir: -ui.sort.dir };
+    } else {
+        ui.sort = { key, dir: key === 'date' ? -1 : 1 };   // newest first, A to Z
+    }
+    render();   // keeps the open and closed folders as they are
+}
+
 async function downloadWorkbook() {
     const { text } = await model.exportFile();
     const name = workbookDownloadName();
@@ -382,6 +449,7 @@ async function openWorkbookFile(file) {
     providers.setCurrentWorkbookPath('');
     ui.openFolders = new Set();
     ui.rootOpen = true;
+    ui.sort = { key: 'list', dir: 1 };
     setMessage(`Opened ${file.name}: ${plural(parsed.songs.length, 'song')}, ${plural(parsed.folders.length, 'folder')}`);
     render(false);
 }
@@ -395,7 +463,11 @@ function handleAction(action, $el) {
         case 'addFolder': return addFolder();
         case 'renameFolder': return renameFolder(folder, $el.closest('.workbookFolderTools').find('.workbookRenameInput').val());
         case 'deleteFolder': return deleteFolder(folder);
-        case 'addSongHere': showSaveForm({ folder }); return undefined;
+        case 'moveUp': return moveEntry(path, -1);
+        case 'moveDown': return moveEntry(path, 1);
+        case 'moveFolderUp': return moveEntry(folder, -1);
+        case 'moveFolderDown': return moveEntry(folder, 1);
+        case 'sort': setSort($el.attr('data-wb-sort')); return undefined;
         case 'download': return downloadWorkbook();
         default: return undefined;
     }
@@ -472,6 +544,7 @@ async function createModel() {
 /** Call once at startup.
  *  @param {{
  *    getPersistentSongFile: () => string,
+ *    getSongProgressState: () => {progress: object|null, includeInLooping: number[]|null},
  *    getLibraryHref: () => string,
  *    getFilenameBoxValue: () => string,
  *    getCurrentWorkbookPath: () => string,
@@ -493,4 +566,29 @@ export async function initializeWorkbook(p) {
             });
         }
     });
+}
+
+/** Sprint 157 it2: what the Workbook remembers about a Song ({progress, includeInLooping}), or null.
+ *  Read synchronously from the in-memory list.  Used only for a Song that was opened from, or saved to, the Workbook. */
+export function getWorkbookSongState(path) {
+    return model ? model.getSongState(path) : null;
+}
+
+/** Remembers practice state for a Workbook Song (patch keys: progress, includeInLooping).  Not awaited by callers:
+ *  the in-memory model already has the new state in the App, and a failed write is reported in the Workbook block. */
+export function updateWorkbookSongState(path, patch) {
+    if (!model || !path) {
+        return Promise.resolve();
+    }
+    return model.setSongState(path, patch)
+        .then((result) => {
+            if (result.ok && result.changed) {
+                refreshStatus();
+            }
+        })
+        .catch((error) => {
+            console.warn('Workbook: could not save practice state', error);
+            setMessage(`Workbook error: ${error?.message || error}`, 'error');
+            render();
+        });
 }

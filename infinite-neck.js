@@ -130,7 +130,7 @@ import { installFillPageSelects } from './fillPageSelectBuilder.js';
 
 import { installLoopTimingModeControls } from './looper-timing-select-handler.js';
 import * as SongLibrary from './SongLibrary.js';
-import { initializeWorkbook } from './WorkbookUI.js';
+import { getWorkbookSongState, initializeWorkbook, updateWorkbookSongState } from './WorkbookUI.js';
 import { WORKBOOK_FILE_TYPE } from './Workbook.js';
 import { escapeHtml, renderSongInstrumentBadges } from './InstrumentRoleBadges.js';
 
@@ -164,12 +164,12 @@ import { TutorialPromptBuilder, buildTutorialPromptModel, renderPracticeList } f
 import {
 	applyPromptToSectionTutorial,
 	canEditTutorialPrompt,
-	deriveTutorialStorageKeyFromHref,
 	filterIncludedLoopSectionIndex,
 	getLoopCaptionModel,
 	isLoopSubsetInEffect,
 	isTutorialSong,
 	normalizeTutorialMode,
+	normalizeTutorialProgress,
 	promptTextToPrompt,
 	readTutorialProgressFromStorage,
 	TUTORIAL_MODES,
@@ -575,21 +575,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	};
 
 	function getTutorialStorageEntry(song = getSong()){
-		const entry = {
+		return {
 			...song,
 			href: gCurrentSongLibraryHref || $("#txtFilename").val() || song?.songName || '',
 			SectionCount: Array.isArray(song?.sections) ? song.sections.length : 0
 		};
-		if (gCurrentWorkbookPath){
-			//Sprint 157: a Workbook Song keeps its own progress, even when it is a copy of a Library tutorial with an explicit storageKey
-			entry.tutorial = { ...song?.tutorial, storageKey: deriveTutorialStorageKeyFromHref(`workbook/${gCurrentWorkbookPath}`) };
-		}
-		return entry;
 	}
 
 	function getTutorialFallbackStorageEntry(song = getSong()){
 		const fallbackHref = $("#txtFilename").val() || song?.songName || '';
-		if (gCurrentWorkbookPath || !fallbackHref || !gCurrentSongLibraryHref || fallbackHref === gCurrentSongLibraryHref){
+		if (!fallbackHref || !gCurrentSongLibraryHref || fallbackHref === gCurrentSongLibraryHref){
 			return null;
 		}
 		return {
@@ -610,7 +605,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		tutorialRuntimeState.song = song;
 		tutorialRuntimeState.progress = null;
-		tutorialRuntimeState.includeInLoopingSectionIndexes = null;
+		//Sprint 157 it2: a Workbook Song remembers its Include in Looping in the Workbook (not in the Song); every other Song starts with all Sections.
+		tutorialRuntimeState.includeInLoopingSectionIndexes = gCurrentWorkbookPath
+			? (getWorkbookSongState(gCurrentWorkbookPath)?.includeInLooping ?? null)
+			: null;
 		tutorialRuntimeState.lessonSectionListOpen = false;
 		tutorialRuntimeState.hamburgerControlsOpen = true;
 		tutorialRuntimeState.promptEditSection = null; //a different Song: the old editor (if any) is simply discarded
@@ -621,6 +619,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		const song = getSong();
 		resetTutorialRuntimeForSongIfNeeded(song);
 		if (!tutorialRuntimeState.progress){
+			if (gCurrentWorkbookPath){
+				//Sprint 157 it2: a Workbook Song reads Bookmark and Done from the Workbook only (never from Browser Storage).
+				const sectionCount = Array.isArray(song?.sections) ? song.sections.length : 0;
+				tutorialRuntimeState.progress = normalizeTutorialProgress(getWorkbookSongState(gCurrentWorkbookPath)?.progress ?? {}, sectionCount);
+				return tutorialRuntimeState.progress;
+			}
 			const storageEntry = getTutorialStorageEntry(song);
 			let progress = readTutorialProgressFromStorage(storageEntry);
 			if (!hasTutorialProgress(progress)){
@@ -638,8 +642,33 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	function saveTutorialProgress(progress){
+		if (gCurrentWorkbookPath){
+			const sectionCount = Array.isArray(getSong()?.sections) ? getSong().sections.length : 0;
+			tutorialRuntimeState.progress = normalizeTutorialProgress(progress, sectionCount);
+			void updateWorkbookSongState(gCurrentWorkbookPath, { progress: tutorialRuntimeState.progress });
+			return tutorialRuntimeState.progress;
+		}
 		tutorialRuntimeState.progress = writeTutorialProgressToStorage(getTutorialStorageEntry(), progress);
 		return tutorialRuntimeState.progress;
+	}
+
+	/** Sprint 157 it2: Include in Looping is remembered only for a Workbook Song, and in the Workbook. */
+	function saveIncludeInLoopingToWorkbook(){
+		if (gCurrentWorkbookPath){
+			void updateWorkbookSongState(gCurrentWorkbookPath, { includeInLooping: tutorialRuntimeState.includeInLoopingSectionIndexes });
+		}
+	}
+
+	/** What Save to Workbook stores with the Song: the Bookmark / Done in effect now (from the Workbook if the Song is already
+	 *  a Workbook Song, else from Browser Storage, which is the last time it is consulted) and the current Include in Looping. */
+	function getSongProgressState(){
+		const song = getSong();
+		resetTutorialRuntimeForSongIfNeeded(song);
+		const include = tutorialRuntimeState.includeInLoopingSectionIndexes;
+		return {
+			progress: getTutorialProgress(),
+			includeInLooping: Array.isArray(include) ? [...include] : null
+		};
 	}
 
 	/** Sprint 152 it3 (wizard mode): accepts the open prompt editor, if any, by sanitizing the textarea and writing it to
@@ -772,6 +801,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function tutorialToggleIncludeInLooping(sectionIndex){
 		const sectionCount = getSong()?.getSections?.().length || 0;
 		tutorialRuntimeState.includeInLoopingSectionIndexes = toggleIncludeInLooping(tutorialRuntimeState.includeInLoopingSectionIndexes, sectionIndex, sectionCount);
+		saveIncludeInLoopingToWorkbook();
 		renderTutorialPrompt();
 		refreshTutorialLoopCaption();
 	}
@@ -779,6 +809,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function tutorialToggleAllIncludeInLooping(){
 		const sectionCount = getSong()?.getSections?.().length || 0;
 		tutorialRuntimeState.includeInLoopingSectionIndexes = toggleAllIncludeInLooping(tutorialRuntimeState.includeInLoopingSectionIndexes, sectionCount);
+		saveIncludeInLoopingToWorkbook();
 		renderTutorialPrompt();
 		refreshTutorialLoopCaption();
 	}
@@ -5205,6 +5236,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		SongLibrary.initializeSongLibrary('#divSongList');
 		initializeWorkbook({
 			getPersistentSongFile,
+			getSongProgressState,
 			getLibraryHref: () => gCurrentSongLibraryHref,
 			getFilenameBoxValue: () => $("#txtFilename").val(),
 			getCurrentWorkbookPath: () => gCurrentWorkbookPath,

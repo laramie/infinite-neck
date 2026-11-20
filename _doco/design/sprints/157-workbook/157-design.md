@@ -162,4 +162,42 @@ For Iteration 2 we would like the following APPROVED changes:
 4) In a Workbook, the Bookmark and Done stati get saved *to the workbook IndexedDB* and to the Workbook file if downloaded, and not Browser Storage the way they are now for Tutorials.  On opening a song from the Library or Disk, and causing Browser Storage to have Bookmark and Done values, these values get saved to the Workbook if the Song is added to the Workbook, and then win over those values that may be present in the non-Workbook song, which should work because we made Workbooks have different keys.  So really, they should not conflict, and are should only be consulted at the moment a Song from Library or Disk is saved to a Workbook, and thereafter should only consult the Workbook storage.
 
 
+## Iteration 2 UA Test Results
+
+**UA checks**
+1. Sort without changing which folders are open. Default restores your order.
+
+- RESULT: PASS
+
+2. Up/down moves survive a reload and a download/open.
+
+- RESULT: PASS
+
+3. Save to Workbook opens the destination folder.
+
+- RESULT: PASS
+
+4. Bookmark, Done and Include in Looping persist per Workbook Song, including after download/open.
+
+- RESULT: PASS
+
+5. A Library Song saved into the Workbook keeps its existing Bookmark and Done.
+
+- RESULT: PASS
+
+6. Include in Looping is ignored in Tutorial Mode `none`.
+
+- RESULT: PASS
+
+## Iteration 2 Round 2 Request
+
+UA ALL PASS for Round 1.
+
+Please tweak the control areas for Workbook, and for each Folder: 
+- Workbook: 
+  - Group all controls in one box, with a style id we can set CSS rules for.  Let it be something like `song-library.css::workbookToolbox` because `.workbookToolbar` is just the first row of controls, and we want all of them in one visual box.  Let it have an initial CSS of `border: 1px black; padding 1em; background-color: #ffe869;`
+- Folder:
+  - Style the existing control row a little different than how it is now appearing to be just another (first) Song.  Its current style is in `song-library.css` and its specifier seems to be `songLibraryCell workbookCellTools workbookFolderTools`.  However, it seems `.workbookFolderTools` targets the controls box well.  (If this is not unique enough to just target the controls, let the controls specifier be something like `workbookFolderControls`.)  Let it have an initial CSS of `border: 1px black; padding 1em; background-color: #ffe869;`  This looks OK in the browser, but it shows that it has `.songLibraryRow` and thus picks up a blue background of `background-color: rgb(177, 255, 255);` which is what makes it look like a Song (this small blue background is visible around the controls that we target with `.workbookFolderTools`), which we don't want.  Either suppress the styling for the first row, since it will always have the folder controls, or move it out of the songLibraryRow rows, which might be more structural change than we want, given that it works functionally now.
+
+
 

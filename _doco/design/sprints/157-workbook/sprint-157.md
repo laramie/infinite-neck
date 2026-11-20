@@ -29,4 +29,9 @@ Purpose of this sprint is to:
   - [Iteration 1 UA Test Report](157-design.md#iteration-1-ua-test-report) ALL PASS.
 
   - "Iteration 2": UX changes that add session-only list sorting, persisted list-order management, and persistence in Workbook only of `Include in Looping`, `Bookmark` and `Done` for Tutorials. Detailed in [Iteraion 2 UX changes](157-design.md#iteraion-2-ux-changes)
+    - Implemented: sort bar, up/down/remove glyph buttons, Save opens destination folder, practice state (Include in Looping, Bookmark, Done) stored per Workbook Song. Code: [Workbook.js](../../../../Workbook.js), [WorkbookUI.js](../../../../WorkbookUI.js), [infinite-neck.js](../../../../infinite-neck.js). Tests: [workbook.test.js](../../../../_tests/jest/workbook.test.js), [workbook-render.test.js](../../../../_tests/jest/workbook-render.test.js). Full Jest: 95 suites, 1439 tests pass. Awaiting UA.
+    - Copilot output saved as report: [157-it2-implementation-report.md](157-it2-implementation-report.md)
+    - UA ALL PASS: [Iteration 2 UA Test Results](157-design.md#iteration-2-ua-test-results)  
+
+  - "Iteration 2 Round 2": a few CSS targets and tweaks to set the controls for Workbook and Folders appart from Song rows. [Iteration 2 Round 2 Request](157-design.md#iteration-2-round-2-request)   
 

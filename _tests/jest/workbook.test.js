@@ -13,6 +13,7 @@ import {
     workbookDownloadName
 } from '../../Workbook.js';
 import { createMemoryAdapter } from '../../WorkbookStorage.js';
+import { filterIncludedLoopSectionIndex, isTutorialSong } from '../../Tutorial.js';
 
 const SONG_A = JSON.stringify({ songName: 'A', sections: [{ n: 1 }] }, null, 2);
 const SONG_B = JSON.stringify({ songName: 'B', sections: [{ n: 2 }] }, null, 2);
@@ -260,5 +261,197 @@ describe('Workbook file', () => {
         const parsed = parseWorkbookFile(text);
         expect(parsed.ok).toBe(true);
         expect({}.polluted).toBeUndefined();
+    });
+});
+
+describe('Workbook list order and display sorting (Iteration 2)', () => {
+    async function filled() {
+        const { model, adapter } = await newModel();
+        await model.addFolder('beta');
+        await model.addFolder('Alpha');
+        await model.addFolder('gamma');
+        await model.saveSong({ baseName: 'zed', text: SONG_A });
+        await model.saveSong({ baseName: 'Apple', text: SONG_A });
+        await model.saveSong({ baseName: 'mid', text: SONG_A });
+        await model.saveSong({ folder: 'beta', baseName: 'b2', text: SONG_A });
+        await model.saveSong({ folder: 'beta', baseName: 'B1', text: SONG_A });
+        await model.saveSong({ folder: 'gamma', baseName: 'g1', text: SONG_A });
+        return { model, adapter };
+    }
+    const names = (list) => list.map((item) => item.path || item.name);
+
+    test('list order is the order of addition', async () => {
+        const { model } = await filled();
+        const view = model.getView();
+        expect(names(view.rootSongs)).toEqual(['zed.json', 'Apple.json', 'mid.json']);
+        expect(names(view.folders)).toEqual(['beta', 'Alpha', 'gamma']);
+        expect(names(view.folders[0].songs)).toEqual(['beta/b2.json', 'beta/B1.json']);
+    });
+
+    test('alpha sort is case-sensitive, applies to folders and Songs together, and reverses', async () => {
+        const { model } = await filled();
+        const asc = model.getView({ sortKey: 'alpha', sortDir: 1 });
+        expect(names(asc.rootSongs)).toEqual(['Apple.json', 'mid.json', 'zed.json']);   // capitals first
+        expect(names(asc.folders)).toEqual(['Alpha', 'beta', 'gamma']);
+        expect(names(asc.folders[1].songs)).toEqual(['beta/B1.json', 'beta/b2.json']);
+        const desc = model.getView({ sortKey: 'alpha', sortDir: -1 });
+        expect(names(desc.rootSongs)).toEqual(['zed.json', 'mid.json', 'Apple.json']);
+        expect(names(desc.folders)).toEqual(['gamma', 'beta', 'Alpha']);
+    });
+
+    test('date sort uses last saved or modified; a folder counts its newest Song; comments count, state does not', async () => {
+        const { model } = await filled();
+        await model.setComment('zed.json', 'touched last');   // now the newest Song
+        const newest = model.getView({ sortKey: 'date', sortDir: -1 });
+        expect(names(newest.rootSongs)).toEqual(['zed.json', 'mid.json', 'Apple.json']);
+        expect(names(newest.folders)).toEqual(['gamma', 'beta', 'Alpha']);   // Alpha was created before everything else
+        const oldest = model.getView({ sortKey: 'date', sortDir: 1 });
+        expect(names(oldest.rootSongs)).toEqual(['Apple.json', 'mid.json', 'zed.json']);
+
+        await model.setSongState('Apple.json', { progress: { doneSectionIndexes: [0], bookmarkSectionIndex: null } });
+        expect(names(model.getView({ sortKey: 'date', sortDir: -1 }).rootSongs)).toEqual(['zed.json', 'mid.json', 'Apple.json']);
+    });
+
+    test('sorting is display only: the stored order and the exported file do not change', async () => {
+        const { model } = await filled();
+        model.getView({ sortKey: 'alpha', sortDir: -1 });
+        expect(names(model.getView().rootSongs)).toEqual(['zed.json', 'Apple.json', 'mid.json']);
+        const { file } = await model.exportFile();
+        expect(file.folders).toEqual(['beta', 'Alpha', 'gamma']);
+        expect(file.songs.map((s) => s.path)).toEqual(['zed.json', 'Apple.json', 'mid.json', 'beta/b2.json', 'beta/B1.json', 'gamma/g1.json']);
+    });
+
+    test('moving Songs and folders changes the stored order and survives a reload and a file round trip', async () => {
+        const { model, adapter } = await filled();
+        const first = model.getView();
+        expect(first.rootSongs.map((s) => [s.canUp, s.canDown])).toEqual([[false, true], [true, true], [true, false]]);
+        expect(first.folders.map((f) => [f.canUp, f.canDown])).toEqual([[false, true], [true, true], [true, false]]);
+
+        expect((await model.moveEntry('mid.json', -1)).ok).toBe(true);
+        expect((await model.moveEntry('zed.json', 1)).ok).toBe(true);
+        expect(names(model.getView().rootSongs)).toEqual(['mid.json', 'zed.json', 'Apple.json']);
+        expect((await model.moveEntry('gamma', -1)).ok).toBe(true);
+        expect((await model.moveEntry('beta/B1.json', -1)).ok).toBe(true);
+        expect(names(model.getView().folders)).toEqual(['beta', 'gamma', 'Alpha']);
+        expect(names(model.getView().folders[0].songs)).toEqual(['beta/B1.json', 'beta/b2.json']);
+
+        expect((await model.moveEntry('mid.json', -1)).error).toMatch(/already first/);
+        expect((await model.moveEntry('Apple.json', 1)).error).toMatch(/already last/);
+        expect((await model.moveEntry('beta', -1)).ok).toBe(false);
+        expect((await model.moveEntry('nope.json', 1)).ok).toBe(false);
+        expect(model.getView().meta.changesSinceBackup).toBeGreaterThan(0);
+
+        const reloaded = await new WorkbookModel(adapter).init();
+        expect(names(reloaded.getView().rootSongs)).toEqual(['mid.json', 'zed.json', 'Apple.json']);
+
+        const { text } = await model.exportFile();
+        const other = (await newModel()).model;
+        await other.replaceFromParsed(parseWorkbookFile(text));
+        expect(names(other.getView().folders)).toEqual(['beta', 'gamma', 'Alpha']);
+        expect(names(other.getView().rootSongs)).toEqual(['mid.json', 'zed.json', 'Apple.json']);
+    });
+});
+
+describe('Workbook remembers practice state per Song (Iteration 2)', () => {
+    const PROGRESS = { doneSectionIndexes: [3, 1, 1], bookmarkSectionIndex: 2 };
+
+    test('saving stores Bookmark/Done and Include in Looping; a plain re-save keeps them; an explicit save replaces them', async () => {
+        const { model } = await newModel();
+        await model.saveSong({ baseName: 'a', text: SONG_A, progress: PROGRESS, includeInLooping: [2, 0] });
+        expect(model.getSongState('a.json')).toEqual({
+            progress: { doneSectionIndexes: [1, 3], bookmarkSectionIndex: 2 },
+            includeInLooping: [0, 2]
+        });
+        await model.saveSong({ baseName: 'a', text: SONG_B });
+        expect(model.getSongState('a.json').includeInLooping).toEqual([0, 2]);
+        await model.saveSong({ baseName: 'a', text: SONG_B, progress: null, includeInLooping: null });
+        expect(model.getSongState('a.json')).toEqual({ progress: null, includeInLooping: null });
+        expect(model.getSongState('missing.json')).toBeNull();
+    });
+
+    test('setSongState changes only the keys given and only counts real changes', async () => {
+        const { model, adapter } = await newModel();
+        await model.saveSong({ baseName: 'a', text: SONG_A });
+        const before = model.getView().meta.changesSinceBackup;
+        expect((await model.setSongState('a.json', { progress: PROGRESS })).changed).toBe(true);
+        expect((await model.setSongState('a.json', { includeInLooping: [1] })).changed).toBe(true);
+        expect((await model.setSongState('a.json', { includeInLooping: [1] })).changed).toBe(false);
+        expect(model.getSongState('a.json').progress.bookmarkSectionIndex).toBe(2);
+        expect(model.getView().meta.changesSinceBackup).toBe(before + 2);
+        expect((await model.setSongState('missing.json', {})).ok).toBe(false);
+        expect(await model.getSongText('a.json')).toBe(SONG_A);   // the Song itself is untouched
+        const reloaded = await new WorkbookModel(adapter).init();
+        expect(reloaded.getSongState('a.json').includeInLooping).toEqual([1]);
+    });
+
+    test('quick successive changes are applied in order and none is lost', async () => {
+        const { model } = await newModel();
+        await model.saveSong({ baseName: 'a', text: SONG_A });
+        await Promise.all([
+            model.setSongState('a.json', { progress: PROGRESS }),
+            model.setSongState('a.json', { includeInLooping: [0] }),
+            model.setSongState('a.json', { progress: { doneSectionIndexes: [], bookmarkSectionIndex: 4 } })
+        ]);
+        expect(model.getSongState('a.json')).toEqual({
+            progress: { doneSectionIndexes: [], bookmarkSectionIndex: 4 },
+            includeInLooping: [0]
+        });
+    });
+
+    test('the state follows a folder rename and goes into the file and back (and nowhere inside the Song)', async () => {
+        const { model } = await newModel();
+        await model.addFolder('Old');
+        await model.saveSong({ folder: 'Old', baseName: 'a', text: SONG_A, progress: PROGRESS, includeInLooping: [0] });
+        await model.renameFolder('Old', 'New');
+        expect(model.getSongState('New/a.json').includeInLooping).toEqual([0]);
+
+        const { file, text } = await model.exportFile();
+        expect(file.songs[0].progress).toEqual({ doneSectionIndexes: [1, 3], bookmarkSectionIndex: 2 });
+        expect(file.songs[0].includeInLooping).toEqual([0]);
+        expect(JSON.stringify(file.songs[0].song)).not.toMatch(/bookmark|includeInLooping/i);
+        expect(file.songs[0].updatedAt).toMatch(/^2026-/);
+
+        const other = (await newModel()).model;
+        await other.replaceFromParsed(parseWorkbookFile(text));
+        expect(other.getSongState('New/a.json')).toEqual(model.getSongState('New/a.json'));
+        expect(other.getEntry('New/a.json').updatedAt).toBe(file.songs[0].updatedAt);   // the Date sort survives download and open
+    });
+
+    test('untrusted state in a file is cleaned', () => {
+        const text = JSON.stringify({
+            fileType: WORKBOOK_FILE_TYPE,
+            workbookVersion: 1,
+            songs: [{
+                path: 'a.json',
+                song: { sections: [] },
+                progress: { doneSectionIndexes: [2, '1', -4, 'x', 1e9, null], bookmarkSectionIndex: 'nope', extra: 1 },
+                includeInLooping: 'all',
+                updatedAt: 'yesterday'
+            }, {
+                path: 'b.json',
+                song: { sections: [] },
+                progress: { doneSectionIndexes: [], bookmarkSectionIndex: null },
+                includeInLooping: [1, 1, 'a', 0]
+            }]
+        });
+        const parsed = parseWorkbookFile(text);
+        expect(parsed.ok).toBe(true);
+        expect(parsed.songs[0].progress).toEqual({ doneSectionIndexes: [1, 2], bookmarkSectionIndex: null });
+        expect(parsed.songs[0].includeInLooping).toBeNull();
+        expect(parsed.songs[0].updatedAt).toBe('');
+        expect(parsed.songs[1].progress).toBeNull();
+        expect(parsed.songs[1].includeInLooping).toEqual([0, 1]);
+    });
+});
+
+describe('Include in Looping in Tutorial Mode none', () => {
+    test('a stored Include in Looping has no effect unless the Song is in a tutorial mode', () => {
+        const options = { sectionCount: 4, includeInLoopingSectionIndexes: [0, 1] };
+        const none = { tutorial: { level: 'none' } };
+        expect(isTutorialSong(none)).toBe(false);
+        expect(isTutorialSong({})).toBe(false);
+        expect(filterIncludedLoopSectionIndex(3, { ...options, tutorialActive: isTutorialSong(none) })).toBe(3);
+        expect(filterIncludedLoopSectionIndex(3, { ...options, tutorialActive: isTutorialSong({ tutorial: { level: 'wizard' } }) })).toBe(0);
+        expect(filterIncludedLoopSectionIndex(3, { ...options, tutorialActive: isTutorialSong({ tutorial: { level: 'strict' } }) })).toBe(0);
     });
 });

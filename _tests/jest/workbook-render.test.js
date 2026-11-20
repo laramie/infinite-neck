@@ -1,4 +1,4 @@
-import { renderWorkbookHtml, renderStatusLine } from '../../WorkbookUI.js';
+import { renderWorkbookHtml, renderStatusLine, renderSortBar } from '../../WorkbookUI.js';
 
 function song(path, comment = '', bytes = 1024) {
     return { path, kind: 'song', seq: 1, comment, source: '', bytes };
@@ -74,5 +74,56 @@ describe('renderWorkbookHtml', () => {
         expect(html).toContain('not saved in this browser');
         expect(renderStatusLine({ changesSinceBackup: 7, lastBackupAt: null })).toContain('workbookStatusStale');
         expect(renderStatusLine({ changesSinceBackup: 0, lastBackupAt: '2026-11-18T00:00:00.000Z' })).not.toContain('workbookStatusStale');
+    });
+});
+
+describe('sort bar and move buttons (Iteration 2)', () => {
+    const folderView = (extra = {}) => ({
+        rootSongs: [{ ...song('a.json'), canUp: false, canDown: true }, { ...song('b.json'), canUp: true, canDown: false }],
+        folders: [{ name: 'F', seq: 3, canUp: false, canDown: true, songs: [{ ...song('F/c.json'), canUp: false, canDown: false }] }],
+        songCount: 3,
+        folderCount: 1,
+        totalBytes: 3,
+        meta: META,
+        ...extra
+    });
+
+    test('three sort buttons follow the Add Folder row, with the active one marked', () => {
+        const html = renderWorkbookHtml(folderView(), { sort: { key: 'date', dir: -1 } });
+        expect(html.indexOf("data-wb-action='addFolder'")).toBeLessThan(html.indexOf('workbookSortBar'));
+        expect(html).toContain('&#x2261; Default');
+        expect(html).toContain('&#x1F552; Date');
+        expect(html).toContain('&#x21C5; A-Z');
+        expect(html).toMatch(/workbookSortActive' data-wb-action='sort' data-wb-sort='date' aria-pressed='true' title='Newest first/);
+        expect(html).toMatch(/data-wb-sort='alpha' aria-pressed='false'/);
+        expect(renderSortBar({ key: 'date', dir: 1 })).toContain('Oldest first');
+        expect(renderSortBar({ key: 'alpha', dir: -1 })).toContain('Z to A');
+        expect(renderSortBar()).toMatch(/workbookSortActive' data-wb-action='sort' data-wb-sort='list'/);
+    });
+
+    test('Song rows have up, down and a glyph Remove; folder rows have up and down between Rename and Delete; no Add current Song here', () => {
+        const html = renderWorkbookHtml(folderView(), { openFolders: new Set(['F']) });
+        expect(html).toContain("class='ssMoveUp btnMoveTuningUp' data-wb-action='moveUp' data-wb-path='a.json' disabled");
+        expect(html).toContain("class='ssMoveDown btnMoveTuningDown' data-wb-action='moveDown' data-wb-path='a.json' title");
+        expect(html).toContain("class='ssMoveUp btnMoveTuningUp' data-wb-action='moveUp' data-wb-path='b.json' title");
+        expect(html).toContain("class='ssMoveDown btnMoveTuningDown' data-wb-action='moveDown' data-wb-path='b.json' disabled");
+        expect(html).toMatch(/btnMoveTuningDown' data-wb-action='moveDown' data-wb-path='a.json'[^>]*>&#x2B07;<\/button><button type='button' class='ssRemove btnRemoveTuning' data-wb-action='removeSong'/);
+        expect(html).not.toMatch(/>Remove<\/button>/);
+        expect(html).not.toContain('Delete folder<');
+        expect(html).not.toContain('Add current Song here');
+        expect(html).not.toContain('addSongHere');
+        const folderRow = html.slice(html.indexOf('workbookFolderTools'), html.indexOf("data-wb-path='F/c.json'"));
+        expect(folderRow.indexOf('renameFolder')).toBeLessThan(folderRow.indexOf('moveFolderUp'));
+        expect(folderRow.indexOf('moveFolderUp')).toBeLessThan(folderRow.indexOf('moveFolderDown'));
+        expect(folderRow.indexOf('moveFolderDown')).toBeLessThan(folderRow.indexOf('deleteFolder'));
+        expect(folderRow).toContain("class='ssMoveUp btnMoveTuningUp' data-wb-action='moveFolderUp' data-wb-folder='F' disabled");
+        expect(folderRow).toContain("class='ssRemove btnRemoveTuning' data-wb-action='deleteFolder' data-wb-folder='F' disabled");
+    });
+
+    test('while sorted, every move button is disabled (they move the stored order)', () => {
+        const html = renderWorkbookHtml(folderView(), { sort: { key: 'alpha', dir: 1 } });
+        const enabledMoves = html.match(/data-wb-action='move(Folder)?(Up|Down)'[^>]*>/g).filter((tag) => !tag.includes('disabled'));
+        expect(enabledMoves).toEqual([]);
+        expect(html).toContain('switch to Default order first');
     });
 });
