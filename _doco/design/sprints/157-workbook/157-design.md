@@ -100,4 +100,66 @@ The way we read the questions and recommendations, v1a and v1b are APPROVED to i
 
 We will wait for version v2 for all v2 choices and options deferred to v2.  None of the v2 choices need to be implemented.  This way, we can evaluate v1 and decide which persisted features we will need.  We like that all the v1 recommendations are safe and sensible.  Thus, the primary things that are not saved today will continue to be unsaved in v1, which is good: No autosave, no Workbook merge, no override of scaling prefs, no Practice List persistence, no tutorial progress other than the step `v1 binds progress to workbook/<path>` which seems good and simple.  As we work on v2 we will no doubt decide on regular Song persistence of these things for the same sprint iteration.
 
+# Iteration 1 UA Test Report
+
+Notes after PASS are not bugfix requests, they should simply be considered on the next Design iteration.
+
+1. Open a Library Song, click "Save to Workbook..." (the default name drops the `practice/` folder), reload the page, and confirm the Song is still in the Workbook.
+
+- RESULT: PASS
+
+
+2. Make a folder with a space in its name and confirm it is refused with a one-click "Fix name".
+
+
+- RESULT: PASS.  First click shows message and offers fixed name. Second click using suggestion creates folder.
+
+
+3. Open a folder, check the first-row buttons, and check that Delete is disabled while it has Songs.
+
+
+- RESULT: PASS
+
+
+4. Type a comment, reload, and check it was kept.
+
+
+- RESULT: PASS
+
+
+5. Download the Workbook, open it from a different origin such as another port, and confirm the Songs come back.
+
+
+- RESULT: PASS.  When launching with the new port 8001, "Workbook was missing" as expected.  Opened from file.  Made change in comment.  When launching from 8000, old workbook was in Browser.  Then opened saved version from 8001 and comment was there.  All as expected.
+
+
+6. Pick a Song file in Open Workbook, and a Workbook file in Open Song. Each should refuse with a message.
+
+
+- RESULT:  PASS.  Note: Message for open Workbook from song file control is a native Confirmation dialog, whereas  Message for open Song from Workbook file control is red message in Workbook file control area.  Both are correct given the design documents, but the dialog caught my attention better.  Might want to do both for the Workbook open file since the red text is free, but just keep dialog only for song open, since there is no red text area for Open Song, and we don't want to add one.
+
+
+7. Open a tutorial Song from the Workbook, set a bookmark, and confirm the Library original is unaffected.
+
+- RESULT: PASS
+
+Claude Comment from UA recipe: The "Open Workbook" confirm always appears when the stored Workbook is non-empty, with an extra warning when there are undownloaded changes. That follows the design, but you may want to judge it in use.
+
+- RESULT: Warnings seem right, and Cancel works to abort the loading.
+
+# Iteration 2
+
+## UX changes
+
+For Iteration 2 we would like the following APPROVED changes:
+
+1) Within the Workbook element, after the `addFolder` button, in the next row, we would like a row of three buttons to sort the rest of the Workbook folders and all the Songs in the root and in subfolders.  There will be three sorts: 1) by-list order, which is what it is now, caption `&#x2261; Default`,  2) by-last-modified-or-saved-date, caption: `&#x1F552; Date`, 3) Alphabetic-case-sensitive, caption: `&#x21C5; A-Z` .  One click on a sort button re-organizes and redisplays the list, but doesn't open or close folders.  A subsequent click on date or alpha sort reverses the sort.  But a subsequent click on list-order does not reverse the sort:  we want list-order to always be order of addition and to be the storage in the Workbook file, which should not be changed. So all files in each subfolder are then in the chosen order, and the folders are also in the chosen order.  This is session-only display and is not persisted. Nor is the choice of sort persisted.  On launch of infinite-neck, or open of a Workbook, default order is list-order, i.e. order that it is stored in.
+
+2) The list-order may be changed by list management buttons: folder up/down buttons, and song up/down buttons. These should look like up/down buttons in Tunings > Tunings in Song > Move, and also in Stylesheets User rows, e.g. `class="ssMoveUp btnMoveTuningUp"`, and also `btnMoveTuningDown`.  The file up/down buttons live on the Song row, before `Remove`, and `Remove` gets the styling of `ssRemove btnRemoveTuning` instead of the current word `Remove`.  The Folder buttons live on the row with `Rename Folder` and `Delete Folder` with `Delete Folder` being restyled as `ssRemove btnRemoveTuning` instead of the words `Delete Folder`, and the up/down buttons appearing between the current `Rename Folder` and `Delete Folder`.  The `Add current Song here` button is obviated and removed.  Its functionality is covered by the `Save to Workbook` button, and just means the User must select the folder manually. However, on save, the chosen destination folder should be opened so the user can see the addition there.  There are no sort buttons within the folders, because the sort within Workbook does all folders and songs at once.  (But there are up/down/remove buttons within the folders for songs as already explained.) The up/down buttons change the list-order, so the new list-order does get persisted to the Browser, and to the Workbook on save.
+
+3) In a Workbook, `Include in Looping` checkbox states *do* get persisted, but to the *Workbook* not the Song.  In a Library Song, they do not.  In a Song loaded from User's local disk, they do not.  This is new behavior, and is only for Workbook Songs.  We believe it already works, but we should ensure that when in Tutorial Mode `none` that `Include in Looping` has no effect.
+
+4) In a Workbook, the Bookmark and Done stati get saved *to the workbook IndexedDB* and to the Workbook file if downloaded, and not Browser Storage the way they are now for Tutorials.  On opening a song from the Library or Disk, and causing Browser Storage to have Bookmark and Done values, these values get saved to the Workbook if the Song is added to the Workbook, and then win over those values that may be present in the non-Workbook song, which should work because we made Workbooks have different keys.  So really, they should not conflict, and are should only be consulted at the moment a Song from Library or Disk is saved to a Workbook, and thereafter should only consult the Workbook storage.
+
+
 
