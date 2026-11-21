@@ -128,6 +128,10 @@
     font-size: 120%;
     color: rgb(74, 20, 0);
 }
+/* Sprint 152 it4 round 2: wizard shows the Song tutorial caption too, above the header, without the strict indent. */
+.tutorialPromptWizardBreadcrumbs .tutorialBreadcrumbsLeader {
+    padding-left: 0.2em;
+}
 
 .tutorialPromptWidgetRow {
     display: inline-block;

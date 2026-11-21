@@ -57,4 +57,37 @@ If this is all consistent, then please ensure that tests are updated.
 We are left with the unfortunate name `useCaptionForSectionCaption` which really means "useSectionCaptionForSectionTutorialCaption".  However, we want to leave it as useCaptionForSectionCaption for now, since the code generally works, and we want to sort out the other confusions first.
 
 
+## Status
+
+Copilot did the coding, and simplified it in the response.  The app now works simply and logically with these captions, as tested in the Browser.  So this Iteration is closed.
+
+## Copilot Response
+
+Round 2 is coded and the full Jest suite passes (1453 tests). I didn't run the UI, so the browser check is yours.
+
+I found no fatal inconsistency in the spec. Your three rows come out as you described:
+- **Tutorial row:** `Song.tutorial.caption` is the breadcrumbs row, shown in both wizard and strict mode, and blank if omitted.
+- **Section row:** `.tutorialPromptCaption` is `Section.tutorial.caption`. With "use Section caption for tutorial" on, it is the Section's own caption instead. If that is blank, the row stays blank.
+- **No fallback:** `Song.tutorial.caption` is never used as the Section row.
+
+**Changes**
+- **Caption rules:** these are in tutorial.builder.js. The lesson list for the current Section now uses the Section's own caption in the same way.
+- **Wizard breadcrumbs:** the "Tutorial:" row sits above the header, outside `tutorialPromptBurgerControls`, so it is always visible. I put it outside because wizard has no hamburger, and a collapsed state left over from strict mode would otherwise hide it.
+- **Strict:** the layout is unchanged.
+- **CSS:** tutorial.css drops the strict-style indent on the wizard "Tutorial:" row.
+- **Menu text:** the `/vpu` item in menu.js now reads "use Section caption for tutorial". The trigger, action and `useCaptionForSectionCaption` name are unchanged.
+- **Help:** help.html uses the new menu name, mentions "Edit Caption", and says the main caption heads the prompt area.
+- **Tests:** tutorial-builder.test.js is updated, with new cases covering these rules in both modes.
+
+**Things to check**
+- **Blank "Tutorial:" row:** wizard mode shows the "Tutorial:" label even when `Song.tutorial.caption` is blank, matching strict.
+- **Caption escaping:** a Section's own caption is escaped as plain text in both modes. Authored strict tutorial captions stay trusted HTML.
+- **Build process:** it still writes `Song.tutorial.caption` from `data-caption-for-tutorial`, and a rebuild can overwrite a `/vpe` edit. That is the only conflict I found.
+- **Old songs:** songs that relied on the fallback from the Section row to `Song.tutorial.caption` now show a blank Section caption.
+
+I didn't add a Round 2 checklist to 152-it4-design.md, since you didn't ask for a new document section.
+
+Made changes.
+
+-----
 

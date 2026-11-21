@@ -27,3 +27,4 @@ Purpose of this sprint is to:
   - "Iteration 2": Implement the design (IncludeInLooping in wizard mode, practice list).
   - "Iteration 3": Edit Prompt button in wizard mode.  See [sprint-152-it3-feature.md](sprint-152-it3-feature.md).
   - "Iteration 4": Re-opening sprint to fix wizard editing of tutorial caption. [152-it4-design.md](152-it4-design.md)
+    - "Round 2": Fixed business of Tutorial.caption being used as Section.tutorial.caption.  Now cascades more logically.  Also, both are visible in wizard mode now.

@@ -1726,7 +1726,7 @@ export var gMenuFile =    {
               "preserveMenuStack": true
             },
             {
-              "caption": "<b>u</b>se caption for tutorial [${useCaptionForTutorialState}]",
+              "caption": "<b>u</b>se Section caption for tutorial [${useCaptionForTutorialState}]",
               "trigger": "u",
               "action": "useCaptionForSectionCaptionAction",
               "vars": [

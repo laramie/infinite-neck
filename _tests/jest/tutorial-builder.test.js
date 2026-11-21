@@ -67,7 +67,10 @@ describe('Tutorial Prompt builder', () => {
         expect(html).toContain('Intro');
         expect(html).toContain('Start');
         expect(html).not.toContain('lessonSectionList');
-        expect(html).not.toContain('tutorialPromptBreadcrumbs');
+        // Sprint 152 it4 round 2: wizard shows the Song tutorial caption row, but not the strict controls.
+        expect(html).toContain('tutorialPromptBreadcrumbs');
+        expect(html).not.toContain('tutorialPromptSectionToggle');
+        expect(html).not.toContain('tutorialPromptWidgetRow');
     });
 
     test('bakes active loop state and caption into the LOOP buttons so re-render on Section change cannot regress it', () => {
@@ -91,15 +94,49 @@ describe('Tutorial Prompt builder', () => {
         expect(activeHtml).toContain('class="tutorialLoopBeats classLoopBeats ButtonOn" data-action="tutorialLoopBeats">');
     });
 
-    test('the Song tutorial caption in the header is escaped (it is plain text)', () => {
+    test('the Song tutorial caption is the breadcrumbs (escaped, plain text), never the Section caption row', () => {
         const song = {
             tutorial: { level: 'wizard', caption: 'A & <b>B</b>' },
-            sections: [{ caption: '' }],
-            getCurrentSection() { return this.sections[0]; },
-            getSections() { return this.sections; }
+            sections: [{ caption: '' }]
         };
         const html = renderTutorialPrompt(buildTutorialPromptModel({ song, currentSectionIndex: 0 }));
-        expect(html).toContain('<span class="tutorialPromptCaption">A &amp; &lt;b&gt;B&lt;/b&gt;</span>');
+        expect(html).toContain('<span class="tutorialPromptBreadcrumbs">A &amp; &lt;b&gt;B&lt;/b&gt;</span>');
+        expect(html).toContain('<span class="tutorialPromptCaption"></span>');
+    });
+
+    test('breadcrumbs come before the header in wizard, and are still blank-safe', () => {
+        const song = { tutorial: { level: 'wizard' }, sections: [{}] };
+        const html = renderTutorialPrompt(buildTutorialPromptModel({ song, currentSectionIndex: 0 }));
+        expect(html).toContain('<span class="tutorialPromptBreadcrumbs"></span>');
+        expect(html.indexOf('tutorialBreadcrumbsLeader')).toBeLessThan(html.indexOf('tutorialPromptHeader'));
+    });
+
+    test('strict: the Song caption is the breadcrumbs and the Section tutorial caption is the header; a blank one stays blank', () => {
+        const song = tutorialSong();
+        song.sections[2].tutorial = undefined;
+        const withCaption = renderTutorialPrompt(buildTutorialPromptModel({ song, currentSectionIndex: 0 }));
+        expect(withCaption).toContain('<span class="tutorialPromptBreadcrumbs">Course / Lesson</span>');
+        expect(withCaption).toContain('<span class="tutorialPromptCaption">Intro</span>');
+        const blank = renderTutorialPrompt(buildTutorialPromptModel({ song, currentSectionIndex: 2 }));
+        expect(blank).toContain('<span class="tutorialPromptCaption"></span>');
+        expect(blank).not.toContain('<span class="tutorialPromptCaption">Course / Lesson</span>');
+    });
+
+    test('"use Section caption for tutorial": the header is the Section caption (escaped), or blank, never the Song caption', () => {
+        ['strict', 'wizard'].forEach((level) => {
+            const song = {
+                tutorial: { level, caption: 'Song Cap', useCaptionForSectionCaption: true },
+                sections: [{ caption: 'A & B', tutorial: { caption: 'ignored' } }, { caption: '' }, {}]
+            };
+            const first = renderTutorialPrompt(buildTutorialPromptModel({ song, currentSectionIndex: 0 }));
+            expect(first).toContain('<span class="tutorialPromptCaption">A &amp; B</span>');
+            expect(first).toContain('<span class="tutorialPromptBreadcrumbs">Song Cap</span>');
+            [1, 2].forEach((index) => {
+                const html = renderTutorialPrompt(buildTutorialPromptModel({ song, currentSectionIndex: index }));
+                expect(html).toContain('<span class="tutorialPromptCaption"></span>');
+                expect(html).not.toContain('<span class="tutorialPromptCaption">Song Cap</span>');
+            });
+        });
     });
 
     describe('Edit Prompt (sprint 152 it3, wizard mode)', () => {

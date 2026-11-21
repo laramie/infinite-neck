@@ -37,7 +37,7 @@ export function buildLessonSectionListModel({
     return Array.from({ length: sectionCount }, (_, index) => {
         const tutorial = getSectionTutorial(song, index);
         let theSectionCaption = song?.tutorial?.useCaptionForSectionCaption 
-            ? song.getSections()[index].caption
+            ? (typeof song?.sections?.[index]?.caption === 'string' ? song.sections[index].caption : '')
             : typeof tutorial.caption === 'string' ? tutorial.caption : '';
         // Authored strict captions are trusted HTML.  A blank caption falls back to the Section's own caption (plain text, escaped when rendered).
         let captionIsHtml = strict;
@@ -122,9 +122,15 @@ export function buildTutorialPromptModel({
     const sectionCount = normalizeSectionCount(song);
     const canEditPrompt = canEditTutorialPrompt(song);
     const canEditCaption = canEditTutorialCaption(song);
-    let theSectionCaption = typeof sectionTutorial.caption === 'string' ? sectionTutorial.caption : '';
-    if (song?.tutorial?.useCaptionForSectionCaption) {
-        theSectionCaption = song?.getCurrentSection().caption;
+    // Sprint 152 it4 round 2: .tutorialPromptCaption is the Section.tutorial.caption, or (when "use Section caption for tutorial" is on)
+    // the Section's own caption, or blank.  Song.tutorial.caption is never used here; it heads the page as the breadcrumbs.
+    const useSectionCaption = !!song?.tutorial?.useCaptionForSectionCaption;
+    let theSectionCaption;
+    if (useSectionCaption) {
+        const ownCaption = song?.sections?.[currentSectionIndex]?.caption;
+        theSectionCaption = typeof ownCaption === 'string' ? ownCaption : '';
+    } else {
+        theSectionCaption = typeof sectionTutorial.caption === 'string' ? sectionTutorial.caption : '';
     }
     return {
         mode,
@@ -139,6 +145,8 @@ export function buildTutorialPromptModel({
         captionEditText: typeof sectionTutorial.caption === 'string' ? sectionTutorial.caption : '',
         songCaption: typeof song?.tutorial?.caption === 'string' ? song.tutorial.caption : '',
         sectionCaption: theSectionCaption,
+        // Authored strict captions are trusted HTML; a Section's own caption, and wizard captions, are plain text.
+        sectionCaptionIsHtml: mode === TUTORIAL_MODES.STRICT && !useSectionCaption,
         currentSectionIndex,
         currentSectionNumber: currentSectionIndex + 1,
         sectionCount,
@@ -224,17 +232,19 @@ export function renderTutorialPrompt(model = {}) {
     const hamburgerArrow = model.hamburgerControlsOpen ? "&#x1F781;" : "&#x1F782;"
     const sectionCurrOfCount = `<span class="tutorialSectionMark">&sect; </span><b>${model.currentSectionNumber}</b> <small>of</small> <b>${model.sectionCount}</b>`;    
     const sectionCurr = `<span class="tutorialSectionMark">&sect;</span>${model.currentSectionNumber}:&nbsp;&nbsp;`;    
-    const breadcrumbs = model.strict
-        ? `<span class="tutorialPromptBreadcrumbs">${escapeHtml(model.songCaption)}</span>`
-        : '';
-    
+    // Song.tutorial.caption heads the page in strict and wizard modes (first row; blank when omitted).
+    const breadcrumbsRow = '<span class="tutorialBreadcrumbsLeader">Tutorial: </span><span class="tutorialPromptBreadcrumbsRow">'
+        + `<span class="tutorialPromptBreadcrumbs">${escapeHtml(model.songCaption)}</span>`
+        + '</span>';
+
     const sectionToggle = model.strict
         ? '<button type="button" class="tutorialPromptSectionToggle" data-action="tutorialToggleSectionList">Tutorial Sections &nbsp;&nbsp;'+arrow+'</button>'
             +'&nbsp;&nbsp;'+sectionCurrOfCount
-            +'<span class="tutorialBreadcrumbsLeader">Tutorial: </span><span class="tutorialPromptBreadcrumbsRow">'
-            +  breadcrumbs
-            +'</span><br>'
+            +breadcrumbsRow
+            +'<br>'
         : '';
+    // Wizard has no hamburger, so its breadcrumbs sit outside #tutorialPromptBurgerControls and are always visible.
+    const wizardBreadcrumbs = model.wizard ? `<div class="tutorialPromptWizardBreadcrumbs">${breadcrumbsRow}</div>` : '';
     const tutorialPromptWidgetRow = model.strict
         ?  '<div class="tutorialPromptWidgetRow">'
          + '<button type="button" class="tutorialNav" data-action="tutorialFirstSection">&#x21E4; First</button>'
@@ -256,8 +266,7 @@ export function renderTutorialPrompt(model = {}) {
                 :  '';
     
     const tutorialCaptionEditorDiv = model.captionEditing ? renderCaptionEditor(model) : '';
-    // Wizard captions are plain text, so they are escaped; strict captions are authored (trusted) HTML.
-    const sectionCaptionHtml = model.strict ? model.sectionCaption : escapeHtml(model.sectionCaption ?? '');
+    const sectionCaptionHtml = model.sectionCaptionIsHtml ? (model.sectionCaption ?? '') : escapeHtml(model.sectionCaption ?? '');
 
     const hamburger = model.strict ? '<button type="button" class="tutorialWidgetRowHamburger" data-action="tutorialToggleHamburgerControls">&equiv; &nbsp;'+hamburgerArrow+'</button>' : '';
     const hamburgerControlsStyle = (model.hamburgerControlsOpen === true) 
@@ -270,9 +279,10 @@ export function renderTutorialPrompt(model = {}) {
             + lessonList
             + tutorialPromptWidgetRow
             + '</span>'
+            + wizardBreadcrumbs
             + '<span class="tutorialPromptHeader">'
             +   hamburger
-            +   sectionCurr+`<span class="tutorialPromptCaption">${sectionCaptionHtml || escapeHtml(model.songCaption)}</span>`
+            +   sectionCurr+`<span class="tutorialPromptCaption">${sectionCaptionHtml}</span>`
             + '</span>'
             + tutorialCaptionEditorDiv
             + tutorialPromptContentDiv
