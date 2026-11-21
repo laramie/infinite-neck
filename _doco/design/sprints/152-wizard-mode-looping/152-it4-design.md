@@ -23,14 +23,18 @@ We want to change this to the new rules:
 
 ## Manual acceptance checklist
 
-- [ ] Wizard, "use caption for tutorial" off: "Edit Caption" stacked above "Edit Prompt" at the right.
-- [ ] Edit Caption: warning says "...will re-write this caption."; textarea holds the current tutorial caption; click outside or Esc saves; header caption updates; empty removes it.
-- [ ] Wizard, "use caption for tutorial" on: boxed "§ Caption" label above "Edit Prompt"; Edit Prompt works.
-- [ ] Strict and none: no buttons or label.
-- [ ] Looping with the caption editor open accepts the edit onto the Section that was edited.
-- [ ] Save and reload: the edited caption persists.
+- [PASS] Wizard, "use caption for tutorial" off: "Edit Caption" stacked above "Edit Prompt" at the right.
+- [PASS] Edit Caption: warning says "...will re-write this caption."; textarea holds the current tutorial caption; click outside or Esc saves; header caption updates; empty removes it.
+- [PASS] Wizard, "use caption for tutorial" on: boxed "§ Caption" label above "Edit Prompt"; Edit Prompt works.
+- [PASS] Strict and none: no buttons or label.
+- [PASS] Looping with the caption editor open accepts the edit onto the Section that was edited.
+- [PASS] Save and reload: the edited caption persists.
 
-# sprint-152 Iteration 5
+# sprint-152 Iteration 4 Round 2
+
+We have marked the Manual acceptance checklist from Iteration 4 Round 1 as PASS.
+
+We have tweaked a little CSS.
 
 In "use caption for tutorial" mode (set by menu.js through key-handlers.js as `tutorial.useCaptionForSectionCaption`), we have specified that if Section.caption is available, then that gets used for the tutorial section caption which is `.tutorialPromptCaption`, otherwise the `Song.tutorial.caption` gets used.  We'd like to roll that back a bit to the new rules: 
 - if no Section.caption is available in "use caption for tutorial" mode, then let the `.tutorialPromptCaption` be blank.
