@@ -1,9 +1,12 @@
 import {
     buildLessonSectionListModel,
     buildTutorialPromptModel,
+    renderCaptionEditor,
     renderLessonSectionList,
     renderPracticeList,
     renderPromptEditor,
+    renderTutorialCaptionEditButton,
+    renderTutorialEditButtons,
     renderTutorialPrompt,
     renderTutorialPromptEditButton
 } from '../../templates/tutorial/tutorial.builder.js';
@@ -121,16 +124,63 @@ describe('Tutorial Prompt builder', () => {
             expect(html).not.toContain('tutorialPromptEditWarning');
         });
 
-        test('no button for strict, none, or when "use caption for tutorial" is on', () => {
+        test('no button for strict or none', () => {
             ['strict', 'none'].forEach((level) => {
-                const model = buildTutorialPromptModel({ song: { ...wizardSong(), tutorial: { level } }, currentSectionIndex: 0, promptEditing: true });
+                const model = buildTutorialPromptModel({ song: { ...wizardSong(), tutorial: { level } }, currentSectionIndex: 0, promptEditing: true, captionEditing: true });
                 expect(model.canEditPrompt).toBe(false);
                 expect(model.promptEditing).toBe(false);
+                expect(model.captionEditing).toBe(false);
                 expect(renderTutorialPromptEditButton(model)).toBe('');
+                expect(renderTutorialCaptionEditButton(model)).toBe('');
+                expect(renderTutorialEditButtons(model)).toBe('');
             });
-            const model = buildTutorialPromptModel({ song: wizardSong({ useCaptionForSectionCaption: true }), currentSectionIndex: 0, promptEditing: true });
-            expect(renderTutorialPromptEditButton(model)).toBe('');
-            expect(renderTutorialPrompt(model)).not.toContain('tutorialPromptEditor');
+        });
+
+        test('"use caption for tutorial" no longer hides Edit Prompt; the caption becomes a label', () => {
+            const model = buildTutorialPromptModel({ song: wizardSong({ useCaptionForSectionCaption: true }), currentSectionIndex: 0 });
+            expect(renderTutorialPromptEditButton(model)).toContain('data-action="tutorialEditPrompt"');
+            expect(renderTutorialCaptionEditButton(model)).toBe('<span class="tutorialCaptionLabel">&sect; Caption</span>');
+            expect(renderTutorialCaptionEditButton(model)).not.toContain('<button');
+            const stack = renderTutorialEditButtons(model);
+            expect(stack.indexOf('tutorialCaptionLabel')).toBeLessThan(stack.indexOf('tutorialEditPrompt'));
+        });
+
+        test('wizard without "use caption for tutorial": Edit Caption stacks above Edit Prompt', () => {
+            const model = buildTutorialPromptModel({ song: wizardSong(), currentSectionIndex: 0 });
+            const stack = renderTutorialEditButtons(model);
+            expect(stack).toContain('data-action="tutorialEditCaption">Edit Caption</button>');
+            expect(stack.indexOf('tutorialEditCaption')).toBeLessThan(stack.indexOf('tutorialEditPrompt'));
+            expect(stack).not.toContain('tutorialCaptionLabel');
+        });
+
+        test('while editing the caption: the caption editor with its warning replaces nothing else, and the buttons are hidden', () => {
+            const song = wizardSong();
+            song.sections[0].tutorial.caption = 'Tom & <b>Jerry</b>';
+            const model = buildTutorialPromptModel({ song, currentSectionIndex: 0, captionEditing: true });
+            expect(model.captionEditing).toBe(true);
+            expect(renderTutorialEditButtons(model)).toBe('');
+            const html = renderTutorialPrompt(model);
+            expect(html).toContain('will re-write this caption.</div>');
+            expect(html).toContain('id="tutorialCaptionEditor"');
+            expect(html).toContain('>\nTom &amp; &lt;b&gt;Jerry&lt;/b&gt;</textarea>');
+            expect(html).toContain('tutorialPromptContent');
+        });
+
+        test('the caption editor is not available when "use caption for tutorial" is on', () => {
+            const model = buildTutorialPromptModel({ song: wizardSong({ useCaptionForSectionCaption: true }), currentSectionIndex: 0, captionEditing: true });
+            expect(model.captionEditing).toBe(false);
+            expect(renderTutorialPrompt(model)).not.toContain('tutorialCaptionEditor');
+        });
+
+        test('renderCaptionEditor is empty for a Section with no tutorial caption', () => {
+            expect(renderCaptionEditor({})).toMatch(/<textarea[^>]*>\n<\/textarea>/);
+        });
+
+        test('the wizard header escapes the plain-text tutorial caption', () => {
+            const song = wizardSong();
+            song.sections[0].tutorial.caption = 'A & <b>B</b>';
+            const html = renderTutorialPrompt(buildTutorialPromptModel({ song, currentSectionIndex: 0 }));
+            expect(html).toContain('<span class="tutorialPromptCaption">A &amp; &lt;b&gt;B&lt;/b&gt;</span>');
         });
 
         test('while editing: the warning and a textarea holding the existing prompt replace the rendered prompt, and the button is hidden', () => {

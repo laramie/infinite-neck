@@ -1,6 +1,7 @@
 import { escapeHtml } from '../../InstrumentRoleBadges.js';
 import { getSanitizedInfo } from '../../html-sanitizer.js';
 import {
+    canEditTutorialCaption,
     canEditTutorialPrompt,
     getLoopCaptionModel,
     isSectionDone,
@@ -113,12 +114,14 @@ export function buildTutorialPromptModel({
     hamburgerControlsOpen = true,
     sectionsLoopActive = false,
     beatsLoopActive = false,
-    promptEditing = false
+    promptEditing = false,
+    captionEditing = false
 } = {}) {
     const mode = normalizeTutorialMode(song?.tutorial?.level);
     const sectionTutorial = getSectionTutorial(song, currentSectionIndex);
     const sectionCount = normalizeSectionCount(song);
     const canEditPrompt = canEditTutorialPrompt(song);
+    const canEditCaption = canEditTutorialCaption(song);
     let theSectionCaption = typeof sectionTutorial.caption === 'string' ? sectionTutorial.caption : '';
     if (song?.tutorial?.useCaptionForSectionCaption) {
         theSectionCaption = song?.getCurrentSection().caption;
@@ -130,6 +133,10 @@ export function buildTutorialPromptModel({
         canEditPrompt,
         promptEditing: canEditPrompt && !!promptEditing,
         promptEditText: promptToEditText(sectionTutorial.prompt),
+        canEditCaption,
+        captionIsLabel: canEditPrompt && !canEditCaption, // wizard with "use caption for tutorial": a label, not a button
+        captionEditing: canEditCaption && !!captionEditing,
+        captionEditText: typeof sectionTutorial.caption === 'string' ? sectionTutorial.caption : '',
         songCaption: typeof song?.tutorial?.caption === 'string' ? song.tutorial.caption : '',
         sectionCaption: theSectionCaption,
         currentSectionIndex,
@@ -166,12 +173,47 @@ export function renderPromptEditor(model = {}) {
         + '</div>';
 }
 
-/** Sprint 152 it3, wizard mode only: the small button that floats to the right of the Prompt Area.  Hidden while editing. */
+/** Sprint 152 it4, wizard mode only: the tutorial caption editor (`section.tutorial.caption`), exactly like the prompt editor.
+ *  The caption is plain text. */
+export function renderCaptionEditor(model = {}) {
+    return '<div class="tutorialPromptEdit tutorialCaptionEdit">'
+        + '<div class="tutorialPromptEditWarning">WARNING: Running the tutorial builder (npm build:tutorial-prompts) will re-write this caption.</div>'
+        + '<div class="tutorialPromptEditHint">Click outside the box, or press Esc, to save the caption.  It is plain text.  An empty box removes the caption.</div>'
+        + `<textarea id="tutorialCaptionEditor" class="tutorialPromptEditor tutorialCaptionEditor" rows="2" spellcheck="false" aria-label="Tutorial caption for this Section">\n${escapeHtml(model.captionEditText ?? '')}</textarea>`
+        + '</div>';
+}
+
+function isEditingAnything(model = {}) {
+    return !!(model.promptEditing || model.captionEditing);
+}
+
+/** Sprint 152 it3, wizard mode only: the small Edit Prompt button at the right of the Prompt Area.  Hidden while editing. */
 export function renderTutorialPromptEditButton(model = {}) {
-    if (!model.wizard || !model.canEditPrompt || model.promptEditing) {
+    if (!model.wizard || !model.canEditPrompt || isEditingAnything(model)) {
         return '';
     }
     return '<button type="button" class="BtnPunchedOut tutorialPromptEditButton" data-action="tutorialEditPrompt">Edit Prompt</button>';
+}
+
+/** Sprint 152 it4, wizard mode only: an Edit Caption button, or (when "use caption for tutorial" is on, so the caption is not
+ *  editable) a boxed "&sect; Caption" label.  The button is hidden while editing; the label always shows. */
+export function renderTutorialCaptionEditButton(model = {}) {
+    if (!model.wizard) {
+        return '';
+    }
+    if (model.captionIsLabel) {
+        return '<span class="tutorialCaptionLabel">&sect; Caption</span>';
+    }
+    if (!model.canEditCaption || isEditingAnything(model)) {
+        return '';
+    }
+    return '<button type="button" class="BtnPunchedOut tutorialPromptEditButton tutorialCaptionEditButton" data-action="tutorialEditCaption">Edit Caption</button>';
+}
+
+/** Sprint 152 it4: the Edit Caption button (or label) stacked above the Edit Prompt button.  '' when neither shows. */
+export function renderTutorialEditButtons(model = {}) {
+    const html = renderTutorialCaptionEditButton(model) + renderTutorialPromptEditButton(model);
+    return html ? `<div class="tutorialPromptEditStack">${html}</div>` : '';
 }
 
 export function renderTutorialPrompt(model = {}) {
@@ -213,6 +255,10 @@ export function renderTutorialPrompt(model = {}) {
                 ?   `<div class="tutorialPromptContent">${model.promptHtml}</div>`
                 :  '';
     
+    const tutorialCaptionEditorDiv = model.captionEditing ? renderCaptionEditor(model) : '';
+    // Wizard captions are plain text, so they are escaped; strict captions are authored (trusted) HTML.
+    const sectionCaptionHtml = model.strict ? model.sectionCaption : escapeHtml(model.sectionCaption ?? '');
+
     const hamburger = model.strict ? '<button type="button" class="tutorialWidgetRowHamburger" data-action="tutorialToggleHamburgerControls">&equiv; &nbsp;'+hamburgerArrow+'</button>' : '';
     const hamburgerControlsStyle = (model.hamburgerControlsOpen === true) 
            ?' style="display: inline;" '
@@ -226,8 +272,9 @@ export function renderTutorialPrompt(model = {}) {
             + '</span>'
             + '<span class="tutorialPromptHeader">'
             +   hamburger
-            +   sectionCurr+`<span class="tutorialPromptCaption">${model.sectionCaption || escapeHtml(model.songCaption)}</span>`
+            +   sectionCurr+`<span class="tutorialPromptCaption">${sectionCaptionHtml || escapeHtml(model.songCaption)}</span>`
             + '</span>'
+            + tutorialCaptionEditorDiv
             + tutorialPromptContentDiv
          + '</div>';
 }
@@ -264,8 +311,8 @@ export class TutorialPromptBuilder {
         return html;
     }
 
-    /** The Edit Prompt button lives in a sibling host, side by side with #tutorialPrompt (which is replaced on every render).
-     *  The destination only becomes a flex row while the button is showing, so strict and none layouts are untouched. */
+    /** The Edit Caption / Edit Prompt buttons (stacked) live in a sibling host, side by side with #tutorialPrompt (which is replaced on every render).
+     *  The destination only becomes a flex row while a button or label is showing, so strict and none layouts are untouched. */
     static renderEditButton(model) {
         const $dest = $(TutorialPromptBuilder.divTutorialPrompt).parent();
         if ($dest.length === 0) {
@@ -275,7 +322,7 @@ export class TutorialPromptBuilder {
         if ($host.length === 0) {
             $host = $('<div id="tutorialPromptEditHost" class="tutorialPromptEditHost"></div>').appendTo($dest);
         }
-        const buttonHtml = renderTutorialPromptEditButton(model);
+        const buttonHtml = renderTutorialEditButtons(model);
         $host.html(buttonHtml);
         $dest.toggleClass('tutorialPromptHost--sideBySide', buttonHtml !== '');
     }

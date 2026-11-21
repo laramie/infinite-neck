@@ -1,7 +1,10 @@
 import {
+  applyCaptionToSectionTutorial,
   applyCaptionToSongTutorial,
   applyPromptToSectionTutorial,
+  canEditTutorialCaption,
   canEditTutorialPrompt,
+  captionTextToCaption,
   filterIncludedLoopSectionIndex,
   getLoopCaptionModel,
   getProgressBadgeModel,
@@ -67,12 +70,40 @@ describe('Tutorial caption and "use caption for tutorial" authoring (sprint 152 
 });
 
 describe('Tutorial prompt editing helpers (sprint 152 it3)', () => {
-  test('canEditTutorialPrompt: wizard only, and not with "use caption for tutorial"', () => {
+  test('canEditTutorialPrompt: wizard only, whatever "use caption for tutorial" says', () => {
     expect(canEditTutorialPrompt({ tutorial: { level: 'wizard' } })).toBe(true);
-    expect(canEditTutorialPrompt({ tutorial: { level: 'wizard', useCaptionForSectionCaption: true } })).toBe(false);
+    expect(canEditTutorialPrompt({ tutorial: { level: 'wizard', useCaptionForSectionCaption: true } })).toBe(true);
     expect(canEditTutorialPrompt({ tutorial: { level: 'strict' } })).toBe(false);
     expect(canEditTutorialPrompt({ tutorial: { level: 'none' } })).toBe(false);
     expect(canEditTutorialPrompt({})).toBe(false);
+  });
+
+  test('canEditTutorialCaption (it4): wizard only, and not with "use caption for tutorial"', () => {
+    expect(canEditTutorialCaption({ tutorial: { level: 'wizard' } })).toBe(true);
+    expect(canEditTutorialCaption({ tutorial: { level: 'wizard', useCaptionForSectionCaption: true } })).toBe(false);
+    expect(canEditTutorialCaption({ tutorial: { level: 'strict' } })).toBe(false);
+    expect(canEditTutorialCaption({ tutorial: { level: 'none' } })).toBe(false);
+    expect(canEditTutorialCaption({})).toBe(false);
+  });
+
+  test('captionTextToCaption passes the text through the plain-text converter and trims', () => {
+    const seen = [];
+    const spy = (text) => { seen.push(text); return `  ${text}  `; };
+    expect(captionTextToCaption('a\r\nb', spy)).toBe('a\nb');
+    expect(seen).toEqual(['a\nb']);
+    expect(captionTextToCaption(undefined)).toBe('');
+    expect(captionTextToCaption('   ')).toBe('');
+  });
+
+  test('applyCaptionToSectionTutorial sets and removes the caption without touching the prompt, and does not mutate', () => {
+    const prompt = { lines: ['<p>x</p>'] };
+    expect(applyCaptionToSectionTutorial({ prompt }, 'Cap')).toEqual({ prompt, caption: 'Cap' });
+    expect(applyCaptionToSectionTutorial(undefined, 'Cap')).toEqual({ caption: 'Cap' });
+    expect(applyCaptionToSectionTutorial({ caption: 'Cap', prompt }, '')).toEqual({ prompt });
+    expect(applyCaptionToSectionTutorial({ caption: 'Cap' }, '')).toBeUndefined();
+    const original = { caption: 'Cap' };
+    applyCaptionToSectionTutorial(original, '');
+    expect(original).toEqual({ caption: 'Cap' });
   });
 
   test('promptToEditText joins the existing lines, and is empty without a prompt', () => {

@@ -21,11 +21,33 @@ export function isTutorialSong(song = {}) {
     return normalizeTutorialMode(song?.tutorial?.level) !== TUTORIAL_MODES.NONE;
 }
 
-/** Sprint 152 it3: the wizard-mode "Edit Prompt" button exists only in wizard mode, and not when the Section
- *  caption is used as the tutorial caption (that setting means the Song is not authoring prompts). */
+/** Sprint 152 it3/it4: the wizard-mode "Edit Prompt" button exists only in wizard mode (strict and none never edit).
+ *  "use caption for tutorial" does not matter for the prompt. */
 export function canEditTutorialPrompt(song = {}) {
-    return normalizeTutorialMode(song?.tutorial?.level) === TUTORIAL_MODES.WIZARD
-        && !song?.tutorial?.useCaptionForSectionCaption;
+    return normalizeTutorialMode(song?.tutorial?.level) === TUTORIAL_MODES.WIZARD;
+}
+
+/** Sprint 152 it4: the wizard-mode tutorial caption (`section.tutorial.caption`) is editable, except when "use caption for tutorial"
+ *  is on: then the Section's own caption is shown instead, and the Edit Caption button is a "&sect; Caption" label. */
+export function canEditTutorialCaption(song = {}) {
+    return canEditTutorialPrompt(song) && !song?.tutorial?.useCaptionForSectionCaption;
+}
+
+/** Sprint 152 it4: textarea text to the plain-text `section.tutorial.caption` to store ('' when nothing is left).
+ *  `toPlainText` is html-sanitizer's getSanitizedPlainText: tags are removed, entities decoded, whitespace collapsed. */
+export function captionTextToCaption(text, toPlainText = (value) => value) {
+    return `${toPlainText(`${text ?? ''}`.replace(/\r\n?/g, '\n')) ?? ''}`.trim();
+}
+
+/** Returns the new `section.tutorial` object with its caption set (or removed for an empty caption); undefined when nothing is left. */
+export function applyCaptionToSectionTutorial(sectionTutorial, caption) {
+    const tutorial = sectionTutorial && typeof sectionTutorial === 'object' ? { ...sectionTutorial } : {};
+    if (caption) {
+        tutorial.caption = caption;
+    } else {
+        delete tutorial.caption;
+    }
+    return Object.keys(tutorial).length > 0 ? tutorial : undefined;
 }
 
 /** Text for the Edit Prompt textarea: the existing prompt lines, one per line. */

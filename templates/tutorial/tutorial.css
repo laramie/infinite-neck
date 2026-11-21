@@ -27,10 +27,29 @@
     flex: 0 0 auto;
     margin: 0.4em 0;
 }
+/* Sprint 152 it4: Edit Caption (or the "&sect; Caption" label) stacked above Edit Prompt. */
+.tutorialPromptEditStack {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5em;
+}
 .tutorialPromptEditButton {
     margin-right: 2em;
     padding: 1em;
     border: none;
+}
+.tutorialCaptionLabel {
+    display: block;
+    margin-right: 2em;
+    padding: 1em;
+    border: 1px solid black;
+    text-align: center;
+    background-color: rgb(251, 185, 99);
+}
+.tutorialCaptionEditor {
+    min-height: 3em;
+    font-family: inherit;
 }
 
 /* The warning above the prompt textarea: change its look here. */

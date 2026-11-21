@@ -153,7 +153,7 @@ import {
 	undoLastDisplayOptionsOp, canUndoDisplayOptionsOp
 } from './templates/display-options/displayOptionsPlan.js';
 import { resolveSet as resolveFunctionSymbolSet, BUILTIN_SETS as FUNCTION_SYMBOL_BUILTIN_SETS } from './templates/function-symbols/functionSymbolSets.js';
-import { getSanitizedInfo, getSanitizedSongWidgets } from './html-sanitizer.js';
+import { getSanitizedInfo, getSanitizedPlainText, getSanitizedSongWidgets } from './html-sanitizer.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
 import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
@@ -162,8 +162,11 @@ import { PrintLayoutController } from './templates/printlayout/printlayout.contr
 import { PrintLayoutBuilder } from './templates/printlayout/printlayout.builder.js';
 import { TutorialPromptBuilder, buildTutorialPromptModel, renderPracticeList } from './templates/tutorial/tutorial.builder.js';
 import {
+	applyCaptionToSectionTutorial,
 	applyPromptToSectionTutorial,
+	canEditTutorialCaption,
 	canEditTutorialPrompt,
+	captionTextToCaption,
 	filterIncludedLoopSectionIndex,
 	getLoopCaptionModel,
 	isLoopSubsetInEffect,
@@ -571,7 +574,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		includeInLoopingSectionIndexes: null,
 		lessonSectionListOpen: false,
 		hamburgerControlsOpen: true,
-		promptEditSection: null  //Sprint 152 it3: the Section object whose prompt is being edited in the wizard-mode textarea, or null
+		promptEditSection: null,  //Sprint 152 it3: the Section object whose prompt is being edited in the wizard-mode textarea, or null
+		captionEditSection: null  //Sprint 152 it4: the Section object whose tutorial caption is being edited, or null
 	};
 
 	function getTutorialStorageEntry(song = getSong()){
@@ -612,6 +616,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		tutorialRuntimeState.lessonSectionListOpen = false;
 		tutorialRuntimeState.hamburgerControlsOpen = true;
 		tutorialRuntimeState.promptEditSection = null; //a different Song: the old editor (if any) is simply discarded
+		tutorialRuntimeState.captionEditSection = null;
 		resetTutorialChrome();
 	}
 
@@ -692,7 +697,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return true;
 	}
 
-	/** The Edit Prompt button (wizard mode, and not when "use caption for tutorial" is on). */
+	/** The Edit Prompt button (wizard mode). */
 	export function tutorialEditPrompt(){
 		const song = getSong();
 		if (!song || !canEditTutorialPrompt(song)){
@@ -702,6 +707,42 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		tutorialRuntimeState.promptEditSection = getCurrentSection();
 		renderTutorialPrompt();
 		$('#tutorialPromptEditor').trigger('focus');
+	}
+
+	/** Sprint 152 it4: like commitTutorialPromptEdit, for the tutorial caption (`section.tutorial.caption`, plain text). */
+	function commitTutorialCaptionEdit(){
+		const section = tutorialRuntimeState.captionEditSection;
+		const editor = document.getElementById('tutorialCaptionEditor');
+		if (!section || !editor){
+			return false;
+		}
+		tutorialRuntimeState.captionEditSection = null;
+		const caption = captionTextToCaption(editor.value, getSanitizedPlainText);
+		const tutorial = applyCaptionToSectionTutorial(section.tutorial, caption);
+		if (tutorial){
+			section.tutorial = tutorial;
+		} else {
+			delete section.tutorial;
+		}
+		return true;
+	}
+
+	/** Sprint 152 it4: the Edit Caption button (wizard mode, and not when "use caption for tutorial" is on). */
+	export function tutorialEditCaption(){
+		const song = getSong();
+		if (!song || !canEditTutorialCaption(song)){
+			return;
+		}
+		resetTutorialRuntimeForSongIfNeeded(song);
+		tutorialRuntimeState.captionEditSection = getCurrentSection();
+		renderTutorialPrompt();
+		$('#tutorialCaptionEditor').trigger('focus');
+	}
+
+	export function tutorialCaptionEditorBlurred(){
+		if (commitTutorialCaptionEdit()){
+			renderTutorialPrompt();
+		}
 	}
 
 	/** focusout of the prompt textarea: accept the edit, then render the prompt (and the warning goes away with the textarea). */
@@ -717,6 +758,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		// Any re-render (a Section change from looping, a list click, a mode change) accepts an open prompt edit first,
 		// because the render is about to replace the textarea.
 		commitTutorialPromptEdit();
+		commitTutorialCaptionEdit();
 		const options = {
 			song,
 			currentSectionIndex: getSectionsCurrentIndex(),
@@ -726,11 +768,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			hamburgerControlsOpen: tutorialRuntimeState.hamburgerControlsOpen,
 			sectionsLoopActive: sectionsLooping(),
 			beatsLoopActive: beatsLooping(),
-			promptEditing: !!tutorialRuntimeState.promptEditSection
+			promptEditing: !!tutorialRuntimeState.promptEditSection,
+			captionEditing: !!tutorialRuntimeState.captionEditSection
 		};
 		const html = TutorialPromptBuilder.renderToDest(options);
 		if (tutorialRuntimeState.promptEditSection && !document.getElementById('tutorialPromptEditor')){
 			tutorialRuntimeState.promptEditSection = null; //the editor could not be shown (mode changed, no Prompt Area yet): do not leave a stale edit pending
+		}
+		if (tutorialRuntimeState.captionEditSection && !document.getElementById('tutorialCaptionEditor')){
+			tutorialRuntimeState.captionEditSection = null;
 		}
 		renderPracticeListHost(options);
 		return html;
@@ -4993,6 +5039,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			tutorialGotoSection,
 			tutorialToggleDone,
 			tutorialEditPrompt,
+			tutorialEditCaption,
 			tutorialToggleBookmark,
 			tutorialToggleIncludeInLooping,
 			tutorialToggleAllIncludeInLooping,
@@ -5012,6 +5059,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		// Sprint 152 it3: blur does not bubble, focusout does.  Losing focus for any reason (a click elsewhere, Esc, looping) accepts the edit.
 		$(document).off('focusout.tutorialPromptEditor').on('focusout.tutorialPromptEditor', '#tutorialPromptEditor', tutorialPromptEditorBlurred);
+		$(document).off('focusout.tutorialCaptionEditor').on('focusout.tutorialCaptionEditor', '#tutorialCaptionEditor', tutorialCaptionEditorBlurred);
 
 		$(document).on('click', '[data-action]', function(e) {
 			e.preventDefault();
