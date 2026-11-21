@@ -1087,6 +1087,7 @@
                 <li><a href="#copy-paste-delete-undo-o-my">Copy, Paste, Delete, Save, Versions, O My!</a></li>
                 <li><a href="#note-types-special-handling">Note Types -- special handling</a></li>
                 <li><a href="#TutorialModes">Tutorial Modes</a></li>
+                <li><a href="#TutorialAuthorChecklist">Tutorial Author Checklist</a></li>
                 <li><a href="#contextHelp">Context Help Topics</a>
                     <ul class="LinkList">
                         
@@ -1960,10 +1961,112 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
 <hr>
 <a name="TutorialModes"></a>
 <h3>Tutorial Modes</h3> 
-<p>Songs in <b>Song Library &gt; Tutorials</b> are tutorials that hide much of the advanced interface of infinite-neck, and focus on guiding you through a lesson.  They contain Sections as steps in the lesson, and 
-so a simple navigator with looping controls is presented at the top of the page for navigating the lesson topics, and the Transport is
-not used.  The Menu buttons are hidden, as is the command-line.  Authoring Menu Pages such as File, View, Fill, Themes, Tunings, Palette, Stylesheets, and so on are inaccessible.  Each Section has a Caption, a Prompt, and usually an Instrument.  If you look you'll see there is a hamburger menu that gives you access to the navigator that takes the place of the Transport.  Once this is opened, you'll see another drop down button that gives you acces to "Tutorial Sections".  This lets you see your progress, set a bookmark for your location in the lesson that will be saved for when you come back later into the tutorial in another session in the same Browser, and checkboxes for showing which Sections you have completed.  There is also a column called "Include in Looping" that when clicked, selects all the Sections, but if you click on the checkboxes in this column, you can turn off Sections from being included in looping so you can just loop the Sections you want to focus on. To prevent confusion, these selections are not saved between sessions, so if you load this tutorial later in the same Browser, all Sections will be checked for inclusion in looping once more.</p>
+<h4>strict mode</h4>
+<p>Songs in <b>Song Library &gt; Tutorials</b> are tutorials that hide much of the advanced interface of infinite-neck, and focus on guiding you through a lesson. </p>
 
+<p>They contain Sections as steps in the lesson, and 
+so a simple navigator with looping controls is presented at the top of the page for navigating the lesson topics, and the Transport is
+not used.  
+</p>
+<p>In the navigator is a button for setting the BPM so that the tutorial can move along at different tempos.</p>
+
+<p>The Menu buttons are hidden, as is the command-line.  Authoring Menu Pages such as File, View, Fill, Themes, Tunings, Palette, Stylesheets, and so on are inaccessible.  </p>
+
+<p>Each Section has a Caption, a Prompt, and usually an Instrument.</p>
+
+<p>If you look you'll see there is a hamburger menu that gives you access to the navigator that takes the place of the Transport.  Once this is opened, you'll see another drop down button that gives you acces to "Tutorial Sections".  This lets you see your progress, set a bookmark for your location in the lesson that will be saved for when you come back later into the tutorial in another session in the same Browser, and checkboxes for showing which Sections you have completed. </p>
+
+<p>There is also a column called "Include in Looping" that when clicked, selects/deselects all the Sections, but if you click on the checkboxes in this column, you can turn off Sections from being included in looping so you can just loop the Sections you want to focus on. To prevent confusion, these selections are not saved between sessions, so if you load this tutorial later in the same Browser, all Sections will be checked for inclusion in looping once more. <b><i>However, if you save the tutorial to a Workbook (makes a copy of the Library tutorial that is yours), then your "Include in Looping" choices are preserved.  </i></b></p>
+
+
+<p>A feature of strict mode is that the User is limited to the following keyboard shortcuts for safety and simplicity:
+<table class="ExamplesTable">
+    <tr><th>key</th><th>action</th></tr>
+    <tr>
+        <td>n</td>
+        <td>next beat</td>
+    </tr>
+    <tr>
+        <td>b</td>
+        <td>previous beat</td>
+    </tr>
+    <tr>
+        <td>B</td>
+        <td>Beat looping</td>
+    </tr>
+    <tr>
+        <td>,</td>
+        <td>previous Section</td>
+    </tr>
+    <tr>
+        <td>.</td>
+        <td>Next Section</td>
+    </tr>
+    <tr>
+        <td>&lt;</td>
+        <td>First Section</td>
+    </tr>
+    <tr>
+        <td>></td>
+        <td>Last Section</td>
+    </tr>
+    <tr>
+        <td>h</td>
+        <td>height increase</td>
+    </tr>
+    <tr>
+        <td>H</td>
+        <td>Height decrease</td>
+    </tr>
+    <tr>
+        <td>w</td>
+        <td>width increase</td>
+    </tr>
+    <tr>
+        <td>W</td>
+        <td>Width decrease</td>
+    </tr>
+    <tr>
+        <td>l</td>
+        <td>loop</td>
+    </tr>
+    <tr>
+        <td>L</td>
+        <td>stop Looping</td>
+    </tr>
+    <tr>
+        <td>0</td>
+        <td>Nut width</td>
+    </tr>
+    <tr>
+        <td>-</td>
+        <td>UI font -</td>
+    </tr>
+    <tr>
+        <td>=</td>
+        <td>UI font +</td>
+    </tr>
+    <tr>
+        <td>_</td>
+        <td>cell font -</td>
+    </tr>
+    <tr>
+        <td>+</td>
+        <td>cell font +</td>
+    </tr>
+    <tr>
+        <td>)</td>
+        <td>font reset</td>
+    </tr>
+    <tr>
+        <td>*</td>
+        <td>show/hide diamonds</td>
+    </tr>
+</table>
+		
+</p>
+
+<h4>wizard mode</h4>
 <p>If the Song loaded from the Library or local disk is not saved in tutorial "strict" mode, the app won't behave this way. This is because tutorial mode is actually a setting that can be "strict", "wizard", or "none", as selected in the command-line <b>/vpt</b> which you can get to if you are <i><b>not</b></i> in tutorial "strict" mode. This enables you to enter tutorial mode if the song is not saved in tutorial mode.</p>
 
 <p>There is also tutorial "wizard" mode accessible from <b>/vpt</b>.  In this mode, you can run many of the tutorial features, but also still have access to advanced features for editing, authoring, changing View, Theme, and Stylesheet settings, and so on.  In fact, from "strict" tutorial mode you can escape to the command-line with the Easter-egg command <span class="key">CTRL-SHIFT-M</span>.  From the command-line, you can set the tutorial mode to something else, like "none" which gets you the full features of infinite-neck, or "wizard" which gives you features of tutorial mode such as "Include in Looping" (selective inclusion of Sections in looping, known as the "practice list" in wizard mode) and tutorial prompts, which are editable in wizard mode.  In "none" mode, you have full access to features, except for the tutorial features.  Wizard mode was designed for authoring tutorials, and for tutorials that teach Users about advanced features.  But it is also the only way you can run with full features and still use "Include in Looping", which is considered too disruptive for normal use such as practicing full songs or giving presentations, since it may be confusing to have the Sections be skipped during looping.  So it is a double opt-in: you must enter wizard mode with <b>/vptw</b>  , and you must use one of the command-line commands to open the "practice list": <b>/vswp</b> or <b>/vtwp</b>.  Attempting to show the "practice list" in "none" or "strict" via <b>/vtwp</b> simply won't show it.  However, in "strict" you automatically get it as part of the prompt area.</p>
@@ -1990,7 +2093,33 @@ not used.  The Menu buttons are hidden, as is the command-line.  Authoring Menu 
 <li>From the command-line, set "strict" mode: <b>/vpts</b></li>
 <li>Now, before you close the command-line, download the file from the command-line before you close it: <b>/fd</b>, since you can't get to the File menu button to download the file in strict mode.</li>
 <li>If you do exit the command-line, you can sneak back in with command <span class="key">CTRL-SHIFT-M</span></li>
-</ul>    
+</ul>  
+
+<a name="TutorialAuthorChecklist"></a>
+<h3>Tutorial Author Checklist</h3>
+
+<p>For wizard mode tutorials</p>
+<ul>
+    <li>edit tutorial main caption: /vpe</li>
+    <li>edit tutorial captions for each Section</li>
+    <li>edit tutorial prompts for each Section</li>
+    <li>Set fullscreen Instrument Caption to hidden: /vf -> /vhwi</li>
+    <li>Set non-fullscreen Instrument Caption rows to hidden: /vf -> /vhwi</li>
+    <li>Choose whether to hide Song title, widget row, etc.</li>
+    <li>Set wizard mode:  /vptw</li>
+    <li>Download file before exiting command-line: /fd</li>
+</ul>
+
+<p>For strict mode tutorials</p>
+<ul>
+    <li>edit tutorial main caption: /vpe</li>
+    <li>edit tutorial captions for each Section</li>
+    <li>edit tutorial prompts for each Section</li>
+    <li>(You should not need to hide Song title, widget row, instrument caption row, etc. which are hidden in strict mode.)</li>
+    <li>Set strict mode:  /vpts</li>
+    <li>Download file before exiting command-line: /fd</li>
+</ul>
+
 <hr>
 <a name="contextHelp"></a>
 <h2>Context Help Topics</h2>
