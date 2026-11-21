@@ -5,6 +5,7 @@ import {
     renderLessonSectionList,
     renderPracticeList,
     renderPromptEditor,
+    renderTutorialBpmControl,
     renderTutorialCaptionEditButton,
     renderTutorialEditButtons,
     renderTutorialPrompt,
@@ -92,6 +93,41 @@ describe('Tutorial Prompt builder', () => {
         const activeHtml = renderTutorialPrompt(activeModel);
         expect(activeHtml).toContain('class="tutorialLOOP classLoopSections ButtonOn" data-action="tutorialLoopSections">RANDOM 2..3<');
         expect(activeHtml).toContain('class="tutorialLoopBeats classLoopBeats ButtonOn" data-action="tutorialLoopBeats">');
+    });
+
+    describe('BPM control (sprint 152 it5, strict mode)', () => {
+        const bpmSong = (level = 'strict') => ({ ...tutorialSong(level), defaultBPM: '30' });
+
+        test('strict: one button between Last and the beats loop button, showing the live .bpm text', () => {
+            const html = renderTutorialPrompt(buildTutorialPromptModel({ song: bpmSong(), currentSectionIndex: 0 }));
+            expect(html).toContain('data-action="tutorialEditBpm"');
+            expect(html).toContain('<span class="bpm">30<small>bpm</small></span>');
+            expect(html).not.toContain('txtTutorialBPM');
+            const last = html.indexOf('data-action="tutorialLastSection"');
+            const bpm = html.indexOf('data-action="tutorialEditBpm"');
+            const beats = html.indexOf('data-action="tutorialLoopBeats"');
+            expect(last).toBeLessThan(bpm);
+            expect(bpm).toBeLessThan(beats);
+        });
+
+        test('strict, editing: a text box holding the BPM and a check button replace the button, with no label', () => {
+            const model = buildTutorialPromptModel({ song: bpmSong(), currentSectionIndex: 0, bpmEditing: true });
+            const html = renderTutorialBpmControl(model);
+            expect(html).toContain('<input type="text" id="txtTutorialBPM"');
+            expect(html).toContain('value="30"');
+            expect(html).toContain('data-action="tutorialCommitBpm">&check;</button>');
+            expect(html).not.toContain('tutorialEditBpm');
+            expect(html).not.toContain('BPM:');
+        });
+
+        test('wizard and none have no BPM control, and cannot be in BPM editing', () => {
+            ['wizard', 'none'].forEach((level) => {
+                const model = buildTutorialPromptModel({ song: bpmSong(level), currentSectionIndex: 0, bpmEditing: true });
+                expect(model.bpmEditing).toBe(false);
+                expect(renderTutorialBpmControl(model)).toBe('');
+                expect(renderTutorialPrompt(model)).not.toContain('tutorialEditBpm');
+            });
+        });
     });
 
     test('the Song tutorial caption is the breadcrumbs (escaped, plain text), never the Section caption row', () => {

@@ -575,7 +575,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		lessonSectionListOpen: false,
 		hamburgerControlsOpen: true,
 		promptEditSection: null,  //Sprint 152 it3: the Section object whose prompt is being edited in the wizard-mode textarea, or null
-		captionEditSection: null  //Sprint 152 it4: the Section object whose tutorial caption is being edited, or null
+		captionEditSection: null,  //Sprint 152 it4: the Section object whose tutorial caption is being edited, or null
+		bpmEditing: false  //Sprint 152 it5: strict mode, the BPM button is showing its text box and check button
 	};
 
 	function getTutorialStorageEntry(song = getSong()){
@@ -617,6 +618,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		tutorialRuntimeState.hamburgerControlsOpen = true;
 		tutorialRuntimeState.promptEditSection = null; //a different Song: the old editor (if any) is simply discarded
 		tutorialRuntimeState.captionEditSection = null;
+		tutorialRuntimeState.bpmEditing = false;
 		resetTutorialChrome();
 	}
 
@@ -745,6 +747,39 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 	}
 
+	/** Sprint 152 it5 (strict mode): accepts the open BPM text box, if any.  The edit state is cleared first, so the focusout
+	 *  that removing the box can fire is ignored.  The value goes through the same TransportController.setBPM as the File menu
+	 *  page's #txtBPM (sets Song.defaultBPM, updates every `.bpm`, restarts a running loop); a non-positive or non-numeric
+	 *  entry is ignored there.  Returns true when an edit was open. */
+	function commitTutorialBpmEdit(){
+		const input = document.getElementById('txtTutorialBPM');
+		if (!tutorialRuntimeState.bpmEditing || !input){
+			return false;
+		}
+		tutorialRuntimeState.bpmEditing = false;
+		getTransportController().setBPM($(input).val());
+		return true;
+	}
+
+	/** The BPM button: replaced by a text box (focused) and a check button. */
+	export function tutorialEditBpm(){
+		const song = getSong();
+		if (!song || normalizeTutorialMode(song.tutorial?.level) !== TUTORIAL_MODES.STRICT){
+			return;
+		}
+		resetTutorialRuntimeForSongIfNeeded(song);
+		tutorialRuntimeState.bpmEditing = true;
+		renderTutorialPrompt();
+		$('#txtTutorialBPM').trigger('focus').trigger('select');
+	}
+
+	/** The check button, or focusout of the text box (a click elsewhere, ENTER, Esc): accept the value and show the button again. */
+	export function tutorialCommitBpm(){
+		if (commitTutorialBpmEdit()){
+			renderTutorialPrompt();
+		}
+	}
+
 	/** focusout of the prompt textarea: accept the edit, then render the prompt (and the warning goes away with the textarea). */
 	export function tutorialPromptEditorBlurred(){
 		if (commitTutorialPromptEdit()){
@@ -759,6 +794,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		// because the render is about to replace the textarea.
 		commitTutorialPromptEdit();
 		commitTutorialCaptionEdit();
+		commitTutorialBpmEdit();
 		const options = {
 			song,
 			currentSectionIndex: getSectionsCurrentIndex(),
@@ -769,7 +805,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			sectionsLoopActive: sectionsLooping(),
 			beatsLoopActive: beatsLooping(),
 			promptEditing: !!tutorialRuntimeState.promptEditSection,
-			captionEditing: !!tutorialRuntimeState.captionEditSection
+			captionEditing: !!tutorialRuntimeState.captionEditSection,
+			bpmEditing: tutorialRuntimeState.bpmEditing
 		};
 		const html = TutorialPromptBuilder.renderToDest(options);
 		if (tutorialRuntimeState.promptEditSection && !document.getElementById('tutorialPromptEditor')){
@@ -777,6 +814,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		if (tutorialRuntimeState.captionEditSection && !document.getElementById('tutorialCaptionEditor')){
 			tutorialRuntimeState.captionEditSection = null;
+		}
+		if (tutorialRuntimeState.bpmEditing && !document.getElementById('txtTutorialBPM')){
+			tutorialRuntimeState.bpmEditing = false;
 		}
 		renderPracticeListHost(options);
 		return html;
@@ -4531,7 +4571,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
-		bindDelegatedEvent('keydown', '#txtFilename, #txtBPM, #txtCaption, .inputTuningID, .sectionChartBeatsPerBarInput', commitFieldOnEnter);
+		bindDelegatedEvent('keydown', '#txtFilename, #txtBPM, #txtTutorialBPM, #txtCaption, .inputTuningID, .sectionChartBeatsPerBarInput', commitFieldOnEnter);
 		bindDelegatedEvent('change', '.sectionChartBeatsPerBarInput', function() {
 			const idx = toInt($(this).data('section-idx'), -1);
 			if (idx >= 0) {
@@ -5040,6 +5080,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			tutorialToggleDone,
 			tutorialEditPrompt,
 			tutorialEditCaption,
+			tutorialEditBpm,
+			tutorialCommitBpm,
 			tutorialToggleBookmark,
 			tutorialToggleIncludeInLooping,
 			tutorialToggleAllIncludeInLooping,
@@ -5060,6 +5102,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		// Sprint 152 it3: blur does not bubble, focusout does.  Losing focus for any reason (a click elsewhere, Esc, looping) accepts the edit.
 		$(document).off('focusout.tutorialPromptEditor').on('focusout.tutorialPromptEditor', '#tutorialPromptEditor', tutorialPromptEditorBlurred);
 		$(document).off('focusout.tutorialCaptionEditor').on('focusout.tutorialCaptionEditor', '#tutorialCaptionEditor', tutorialCaptionEditorBlurred);
+		$(document).off('focusout.tutorialBpm').on('focusout.tutorialBpm', '#txtTutorialBPM', tutorialCommitBpm);
 
 		$(document).on('click', '[data-action]', function(e) {
 			e.preventDefault();

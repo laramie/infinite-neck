@@ -162,6 +162,16 @@
     border: 1px solid gray;
     transition: all 0.1s ease;
 }
+/* Sprint 152 it5: the strict-mode BPM button (and, while editing, its check button) is white, not amber. */
+.tutorialNav.tutorialBpm {
+    background: white;
+    box-shadow:   inset -4px -4px 4px lightgray, 5px 2px 4px black;
+}
+.tutorialBpmInput {
+    margin-left: 0.6em;
+    font-size: 110%;
+    text-align: center;
+}
 .tutorialNavNext {
     background: #87cf0b;
     box-shadow:   inset -4px -4px 4px#527e06, 5px 2px 4px black;

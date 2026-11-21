@@ -115,7 +115,8 @@ export function buildTutorialPromptModel({
     sectionsLoopActive = false,
     beatsLoopActive = false,
     promptEditing = false,
-    captionEditing = false
+    captionEditing = false,
+    bpmEditing = false
 } = {}) {
     const mode = normalizeTutorialMode(song?.tutorial?.level);
     const sectionTutorial = getSectionTutorial(song, currentSectionIndex);
@@ -145,6 +146,9 @@ export function buildTutorialPromptModel({
         captionEditText: typeof sectionTutorial.caption === 'string' ? sectionTutorial.caption : '',
         songCaption: typeof song?.tutorial?.caption === 'string' ? song.tutorial.caption : '',
         sectionCaption: theSectionCaption,
+        // Sprint 152 it5: strict mode only.  The Song's BPM (a string such as "80") for the BPM button, or the editor when bpmEditing.
+        bpm: `${song?.defaultBPM ?? ''}`,
+        bpmEditing: mode === TUTORIAL_MODES.STRICT && !!bpmEditing,
         // Authored strict captions are trusted HTML; a Section's own caption, and wizard captions, are plain text.
         sectionCaptionIsHtml: mode === TUTORIAL_MODES.STRICT && !useSectionCaption,
         currentSectionIndex,
@@ -224,6 +228,20 @@ export function renderTutorialEditButtons(model = {}) {
     return html ? `<div class="tutorialPromptEditStack">${html}</div>` : '';
 }
 
+/** Sprint 152 it5, strict mode only: the BPM control of the widget row.  One button, text like `<span class="bpm">30<small>bpm</small></span>`
+ *  (the `.bpm` span is kept live by showBPM()), or while editing the same text box and check button as the File menu page. */
+export function renderTutorialBpmControl(model = {}) {
+    if (!model.strict) {
+        return '';
+    }
+    if (model.bpmEditing) {
+        return `<input type="text" id="txtTutorialBPM" class="tutorialBpmInput" size="4" value="${escapeAttribute(model.bpm ?? '')}" aria-label="BPM">`
+            + '<button type="button" class="tutorialNav tutorialBpm" data-action="tutorialCommitBpm">&check;</button>';
+    }
+    return '<button type="button" class="tutorialNav tutorialBpm" data-action="tutorialEditBpm" aria-label="Set BPM">'
+        + `<span class="bpm">${escapeHtml(model.bpm ?? '')}<small>bpm</small></span></button>`;
+}
+
 export function renderTutorialPrompt(model = {}) {
     if (!model.strict && !model.wizard) {
         return '';
@@ -251,6 +269,7 @@ export function renderTutorialPrompt(model = {}) {
          + '<button type="button" class="tutorialNav" data-action="tutorialPrevSection">&laquo; Previous</button>'
          + '<button type="button" class="tutorialNavNext" data-action="tutorialNextSection">Next &raquo;</button>'
          + '<button type="button" class="tutorialNav" data-action="tutorialLastSection">Last &#x21E5;</button>'
+         + renderTutorialBpmControl(model)
          + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
          + `<button type="button" class="tutorialLoopBeats classLoopBeats${model.beatsLoopActive ? ' ButtonOn' : ''}" data-action="tutorialLoopBeats">&infin;</button>`
          + `<button type="button" class="tutorialLOOP classLoopSections${model.sectionsLoopActive ? ' ButtonOn' : ''}" data-action="tutorialLoopSections">${model.loopSectionsCaption || 'LOOP'}</button>`
