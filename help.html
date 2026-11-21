@@ -1964,7 +1964,17 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
 <h4>strict mode</h4>
 <p>Songs in <b>Song Library &gt; Tutorials</b> are tutorials that hide much of the advanced interface of infinite-neck, and focus on guiding you through a lesson. </p>
 
-<p>They contain Sections as steps in the lesson, and 
+<br>
+<p>Tutorial "strict" mode minimal:
+    <br><br><img src="img/help/context/tutorial-strict-minimal.png"  class="floatingScreenshot" width="900"></p>
+<br>
+<p>Tutorial "strict" mode with navigator open:
+    <br><br><img src="img/help/context/tutorial-strict-navigator.png" class="floatingScreenshot" width="900"></p>
+<br>
+<p>Tutorial "strict" mode with navigator and Tutorial Sections list open:
+    <br><br><img src="img/help/context/tutorial-strict-sections.png" class="floatingScreenshot" width="900"></p>
+
+<p>Tutorials contain Sections as steps in the lesson, and 
 so a simple navigator with looping controls is presented at the top of the page for navigating the lesson topics, and the Transport is
 not used.  
 </p>
@@ -2067,57 +2077,77 @@ not used.
 </p>
 
 <h4>wizard mode</h4>
-<p>If the Song loaded from the Library or local disk is not saved in tutorial "strict" mode, the app won't behave this way. This is because tutorial mode is actually a setting that can be "strict", "wizard", or "none", as selected in the command-line <b>/vpt</b> which you can get to if you are <i><b>not</b></i> in tutorial "strict" mode. This enables you to enter tutorial mode if the song is not saved in tutorial mode.</p>
+<p>If the Song loaded from the Library or local disk is not saved in tutorial "strict" mode, the app won't behave this way. This is because tutorial mode is actually a setting that can be "strict", "wizard", or "none", as selected in the command-line <span class="menuExampleLine"><b>/vpt</b></span> which you can get to if you are <i><b>not</b></i> in tutorial "strict" mode. This enables you to enter tutorial mode if the song is not saved in tutorial mode.</p>
 
-<p>There is also tutorial "wizard" mode accessible from <b>/vpt</b>.  In this mode, you can run many of the tutorial features, but also still have access to advanced features for editing, authoring, changing View, Theme, and Stylesheet settings, and so on.  In fact, from "strict" tutorial mode you can escape to the command-line with the Easter-egg command <span class="key">CTRL-SHIFT-M</span>.  From the command-line, you can set the tutorial mode to something else, like "none" which gets you the full features of infinite-neck, or "wizard" which gives you features of tutorial mode such as "Include in Looping" (selective inclusion of Sections in looping, known as the "practice list" in wizard mode) and tutorial prompts, which are editable in wizard mode.  In "none" mode, you have full access to features, except for the tutorial features.  Wizard mode was designed for authoring tutorials, and for tutorials that teach Users about advanced features.  But it is also the only way you can run with full features and still use "Include in Looping", which is considered too disruptive for normal use such as practicing full songs or giving presentations, since it may be confusing to have the Sections be skipped during looping.  So it is a double opt-in: you must enter wizard mode with <b>/vptw</b>  , and you must use one of the command-line commands to open the "practice list": <b>/vswp</b> or <b>/vtwp</b>.  Attempting to show the "practice list" in "none" or "strict" via <b>/vtwp</b> simply won't show it.  However, in "strict" you automatically get it as part of the prompt area.</p>
+<p>There is also tutorial "wizard" mode accessible from <span class="menuExampleLine"><b>/vpt</b></span>.  In this mode, you can run many of the tutorial features, but also still have access to advanced features for editing, authoring, changing View, Theme, and Stylesheet settings, and so on.  In fact, from "strict" tutorial mode you can escape to the command-line with the Easter-egg command <span class="key">CTRL-SHIFT-M</span>.  From the command-line, you can set the tutorial mode to something else, like "none" which gets you the full features of infinite-neck, or "wizard" which gives you features of tutorial mode such as "Include in Looping" (selective inclusion of Sections in looping, known as the "Practice List" in wizard mode) and tutorial prompts, which are editable in wizard mode.  In "none" mode, you have full access to features, except for the tutorial features.  Wizard mode was designed for authoring tutorials, and for tutorials that teach Users about advanced features.  But it is also the only way you can run with full features and still use "Include in Looping" (the Practice List), which is considered too disruptive for normal use such as practicing full songs or giving presentations, since it may be confusing to have the Sections be skipped during looping.  So it is a double opt-in: you must enter wizard mode with <span class="menuExampleLine"><b>/vtwp</b></span>  , and you must use one of the command-line commands to open the "Practice List": <span class="menuExampleLine"><b>/vswp</b></span> or <span class="menuExampleLine"><b>/vtwp</b></span>.  Attempting to show the "Practice List" in "none" via <span class="menuExampleLine"><b>/vtwp</b></span> simply won't show it.  However, in "strict" you automatically get it as part of the prompt area, and is considered part of the tutorial flow.</p>
 
-<p>In wizard mode when the "practice list" excludes some Sections from looping, the Looper Lights will show with a dashed border, and the LOOP button will show something like "LOOPING 1..3" for example when you have unchecked Sections 4 and later, rather than the normal "LOOPING" caption.  This caption is also visible in "strict" tutorial mode, but the dashed border doesn't appear since "strict" tutorials don't show Looper Lights or Section Status widgets.</p>
+<p>In wizard mode when the "Practice List" excludes some Sections from looping, the Looper Lights will show with a dashed border, and the LOOP button will show something like "LOOPING 1..3" for example when you have unchecked Sections 4 and later, rather than the normal "LOOPING" caption.  This caption is also visible in "strict" tutorial mode, but the dashed border doesn't appear since "strict" tutorials don't show Looper Lights or Section Status widgets.
+    <br>
+    <br>
+    Looper Light when Practice List has excluded Sections:
+    <br>
+    <img src="img/help/context/looper-light-practice-list-green.png">
+    <br>
+    <br>
+    Looper Light while looping and Practice List has excluded Sections:
+    <br>
+    <img src="img/help/context/looper-light-practice-list-magenta.png">
 
-<p>Another feature in wizard mode is that you can edit the tutorial prompts, and can use Section Caption as the tutorial captions.  Both of these are work-arounds because the way "strict" tutorials are created for our Library is there is an authoring build process where text files on the server are edited to contain the lesson plan, the prompts, the captions, and the other settings, and then the tutorial songfile is generated.  But in "wizard" mode, you can turn any song into a tutorial without this build process and simply save the file to your local disk.  This gives you the ability to make tutorials, or to annotate prompts for any songs in the style of "strict" tutorials but with the power-user features of wizard mode.
+
+
+</p>
+
+<p>Another feature in wizard mode is that you can edit the tutorial prompts, and can use Section Caption as the tutorial captions.  Both of these are work-arounds because the way "strict" tutorials are created for our Library is there is an authoring build process where text files on the server are edited to contain the lesson plan, the prompts, the captions, and the other settings, and then the tutorial songfile is generated.  But in "wizard" mode, you can turn any song into a tutorial without this build process and simply save the file to your local disk or to the Workbook.  This gives you the ability to make tutorials, or to annotate prompts for any songs in the style of "strict" tutorials but with the power-user features of wizard mode.  Workbooks can be downloaded, so you can make a Workbook of tutorials, and download and share that Workbook as coursework for a class, for example.
 </p>
 <p>In wizard mode, you create captions and prompts by:</p>
 <ul>
-    <li>Enter wizard mode: <b>/vptw</b></li>
-    <li>Toggle "use Section caption for tutorial" to false: <b>/vpu</b></li>
+    <li>Enter wizard mode: <span class="menuExampleLine"><b>/vptw</b></span></li>
+    <li>Toggle "use Section caption for tutorial" to false: <span class="menuExampleLine"><b>/vpu</b></span></li>
     <li>In a Section, look for the buttons in the prompt area called "Edit Caption" and "Edit Prompt" on the right.</li>
     <li>When you click "Edit Prompt", you can edit the prompt with text or HTML. Leave the edit area to save it (click elsewhere, or TAB out).  "Edit Caption" works the same way for the tutorial caption of the Section, which is plain text.</li>
-    <li>If you would rather use each Section's own Caption as the tutorial caption, toggle "use Section caption for tutorial" to true: <b>/vpu</b>  The "Edit Caption" button then becomes a "&sect; Caption" label, and a Section with no Caption of its own shows a blank caption.</li>
+    <li>If you would rather use each Section's own Caption as the tutorial caption, toggle "use Section caption for tutorial" to true: <span class="menuExampleLine"><b>/vpu</b></span>.  The "Edit Caption" button then becomes a "&sect; Caption" label, and a Section with no Caption of its own shows a blank caption.</li>
     <li>Now use the Section Drawer to add a Caption to the Sections you want to have Captions. <b></b></li>
     <li>Now when you navigate, you'll have prompts and Captions.</li>
-    <li>To set the main tutorial caption (<code>Song.tutorial.caption</code>), which heads the prompt area in "wizard" and "strict" modes, use <b>/vpe</b> (<b>e</b>dit tutorial main caption).  The box holds the current caption.  It is plain text: tags are removed, HTML entities such as <code>&amp;amp;</code> are turned into the character, and <code>\"</code> means a quote mark.  It works in every tutorial mode.  Press ENTER twice to leave the box without changing it.  It is never used as the caption of a Section.</li>
-    <li>"use Section caption for tutorial" is saved with the Song, so it is still on when you load the file later.</li>
+    <li>To set the main tutorial caption (<code>Song.tutorial.caption</code>), which heads the prompt area in "wizard" and "strict" modes, use <span class="menuExampleLine"><b>/vpe</b></span> (<b>e</b>dit tutorial main caption).  When editing, it is plain text: tags are removed, HTML entities such as <code>&amp;amp;</code> are turned into the character, and <code>\"</code> means a quote mark.  It works in every tutorial mode.  Press ENTER twice to leave the box without changing it.  It is never used as the caption of a Section.</li>
+    <li><b>"use Section caption for tutorial"</b> is saved with the Song, so its value persists when you load the file later.</li>
     <li>If you are a tutorial author, and are using the build process tools, be aware that running <b>npm run build:tutorial-prompts</b> will overwrite the prompts you have saved in the above way.  The build process stores tutorial Captions in a separate location from Section Captions, however.</li>
 </ul> 
-<p>Note that doing it this way, and then using the next steps, you can create a "strict" mode tutorial songfile you can save and share (without the build process).  Choose whether the Tutorial Captions come from the Section Captions with <b>/vpu</b>.  The Tutorial Prompts can be added/edited in wizard mode with the "Edit Prompt" button.  If you have <b>/vpu</b> set to false, then you can also add/edit the Tutorial Section Captions with the "Edit Caption" button.    As long as you don't use the build process from the system shell and the "npm" Node tool as a developer, these Prompts will persist. Steps to save your song as a "strict" tutorial:</p>
+<p>Note that doing it this way, and then using the next steps, you can create a "strict" mode tutorial songfile you can save and share (without the build process).  Choose whether the Tutorial Captions come from the Section Captions with <span class="menuExampleLine"><b>/vpu</b></span>.  The Tutorial Prompts can be added/edited in wizard mode with the "Edit Prompt" button.  If you have <span class="menuExampleLine"><b>/vpu</b></span> set to false, then you can also add/edit the Tutorial Section Captions with the "Edit Caption" button.    As long as you don't use the build process from the system shell and the "npm" Node tool as a developer, these Prompts will persist. Steps to save your song as a "strict" tutorial:</p>
 <ul>
-<li>From the command-line, set "strict" mode: <b>/vpts</b></li>
-<li>Now, before you close the command-line, download the file from the command-line before you close it: <b>/fd</b>, since you can't get to the File menu button to download the file in strict mode.</li>
+<li>From the command-line, set "strict" mode: <span class="menuExampleLine"><b>/vpts</b></span></li>
+<li>Now, before you close the command-line, download the file from the command-line before you close it: <span class="menuExampleLine"><b>/fd</b></span>, since you can't get to the File menu button to download the file in strict mode.</li>
 <li>If you do exit the command-line, you can sneak back in with command <span class="key">CTRL-SHIFT-M</span></li>
 </ul>  
 
 <a name="TutorialAuthorChecklist"></a>
 <h3>Tutorial Author Checklist</h3>
 
-<p>For wizard mode tutorials</p>
+<h4>For wizard mode tutorials:</h4>
 <ul>
-    <li>edit tutorial main caption: /vpe</li>
+    <li>edit tutorial main caption: <span class="menuExampleLine"><b>/vpe</b></span></li>
     <li>edit tutorial captions for each Section</li>
     <li>edit tutorial prompts for each Section</li>
-    <li>Set fullscreen Instrument Caption to hidden: /vf -> /vhwi</li>
-    <li>Set non-fullscreen Instrument Caption rows to hidden: /vf -> /vhwi</li>
+    <li>Choose whether to set fullscreen Instrument Caption to hidden: <span class="menuExampleLine"><b>/vt</b></span> -> <span class="menuExampleLine"><b>/vhwi</b></span></li>
+    <li>Choose whether to set non-fullscreen Instrument Caption rows to hidden: <span class="menuExampleLine"><b>/vf</b></span> -> <span class="menuExampleLine"><b>/vhwi</b></span></li>
     <li>Choose whether to hide Song title, widget row, etc.</li>
-    <li>Set wizard mode:  /vptw</li>
-    <li>Download file before exiting command-line: /fd</li>
+    <li>Set wizard mode:  <span class="menuExampleLine"><b>/vptw</b></span></li>
+    <li>Download file before exiting command-line: <span class="menuExampleLine"><b>/fd</b></span></li>
+    <li>Or, open the <a href="#divFileControls">File menu page</a>, and save it to the Workbook</li>
 </ul>
 
-<p>For strict mode tutorials</p>
+<h4>For strict mode tutorials:</h4>
+
+<p>For strict mode tutorials, you do not need to hide Song title, widget row, instrument caption row, etc. which are hidden in strict mode.  However, if you are authoring in wizard mode, to get all the strict mode rules to apply, you should save the Song to local disk or to the Workbook, then re-open it. 
+</p> 
+
 <ul>
-    <li>edit tutorial main caption: /vpe</li>
+    <li>edit tutorial main caption: <span class="menuExampleLine"><b>/vpe</b></span></li>
     <li>edit tutorial captions for each Section</li>
     <li>edit tutorial prompts for each Section</li>
-    <li>(You should not need to hide Song title, widget row, instrument caption row, etc. which are hidden in strict mode.)</li>
-    <li>Set strict mode:  /vpts</li>
-    <li>Download file before exiting command-line: /fd</li>
+    <li>If you will be saving it to the Workbook, open the <a href="#divFileControls">File menu page</a> now <span class="menuExampleLine"><b>/f;</b></span>, and leave it open while you go to the command-line. </li>
+    <li>Set strict mode:  <span class="menuExampleLine"><b>/vpts</b></span></li>
+    <li>Download file before exiting command-line: <span class="menuExampleLine"><b>/fd</b></span></li>
+    <li>Or, save the Song to the Workbook now with the <a href="#divFileControls">File menu page</a> button <span class="GUIReferenceInline">Save to Workbook...</span> (might need to <span class="menuExampleLine"><b>x</b></span> out of the command line to get it out of the way).</li>
 </ul>
 
 <hr>
@@ -6223,7 +6253,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
                 <td>
                 </td>
-                <td>show/hide File menu page
+                <td>show/hide <a href="#divFileControls">File menu page</a>
                 </td>
             </tr>
             <tr id="showHideSection">
@@ -6370,7 +6400,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
                 <td>
                 </td>
-                <td>show File menu page
+                <td>show <a href="#divFileControls">File menu page</a>
                 </td>
             </tr>
             
