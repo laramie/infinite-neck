@@ -83,6 +83,12 @@ export function tutorialCaptionFromInput(text, toPlainText = (value) => value) {
     return `${toPlainText(unescaped) ?? ''}`.trim();
 }
 
+/** Sprint 152 it5 r3: typing exactly `<>` (before any sanitizing, which would strip it) in `/vpe` means "remove Song.tutorial.caption".
+ *  A blank entry still means "no change"; the literal text `&lt;>` is stored as `<>`. */
+export function isTutorialCaptionClearToken(text) {
+    return `${text ?? ''}`.trim() === '<>';
+}
+
 /** Returns the new `Song.tutorial` object with its caption set (or removed for an empty caption).  Keeps the other fields,
  *  and always has a `level`. */
 export function applyCaptionToSongTutorial(songTutorial, caption) {

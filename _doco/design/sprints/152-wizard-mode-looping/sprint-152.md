@@ -32,4 +32,7 @@ Purpose of this sprint is to:
     - Round 1: Added bpm button and edit control to strict tutorial navigator, otherwise there was no way to reach any bpm control.  
     - Round 2: `refreshTutorialPrompt()` added to make edits more "live"
     - Round 3: change "Tutorial:" to "Wizard:" as label to Song.tutorial.caption in wizard mode.
+    - Round 4: 
+      - FIXED: fixed various elements not being hidden on executing `/vpts`.
+      - OPEN: found strange behaviors: ESC shows floated window grapples, floated windows are allowed in strict, and left rail elements are hidden in strict and wizard.  These should be revisited.
 

@@ -538,6 +538,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		};
 		sectionChanged();
 		resetTutorialChrome();
+		if (normalizedMode === TUTORIAL_MODES.STRICT){
+			// Record the hidden state in the Layout, so that ESC (leaveFullscreen -> Layout.doToggles) does not show these again.
+			// #topControlsCaptions holds the Song title, the Section caption and the Widget Row.  Switching away from strict leaves
+			// the flags alone (SHIFT+A and /vs... bring them back).
+			const layout = getSong().getLayout();
+			layout.toggleCaptionRow(false);
+			layout.toggleInstrumentCaptions(false);
+		}
 		if (sectionsLooping()){
 			applyLoopSectionsUi(true); //the caption depends on the mode
 		}

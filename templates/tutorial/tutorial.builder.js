@@ -251,7 +251,8 @@ export function renderTutorialPrompt(model = {}) {
     const sectionCurrOfCount = `<span class="tutorialSectionMark">&sect; </span><b>${model.currentSectionNumber}</b> <small>of</small> <b>${model.sectionCount}</b>`;    
     const sectionCurr = `<span class="tutorialSectionMark">&sect;</span>${model.currentSectionNumber}:&nbsp;&nbsp;`;    
     // Song.tutorial.caption heads the page in strict and wizard modes (first row; blank when omitted).
-    const breadcrumbsRow = '<span class="tutorialBreadcrumbsLeader">Tutorial: </span><span class="tutorialPromptBreadcrumbsRow">'
+    const breadcrumbsLeader = model.wizard ? 'Wizard: ' : 'Tutorial: ';
+    const breadcrumbsRow = `<span class="tutorialBreadcrumbsLeader">${breadcrumbsLeader}</span><span class="tutorialPromptBreadcrumbsRow">`
         + `<span class="tutorialPromptBreadcrumbs">${escapeHtml(model.songCaption)}</span>`
         + '</span>';
 

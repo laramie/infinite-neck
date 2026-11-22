@@ -147,6 +147,13 @@ describe('Tutorial Prompt builder', () => {
         expect(html.indexOf('tutorialBreadcrumbsLeader')).toBeLessThan(html.indexOf('tutorialPromptHeader'));
     });
 
+    test('the breadcrumbs leader reads Wizard: in wizard mode and Tutorial: in strict mode', () => {
+        const wizard = renderTutorialPrompt(buildTutorialPromptModel({ song: { tutorial: { level: 'wizard' }, sections: [{}] }, currentSectionIndex: 0 }));
+        const strict = renderTutorialPrompt(buildTutorialPromptModel({ song: { tutorial: { level: 'strict' }, sections: [{}] }, currentSectionIndex: 0 }));
+        expect(wizard).toContain('<span class="tutorialBreadcrumbsLeader">Wizard: </span>');
+        expect(strict).toContain('<span class="tutorialBreadcrumbsLeader">Tutorial: </span>');
+    });
+
     test('strict: the Song caption is the breadcrumbs and the Section tutorial caption is the header; a blank one stays blank', () => {
         const song = tutorialSong();
         song.sections[2].tutorial = undefined;

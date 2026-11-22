@@ -590,6 +590,13 @@ describe('key-handlers spacebar mapping', () => {
 		const empty = performCmdAction(item, { caption: '   ' });
 		expect(empty.result).toBe('tutorial caption: nothing to set');
 		expect(song.tutorial.caption).toBe('Cap');
+
+		//<> removes the caption; the literal text &lt;> is stored as <>
+		const cleared = performCmdAction(item, { caption: ' <> ' });
+		expect(cleared.result).toBe('tutorial caption removed');
+		expect(song.tutorial).toEqual({ level: 'none' });
+		performCmdAction(item, { caption: '&lt;>' });
+		expect(song.tutorial.caption).toBe('<>');
 	});
 
 	test('presentation submenu actions toggle mode and invoke Display Options save/clear without popping', () => {

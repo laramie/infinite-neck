@@ -91,6 +91,7 @@ import {
 import {
 	TUTORIAL_MODES,
 	applyCaptionToSongTutorial,
+	isTutorialCaptionClearToken,
 	normalizeTutorialMode,
 	tutorialCaptionFromInput
 } from './Tutorial.js';
@@ -1402,13 +1403,18 @@ export function performCmdAction(menuItem, args){
 		}
 		case "setTutorialCaption": {
 			const tutorialSong = getSong();
-			const caption = tutorialCaptionFromInput(argByInputID, getSanitizedPlainText);
-			if (!tutorialSong || !caption) {
+			const clearCaption = isTutorialCaptionClearToken(argByInputID);
+			const caption = clearCaption ? '' : tutorialCaptionFromInput(argByInputID, getSanitizedPlainText);
+			if (!tutorialSong || (!caption && !clearCaption)) {
 				actionResult.result = 'tutorial caption: nothing to set';
 				break;
 			}
 			tutorialSong.tutorial = applyCaptionToSongTutorial(tutorialSong.tutorial, caption);
 			sectionChanged(); //re-renders the Prompt Area, which shows the caption
+			if (clearCaption) {
+				actionResult.result = 'tutorial caption removed';
+				break;
+			}
 			actionResult.result = `tutorial caption set (${caption.length} characters)`; //results are shown as HTML, so the plain-text caption is not echoed
 			break;
 		}
