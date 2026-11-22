@@ -1290,6 +1290,11 @@ export var gMenuFile =    {
               "action": "hideFingering"
             },
             {
+              "caption": "<b>p</b>ractice list",
+              "trigger": "p",
+              "action": "hidePracticeList"
+            },
+            {
               "caption": "<b>q</b>uick menu",
               "trigger": "q",
               "action": "hideQuickMenu"
@@ -1375,6 +1380,11 @@ export var gMenuFile =    {
               "caption": "<b>f</b>ingering",
               "trigger": "f",
               "action": "showFingering"
+            },
+            {
+              "caption": "<b>p</b>ractice list",
+              "trigger": "p",
+              "action": "showPracticeList"
             },
             {
               "caption": "<b>q</b>uick menu",
@@ -1483,6 +1493,11 @@ export var gMenuFile =    {
               "caption": "<b>f</b>ingering",
               "trigger": "f",
               "action": "toggleFingering"
+            },
+            {
+              "caption": "<b>p</b>ractice list",
+              "trigger": "p",
+              "action": "togglePracticeList"
             },
             {
               "caption": "<b>q</b>uick menu",
