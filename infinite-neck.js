@@ -455,6 +455,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			transposeSongKeys,
 			updateFontLabel,
 			updateSectionsStatus,
+			refreshTutorialPrompt,
 			toggleQuickMenu,
 			hideQuickMenu,
 			showQuickMenu
@@ -785,6 +786,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (commitTutorialPromptEdit()){
 			renderTutorialPrompt();
 		}
+	}
+
+	/** Sprint 152 it5 r2: re-renders the Prompt Area now (what a navigation button does), for edits made elsewhere:
+	 *  /vpu, #txtCaption, /sc.  Does nothing before the Song exists or while headless. */
+	export function refreshTutorialPrompt(){
+		const song = getSong();
+		if (!song || song.isHeadless){
+			return;
+		}
+		renderTutorialPrompt();
 	}
 
 	function renderTutorialPrompt(){

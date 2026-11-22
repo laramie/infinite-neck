@@ -67,6 +67,7 @@ export class SectionDrawerBuilder {
             var cap = $( this ).val();
             getCurrentSection().caption = cap;
             InfiniteNeck.updateSectionsStatus();
+            InfiniteNeck.refreshTutorialPrompt();
         });
 
         $("#btnNewSection").click(function() {

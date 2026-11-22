@@ -219,6 +219,7 @@ function transposeSong(...args) { return requireProvider('transposeSong')(...arg
 function transposeSongKeys(...args) { return requireProvider('transposeSongKeys')(...args); }
 function updateFontLabel(...args) { return requireProvider('updateFontLabel')(...args); }
 function updateSectionsStatus(...args) { return requireProvider('updateSectionsStatus')(...args); }
+function refreshTutorialPrompt(...args) { return requireProvider('refreshTutorialPrompt')(...args); }
 function toggleQuickMenu(...args) { return requireProvider('toggleQuickMenu')(...args); }
 function hideQuickMenu(...args) { return requireProvider('hideQuickMenu')(...args); }
 function showQuickMenu(...args) { return requireProvider('showQuickMenu')(...args); }
@@ -894,6 +895,7 @@ export function performCmdAction(menuItem, args){
 		case "setSectionCaption":
 			getCurrentSection().caption = argByInputID;
 			updateSectionsStatus();
+			refreshTutorialPrompt(); //the tutorial caption can show the Section caption
 			break;
 
 		case "setSectionFlats":
@@ -1416,6 +1418,7 @@ export function performCmdAction(menuItem, args){
 				song.tutorial = {};
 			}
 			song.tutorial.useCaptionForSectionCaption = !song.tutorial.useCaptionForSectionCaption;
+			refreshTutorialPrompt();
 			actionResult.result = `useCaptionForSectionCaption: ${getSong().tutorial.useCaptionForSectionCaption}`
 			break;
 		case "saveViewDisplayOptions":   //SAVE Diff

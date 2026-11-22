@@ -255,6 +255,7 @@ describe('key-handlers spacebar mapping', () => {
 	let mockUndoDisplayOptionsOp;
 	let showMessagesChecked;
 	let updateSectionsStatus;
+	let refreshTutorialPrompt;
 
 	beforeEach(() => {
 		song = createSong();
@@ -291,6 +292,7 @@ describe('key-handlers spacebar mapping', () => {
 		showMessagesChecked = false;
 		mockDownloadBackupThenClearGraveyardByType = jest.fn(() => ({ result: 'cleared: SECTION (1)' }));
 		updateSectionsStatus = jest.fn();
+		refreshTutorialPrompt = jest.fn();
 
 		looperState.sections = false;
 		looperState.beats = false;
@@ -362,7 +364,8 @@ describe('key-handlers spacebar mapping', () => {
 			transposeSong: jest.fn(),
 			transposeSongKeys: jest.fn(),
 			updateFontLabel: jest.fn(),
-			updateSectionsStatus
+			updateSectionsStatus,
+			refreshTutorialPrompt
 		});
 
 		performCmdAction({ action: 'mapSpacebar_unsetSpacebarAction' });
@@ -554,6 +557,18 @@ describe('key-handlers spacebar mapping', () => {
 		const tallResult = performCmdAction({ action: 'setMenuPrefs' }, { key: 't' });
 		expect(tallResult.result).toBe('menu prefs: tall');
 		expect(mockSetCmdLineMenuMode).toHaveBeenNthCalledWith(3, 'tall');
+	});
+
+	test('setSectionCaption sets the Section caption and refreshes the status and the tutorial Prompt Area (Sprint 152 it5 r2)', () => {
+		performCmdAction({ action: 'setSectionCaption', input: { id: 'caption' } }, { caption: 'Verse' });
+		expect(song.getCurrentSection().caption).toBe('Verse');
+		expect(updateSectionsStatus).toHaveBeenCalledTimes(1);
+		expect(refreshTutorialPrompt).toHaveBeenCalledTimes(1);
+	});
+
+	test('useCaptionForSectionCaptionAction refreshes the tutorial Prompt Area (Sprint 152 it5 r2)', () => {
+		performCmdAction({ action: 'useCaptionForSectionCaptionAction' });
+		expect(refreshTutorialPrompt).toHaveBeenCalledTimes(1);
 	});
 
 	test('setTutorialCaption writes Song.tutorial.caption (plain text), and the input box is populated from it', () => {
