@@ -36,13 +36,15 @@
 }
 .tutorialPromptEditButton {
     margin-right: 2em;
-    padding: 1em;
+    padding-block: 0.2em;
+    padding-inline: 0.8em;
     border: none;
 }
 .tutorialCaptionLabel {
     display: block;
     margin-right: 2em;
-    padding: 1em;
+    padding-block: 0.2em;
+    padding-inline: 0.8em;
     border: 1px solid black;
     text-align: center;
     background-color: rgb(251, 185, 99);
