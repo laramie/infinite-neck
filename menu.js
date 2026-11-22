@@ -1786,7 +1786,7 @@ export var gMenuFile =    {
               "action": "setTutorialCaption",
               "input": {
                 "type": "input",
-                "caption": "(string)",
+                "caption": "(string|&lt;>)",
                 "default": "tutorialCaptionInput",
                 "datatype": "string",
                 "id": "caption"
