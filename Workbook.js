@@ -3,23 +3,39 @@
 // Sprint 157: the Workbook.  Pure module (no DOM, no jQuery, no browser storage): names, the Workbook file format,
 // and WorkbookModel, which keeps the list in memory and writes through a storage adapter (WorkbookStorage.js).
 //
+// Sprint 158: a Workbook can also be a mounted tutorial course.  File format v2 adds Workbook-level `id`, `version`, `caption`,
+// `description`, `suggestedMount`, and folders that can carry a caption and a description.  Each Song entry carries a derived
+// cache (caption, instruments, SectionCount, tutorial level) that is always recomputed from the Song, never trusted from a file.
+//
 // Paths: a Song is "name.json" (Workbook root) or "folder/name.json".  Folders are one level deep.
 // Order is order of addition: every entry gets a `seq`, folders and Songs share the counter.
 
+import { getSongInstrumentSummaries } from './InstrumentRoleBadges.js';
+
 export const WORKBOOK_FILE_TYPE = 'infinite-neck-workbook';
-export const WORKBOOK_VERSION = 1;
+export const WORKBOOK_VERSION = 2;
+export const SUPPORTED_WORKBOOK_VERSIONS = Object.freeze([1, 2]);
 export const WORKBOOK_LABEL = 'Workbook';
+export const BUILTIN_MOUNT_ID = 'workbook';
+export const WORKBOOK_FILE_SUFFIX = '.workbook.json';
 
 export const MAX_NAME_LENGTH = 64;
 export const MAX_COMMENT_LENGTH = 2000;
+export const MAX_CAPTION_LENGTH = 200;
+export const MAX_WORKBOOK_DESCRIPTION_LENGTH = 20000;
+export const MAX_FOLDER_DESCRIPTION_LENGTH = 5000;
 export const MAX_SONGS = 1000;
 export const MAX_FOLDERS = 200;
+export const MAX_INSTRUMENTS_PER_SONG = 24;
 export const MAX_SONG_TEXT_LENGTH = 5 * 1024 * 1024;
 export const STALE_BACKUP_CHANGES = 5;
 
 const FOLDER_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
 const SONG_BASE_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9_-]|\.(?=[A-Za-z0-9_-]))*$/;
 const RESERVED_PATTERN = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
+export const WORKBOOK_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
+const VERSION_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,31}$/;
+const TUTORIAL_LEVELS = new Set(['none', 'wizard', 'strict']);
 
 //==================== names ====================
 
@@ -71,6 +87,9 @@ export function validateSongBaseName(name) {
     if (!SONG_BASE_PATTERN.test(value)) {
         return describeBadCharacters(value, 'Song');
     }
+    if (/\.workbook$/i.test(value)) {
+        return fail('Song names cannot end in ".workbook": that ending marks a Workbook file.', { fixable: true });
+    }
     if (RESERVED_PATTERN.test(value.split('.')[0])) {
         return fail(`"${value}" is a reserved name on Windows.`);
     }
@@ -89,7 +108,7 @@ export function sanitizeName(raw) {
     if (value.length > MAX_NAME_LENGTH) {
         value = value.slice(0, MAX_NAME_LENGTH).replace(/\.+$/, '');
     }
-    return value;
+    return value.replace(/\.workbook$/i, '-workbook');
 }
 
 /** The default Song name offered by Save to Workbook: the Workbook name it was opened from, else the Library file
@@ -175,9 +194,13 @@ export function describeBackup(meta = {}) {
     return `Backup: last downloaded ${`${meta.lastBackupAt}`.slice(0, 10)}, ${changeText}`;
 }
 
-export function workbookDownloadName(date = new Date()) {
+/** `<id>.workbook.json` for a Workbook that has an id (a course), else `Workbook-YYYYMMDD.workbook.json`. */
+export function workbookDownloadName(date = new Date(), id = '') {
+    if (WORKBOOK_ID_PATTERN.test(`${id || ''}`)) {
+        return `${id}${WORKBOOK_FILE_SUFFIX}`;
+    }
     const iso = date.toISOString().slice(0, 10).replaceAll('-', '');
-    return `Workbook-${iso}.json`;
+    return `Workbook-${iso}${WORKBOOK_FILE_SUFFIX}`;
 }
 
 //==================== file format ====================
@@ -188,6 +211,247 @@ function isPlainObject(value) {
 
 function byteLength(text) {
     return new TextEncoder().encode(text).length;
+}
+
+//---- Sprint 158: Workbook info (id, version, caption, description), folder info, and the derived Song summary ----
+
+/** Plain text on one line, capped.  A caption is escaped wherever it is shown. */
+export function cleanCaption(value) {
+    return typeof value === 'string' ? value.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ').trim().slice(0, MAX_CAPTION_LENGTH) : '';
+}
+
+function cleanDescription(value, max, sanitizeHtml) {
+    if (typeof value !== 'string') {
+        return '';
+    }
+    const text = value.slice(0, max);
+    return sanitizeHtml ? `${sanitizeHtml(text)}`.slice(0, max) : text;
+}
+
+/** @returns {{ok:true, value:string} | {ok:false, error:string}}  An empty id is allowed (a Workbook without one). */
+export function validateWorkbookId(id) {
+    const value = `${id ?? ''}`.trim();
+    if (!value) {
+        return { ok: true, value: '' };
+    }
+    if (!WORKBOOK_ID_PATTERN.test(value)) {
+        return fail(`Workbook id "${value.slice(0, 40)}" is not valid: use letters, digits, - and _, starting with a letter or digit, up to 64 characters.`);
+    }
+    return { ok: true, value };
+}
+
+/** @returns {{ok:true, value:string} | {ok:false, error:string}}  A number or text; an empty version is allowed. */
+export function validateWorkbookVersion(version) {
+    const value = `${version ?? ''}`.trim();
+    if (!value) {
+        return { ok: true, value: '' };
+    }
+    if (!VERSION_PATTERN.test(value)) {
+        return fail(`Workbook version "${value.slice(0, 40)}" is not valid: use letters, digits, . - and _, up to 32 characters.`);
+    }
+    return { ok: true, value };
+}
+
+/** The Workbook-level fields of a file (or of an edit).  Nothing else in the file is trusted as Workbook info.
+ *  @param {{sanitizeHtml?: (html:string) => string}} [options]
+ *  @returns {{ok:true, info:{id,version,caption,description,suggestedMount}} | {ok:false, error:string}} */
+export function normalizeWorkbookInfo(raw = {}, { sanitizeHtml } = {}) {
+    const source = isPlainObject(raw) ? raw : {};
+    const id = validateWorkbookId(source.id);
+    if (!id.ok) {
+        return id;
+    }
+    const version = validateWorkbookVersion(source.version);
+    if (!version.ok) {
+        return version;
+    }
+    return {
+        ok: true,
+        info: {
+            id: id.value,
+            version: version.value,
+            caption: cleanCaption(source.caption),
+            description: cleanDescription(source.description, MAX_WORKBOOK_DESCRIPTION_LENGTH, sanitizeHtml),
+            suggestedMount: source.suggestedMount === 'tutorial' ? 'tutorial' : ''
+        }
+    };
+}
+
+/** What a Workbook row needs to show about a Song without reading its text.  Always computed from the Song itself.
+ *  Instruments use `allowUnknown: true` (the shared rule with the Library build): a tuning without a `fromBaseID` shows as "(unknown)". */
+export function deriveSongSummary(song) {
+    const obj = isPlainObject(song) ? song : {};
+    const level = isPlainObject(obj.tutorial) ? `${obj.tutorial.level ?? ''}`.trim().toLowerCase() : '';
+    return {
+        caption: cleanCaption(isPlainObject(obj.tutorial) ? obj.tutorial.caption : ''),
+        instruments: getSongInstrumentSummaries(obj, { allowUnknown: true }).slice(0, MAX_INSTRUMENTS_PER_SONG),
+        SectionCount: Array.isArray(obj.sections) ? obj.sections.length : 0,
+        tutorial: TUTORIAL_LEVELS.has(level) ? level : ''
+    };
+}
+
+function deriveSummaryFromText(text) {
+    try {
+        return deriveSongSummary(JSON.parse(text));
+    } catch {
+        return deriveSongSummary(null);
+    }
+}
+
+/** A Workbook folder as the file stores it: a bare name (the minimal form) or { name, caption?, description? }. */
+function normalizeFolderItem(item, sanitizeHtml) {
+    if (typeof item === 'string') {
+        return { name: item, caption: '', description: '' };
+    }
+    if (isPlainObject(item)) {
+        return {
+            name: item.name,
+            caption: cleanCaption(item.caption),
+            description: cleanDescription(item.description, MAX_FOLDER_DESCRIPTION_LENGTH, sanitizeHtml)
+        };
+    }
+    return null;
+}
+
+//---- Sprint 158: mounts.  A mount is one Workbook; the built-in one is "workbook". ----
+
+/** A Song Library href that may be fetched as a Workbook: "tutorials/C000-intro.workbook.json".  Relative, no "..", no query. */
+export function isLibraryWorkbookHref(href) {
+    const text = `${href ?? ''}`;
+    return /^[A-Za-z0-9_./-]+\.workbook\.json$/.test(text)
+        && !text.includes('..')
+        && !text.includes('//')
+        && !text.startsWith('/')
+        && !text.startsWith('.');
+}
+
+/** The base of a mount id from a file name: "C100-cowboy-chords.workbook.json" gives "C100-cowboy-chords". */
+export function mountIdFromFileName(fileName) {
+    const cleaned = `${fileName ?? ''}`.split(/[\\/]/).pop()
+        .replace(/\.workbook\.json$/i, '')
+        .replace(/\.json$/i, '')
+        .replace(/[^A-Za-z0-9_-]+/g, '-')
+        .replace(/^[-_]+/, '')
+        .replace(/-+$/, '')
+        .slice(0, 60);
+    return cleaned || 'workbook-file';
+}
+
+/** `base`, or base-2, base-3 ... when taken (not case-sensitive).  The built-in "workbook" is always taken. */
+export function uniqueMountId(base, taken = []) {
+    const used = new Set([BUILTIN_MOUNT_ID, ...taken].map((id) => `${id}`.toLowerCase()));
+    let candidate = base;
+    for (let n = 2; used.has(candidate.toLowerCase()); n++) {
+        candidate = `${base}-${n}`;
+    }
+    return candidate;
+}
+
+/** The IndexedDB name of a mounted Workbook (lower case, so ids that differ only by case cannot clash). */
+export function mountDbName(mountId) {
+    return `infinite-neck-workbook-mount-${`${mountId}`.toLowerCase()}`;
+}
+
+const MOUNT_REGISTRY_KEY = 'infinite-neck:workbook-mounts';
+const LEDGER_KEY_PREFIX = 'infinite-neck:workbook-progress:';
+
+function safeStorageRead(storage, key) {
+    try {
+        const raw = storage?.getItem?.(key);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
+function safeStorageWrite(storage, key, value) {
+    try {
+        if (value === null) {
+            storage?.removeItem?.(key);
+        } else {
+            storage?.setItem?.(key, JSON.stringify(value));
+        }
+        return true;
+    } catch {
+        return false;   // storage full or unavailable: mounts and progress notes are best effort, the Workbook itself is in IndexedDB
+    }
+}
+
+/** The mounts to restore at launch, in display order.  Bad records are dropped. */
+export function readMountRegistry(storage) {
+    const raw = safeStorageRead(storage, MOUNT_REGISTRY_KEY);
+    if (!Array.isArray(raw)) {
+        return [];
+    }
+    const seen = new Set([BUILTIN_MOUNT_ID]);
+    const result = [];
+    for (const item of raw) {
+        const id = `${item?.mountId ?? ''}`;
+        if (WORKBOOK_ID_PATTERN.test(id) && !seen.has(id.toLowerCase())) {
+            seen.add(id.toLowerCase());
+            result.push({ mountId: id });
+        }
+    }
+    return result;
+}
+
+export function writeMountRegistry(storage, mountIds) {
+    return safeStorageWrite(storage, MOUNT_REGISTRY_KEY, mountIds.map((mountId) => ({ mountId })));
+}
+
+/** Progress (Done, Bookmark) and Include in Looping of the mounted Workbook, by Song path, keyed by its mount id.
+ *  Saved when a mount is unmounted or replaced, so that mounting the same course again (a newer version, or later) gets it back. */
+export function readProgressLedger(storage, mountId) {
+    const raw = safeStorageRead(storage, `${LEDGER_KEY_PREFIX}${`${mountId}`.toLowerCase()}`);
+    const result = {};
+    if (!isPlainObject(raw)) {
+        return result;
+    }
+    for (const [path, state] of Object.entries(raw).slice(0, MAX_SONGS)) {
+        if (!isPlainObject(state) || !validateSongPath(path).ok) {
+            continue;
+        }
+        const progress = sanitizeProgress(state.progress);
+        const includeInLooping = sanitizeIncludeInLooping(state.includeInLooping);
+        if (progress || includeInLooping) {
+            result[path] = { progress, includeInLooping };
+        }
+    }
+    return result;
+}
+
+export function writeProgressLedger(storage, mountId, ledger) {
+    return safeStorageWrite(storage, `${LEDGER_KEY_PREFIX}${`${mountId}`.toLowerCase()}`, Object.keys(ledger || {}).length ? ledger : null);
+}
+
+export function clearProgressLedger(storage, mountId) {
+    return safeStorageWrite(storage, `${LEDGER_KEY_PREFIX}${`${mountId}`.toLowerCase()}`, null);
+}
+
+/** @param {Map|Iterable} entries  a WorkbookModel's entries (kind 'song' ones are read) */
+export function ledgerFromEntries(entries) {
+    const ledger = {};
+    for (const entry of entries) {
+        if (entry.kind === 'song' && (entry.progress || entry.includeInLooping)) {
+            ledger[entry.path] = { progress: entry.progress ?? null, includeInLooping: entry.includeInLooping ?? null };
+        }
+    }
+    return ledger;
+}
+
+/** Puts remembered progress into a parsed file (before it is stored).  The file's own progress wins: the ledger only fills
+ *  Songs that have none, and only for paths the new file has.  Returns how many Songs got something. */
+export function applyLedgerToParsed(parsed, ledger = {}) {
+    let applied = 0;
+    for (const song of parsed.songs) {
+        const remembered = ledger[song.path];
+        if (remembered && !song.progress && !song.includeInLooping) {
+            song.progress = remembered.progress;
+            song.includeInLooping = remembered.includeInLooping;
+            applied++;
+        }
+    }
+    return applied;
 }
 
 //---- Sprint 157 it2: per-Song practice state kept in the Workbook (never in the Song) ----
@@ -257,24 +521,50 @@ function makeComparator(sortKey, sortDir, keyOf) {
     };
 }
 
-/** @param {{folders:string[], songs:{path:string, comment:string, source:string, text:string}[], savedAt?:string}} input
- *  Each Song text is parsed into the file as a plain JSON object, so the file is one valid, editable document. */
-export function buildWorkbookFile({ folders = [], songs = [], savedAt = new Date().toISOString() } = {}) {
-    return {
+/** @param {{folders:(string|{name:string,caption?:string,description?:string})[], songs:{path:string, comment:string, source:string, text:string}[], savedAt?:string, info?:object}} input
+ *  Each Song text is parsed into the file as a plain JSON object, so the file is one valid, editable document.
+ *  The Song's `caption`, `instruments` and `SectionCount` are written for people and tools that read the file; opening it ignores them. */
+export function buildWorkbookFile({ folders = [], songs = [], savedAt = new Date().toISOString(), info = {} } = {}) {
+    const file = {
         fileType: WORKBOOK_FILE_TYPE,
         workbookVersion: WORKBOOK_VERSION,
-        savedAt,
-        folders: [...folders],
-        songs: songs.map((entry) => ({
+        savedAt
+    };
+    file.id = info.id || '';
+    file.version = info.version || '';
+    file.caption = info.caption || '';
+    file.description = info.description || '';
+    if (info.suggestedMount) {
+        file.suggestedMount = info.suggestedMount;
+    }
+    file.folders = folders.map((folder) => {
+        const item = normalizeFolderItem(folder);
+        const out = { name: item.name };
+        if (item.caption) {
+            out.caption = item.caption;
+        }
+        if (item.description) {
+            out.description = item.description;
+        }
+        return out;
+    });
+    file.songs = songs.map((entry) => {
+        const song = JSON.parse(entry.text);
+        const summary = deriveSongSummary(song);
+        return {
             path: entry.path,
             comment: entry.comment || '',
             source: entry.source || '',
+            caption: summary.caption,
+            instruments: summary.instruments,
+            SectionCount: summary.SectionCount,
             progress: sanitizeProgress(entry.progress),
             includeInLooping: sanitizeIncludeInLooping(entry.includeInLooping),
             updatedAt: entry.updatedAt || '',
-            song: JSON.parse(entry.text)
-        }))
-    };
+            song
+        };
+    });
+    return file;
 }
 
 export function serializeWorkbookFile(file) {
@@ -282,8 +572,9 @@ export function serializeWorkbookFile(file) {
 }
 
 /** Validates an untrusted Workbook file.  Nothing is opened or run: it only returns data for the model to store.
- *  @returns {{ok:true, folders:string[], songs:{path,comment,source,text}[]} | {ok:false, error:string}} */
-export function parseWorkbookFile(text) {
+ *  Versions 1 and 2 are read.  `sanitizeHtml` (optional) cleans the descriptions; they are sanitized again whenever shown.
+ *  @returns {{ok:true, info:object, folders:{name,caption,description}[], songs:{path,comment,source,text,caption,instruments,SectionCount,tutorial}[]} | {ok:false, error:string}} */
+export function parseWorkbookFile(text, { sanitizeHtml } = {}) {
     let file;
     try {
         file = JSON.parse(text);
@@ -296,8 +587,12 @@ export function parseWorkbookFile(text) {
         }
         return fail(`This is not a Workbook file (fileType "${WORKBOOK_FILE_TYPE}" is missing).`);
     }
-    if (file.workbookVersion !== WORKBOOK_VERSION) {
-        return fail(`Unsupported Workbook version: ${JSON.stringify(file.workbookVersion)}.  This App reads version ${WORKBOOK_VERSION}.`);
+    if (!SUPPORTED_WORKBOOK_VERSIONS.includes(file.workbookVersion)) {
+        return fail(`Unsupported Workbook version: ${JSON.stringify(file.workbookVersion)}.  This App reads versions ${SUPPORTED_WORKBOOK_VERSIONS.join(' and ')}.`);
+    }
+    const normalizedInfo = normalizeWorkbookInfo(file, { sanitizeHtml });
+    if (!normalizedInfo.ok) {
+        return normalizedInfo;
     }
 
     const folderList = file.folders === undefined ? [] : file.folders;
@@ -314,7 +609,7 @@ export function parseWorkbookFile(text) {
 
     const folders = [];
     const folderKeys = new Set();
-    const addFolder = (name) => {
+    const addFolder = (name, caption = '', description = '') => {
         const checked = validateFolderName(name);
         if (!checked.ok || checked.value !== name) {
             return fail(`Folder ${JSON.stringify(name)}: ${checked.ok ? 'name has extra spaces.' : checked.error}`);
@@ -323,11 +618,15 @@ export function parseWorkbookFile(text) {
             return fail(`Folder "${name}" appears twice (names are not case-sensitive).`);
         }
         folderKeys.add(pathKey(name));
-        folders.push(name);
+        folders.push({ name, caption, description });
         return null;
     };
-    for (const name of folderList) {
-        const problem = addFolder(name);
+    for (const item of folderList) {
+        const folder = normalizeFolderItem(item, sanitizeHtml);
+        if (!folder) {
+            return fail('Every item in "folders" must be a name or an object with a name.');
+        }
+        const problem = addFolder(folder.name, folder.caption, folder.description);
         if (problem) {
             return problem;
         }
@@ -372,15 +671,25 @@ export function parseWorkbookFile(text) {
             progress: sanitizeProgress(entry.progress),
             includeInLooping: sanitizeIncludeInLooping(entry.includeInLooping),
             updatedAt: isIsoDate(entry.updatedAt) ? entry.updatedAt : '',
+            ...deriveSongSummary(entry.song),   // caption, instruments, SectionCount, tutorial: never taken from the file's own copies
             text: songText
         });
     }
-    return { ok: true, folders, songs };
+    return { ok: true, info: normalizedInfo.info, folders, songs };
 }
 
 //==================== the model ====================
 
-const DEFAULT_META = Object.freeze({ nextSeq: 1, lastBackupAt: null, changesSinceBackup: 0 });
+const DEFAULT_META = Object.freeze({
+    nextSeq: 1,
+    lastBackupAt: null,
+    changesSinceBackup: 0,
+    id: '',
+    version: '',
+    caption: '',
+    description: '',
+    suggestedMount: ''
+});
 
 export class WorkbookModel {
     /** @param adapter see WorkbookStorage.js: loadIndex, getText, getAllTexts, commit
@@ -445,7 +754,11 @@ export class WorkbookModel {
         const folders = annotate(folderEntries).map((folder) => {
             const folderSongs = annotate(songs.filter((song) => splitPath(song.path).folder === folder.path));
             const newest = folderSongs.reduce((latest, song) => ((song.updatedAt || '') > latest ? song.updatedAt : latest), folder.updatedAt || '');
-            return { name: folder.path, seq: folder.seq, canUp: folder.canUp, canDown: folder.canDown, date: newest, songs: sortSongs(folderSongs) };
+            return {
+                name: folder.path, seq: folder.seq, canUp: folder.canUp, canDown: folder.canDown, date: newest,
+                caption: folder.caption || '', description: folder.description || '',
+                songs: sortSongs(folderSongs)
+            };
         });
         const sortedFolders = key === 'list' ? folders : [...folders].sort(makeComparator(key, dir, (folder) => ({ name: folder.name, date: folder.date, seq: folder.seq })));
         return {
@@ -454,8 +767,15 @@ export class WorkbookModel {
             songCount: songs.length,
             folderCount: folders.length,
             totalBytes: songs.reduce((sum, song) => sum + (song.bytes || 0), 0),
+            info: this.getInfo(),
             meta: { ...this.meta }
         };
+    }
+
+    /** The Workbook-level info: id, version, caption, description, suggestedMount (all text, '' when not set). */
+    getInfo() {
+        const { id, version, caption, description, suggestedMount } = this.meta;
+        return { id: id || '', version: version || '', caption: caption || '', description: description || '', suggestedMount: suggestedMount || '' };
     }
 
     /** The Workbook's remembered practice state for a Song (Tutorial Done / Bookmark, Include in Looping), or null. */
@@ -535,6 +855,7 @@ export class WorkbookModel {
         const entry = {
             path,
             kind: 'song',
+            ...deriveSummaryFromText(text),
             seq: existing ? existing.seq : this.meta.nextSeq,
             comment: comment !== undefined ? `${comment}`.slice(0, MAX_COMMENT_LENGTH) : (existing?.comment || ''),
             source: `${source || existing?.source || ''}`.slice(0, 200),
@@ -565,7 +886,7 @@ export class WorkbookModel {
             return fail(`There are already ${MAX_FOLDERS} folders.`);
         }
         await this._write({
-            putEntries: [{ path: checked.value, kind: 'folder', seq: this.meta.nextSeq, comment: '', source: '', bytes: 0, updatedAt: this.now() }],
+            putEntries: [{ path: checked.value, kind: 'folder', seq: this.meta.nextSeq, caption: '', description: '', comment: '', source: '', bytes: 0, updatedAt: this.now() }],
             metaPatch: { nextSeq: this.meta.nextSeq + 1 }
         });
         return { ok: true, path: checked.value };
@@ -682,6 +1003,42 @@ export class WorkbookModel {
         return { ok: true };
     }
 
+    /** Edits the Workbook-level info.  Patch keys: id, version, caption, description (only the keys given change).
+     *  `sanitizeHtml` (optional) cleans the description. */
+    async setWorkbookInfo(patch = {}, { sanitizeHtml } = {}) {
+        const merged = normalizeWorkbookInfo({ ...this.getInfo(), ...patch }, { sanitizeHtml });
+        if (!merged.ok) {
+            return merged;
+        }
+        const before = JSON.stringify(this.getInfo());
+        const next = { ...merged.info, suggestedMount: this.meta.suggestedMount || '' };
+        if (JSON.stringify(next) === before) {
+            return { ok: true, changed: false };
+        }
+        await this._write({ metaPatch: next });
+        return { ok: true, changed: true };
+    }
+
+    /** Edits a folder's caption and description (only the keys given change). */
+    async setFolderInfo(name, patch = {}, { sanitizeHtml } = {}) {
+        const folder = this.getEntry(name);
+        if (!folder || folder.kind !== 'folder') {
+            return fail(`Folder "${name}" does not exist.`);
+        }
+        const next = { ...folder };
+        if ('caption' in patch) {
+            next.caption = cleanCaption(patch.caption);
+        }
+        if ('description' in patch) {
+            next.description = cleanDescription(patch.description, MAX_FOLDER_DESCRIPTION_LENGTH, sanitizeHtml);
+        }
+        if ((next.caption || '') === (folder.caption || '') && (next.description || '') === (folder.description || '')) {
+            return { ok: true, changed: false };
+        }
+        await this._write({ putEntries: [next] });
+        return { ok: true, changed: true };
+    }
+
     async markBackedUp() {
         await this._write({ metaPatch: { lastBackupAt: this.now(), changesSinceBackup: 0 }, countsAsChange: false });
     }
@@ -692,7 +1049,7 @@ export class WorkbookModel {
         const texts = await this.adapter.getAllTexts();
         const bySeq = (a, b) => a.seq - b.seq;
         const all = [...this.entries.values()];
-        const folders = all.filter((entry) => entry.kind === 'folder').sort(bySeq).map((entry) => entry.path);
+        const folders = all.filter((entry) => entry.kind === 'folder').sort(bySeq).map((entry) => ({ name: entry.path, caption: entry.caption || '', description: entry.description || '' }));
         const songs = all.filter((entry) => entry.kind === 'song').sort(bySeq).map((entry) => ({
             path: entry.path,
             comment: entry.comment,
@@ -702,7 +1059,7 @@ export class WorkbookModel {
             updatedAt: entry.updatedAt || '',
             text: texts.get(entry.path)
         }));
-        const file = buildWorkbookFile({ folders, songs, savedAt: this.now() });
+        const file = buildWorkbookFile({ folders, songs, savedAt: this.now(), info: this.getInfo() });
         return { file, text: serializeWorkbookFile(file) };
     }
 
@@ -712,12 +1069,16 @@ export class WorkbookModel {
         const putEntries = [];
         const putTexts = [];
         const updatedAt = this.now();
-        for (const name of parsed.folders) {
-            putEntries.push({ path: name, kind: 'folder', seq: seq++, comment: '', source: '', bytes: 0, updatedAt });
+        for (const folder of parsed.folders) {
+            putEntries.push({
+                path: folder.name, kind: 'folder', seq: seq++, caption: folder.caption || '', description: folder.description || '',
+                comment: '', source: '', bytes: 0, updatedAt
+            });
         }
         for (const song of parsed.songs) {
             putEntries.push({
                 path: song.path, kind: 'song', seq: seq++, comment: song.comment, source: song.source,
+                caption: song.caption || '', instruments: song.instruments || [], SectionCount: song.SectionCount || 0, tutorial: song.tutorial || '',
                 progress: song.progress ?? null, includeInLooping: song.includeInLooping ?? null,
                 bytes: byteLength(song.text), updatedAt: song.updatedAt || updatedAt
             });
@@ -727,7 +1088,7 @@ export class WorkbookModel {
             clearAll: true,
             putEntries,
             putTexts,
-            metaPatch: { nextSeq: seq, lastBackupAt: updatedAt, changesSinceBackup: 0 },
+            metaPatch: { nextSeq: seq, lastBackupAt: updatedAt, changesSinceBackup: 0, ...(parsed.info || {}) },
             countsAsChange: false
         });
     }
@@ -735,7 +1096,7 @@ export class WorkbookModel {
 
 // Every public change runs after the one before it has been committed.  Two quick changes (a Done tick, then an
 // Include in Looping tick) would otherwise both start from the same in-memory entry, and the second would undo the first.
-for (const name of ['saveSong', 'addFolder', 'renameFolder', 'deleteFolder', 'deleteSong', 'setComment', 'setSongState', 'moveEntry', 'markBackedUp', 'replaceFromParsed']) {
+for (const name of ['saveSong', 'addFolder', 'renameFolder', 'deleteFolder', 'deleteSong', 'setComment', 'setSongState', 'moveEntry', 'setWorkbookInfo', 'setFolderInfo', 'markBackedUp', 'replaceFromParsed']) {
     const original = WorkbookModel.prototype[name];
     WorkbookModel.prototype[name] = function serialized(...args) {
         return this._serial(() => original.apply(this, args));

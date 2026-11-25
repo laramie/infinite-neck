@@ -84,7 +84,8 @@ describe('Workbook names', () => {
     });
 
     test('download name and backup text', () => {
-        expect(workbookDownloadName(new Date('2026-11-18T12:00:00Z'))).toBe('Workbook-20261118.json');
+        expect(workbookDownloadName(new Date('2026-11-18T12:00:00Z'))).toBe('Workbook-20261118.workbook.json');
+        expect(workbookDownloadName(new Date('2026-11-18T12:00:00Z'), 'C100-cowboy')).toBe('C100-cowboy.workbook.json');
         expect(describeBackup({ lastBackupAt: null, changesSinceBackup: 0 })).toBe('Backup: never downloaded');
         expect(describeBackup({ lastBackupAt: null, changesSinceBackup: 2 })).toBe('Backup: never downloaded, 2 changes');
         expect(describeBackup({ lastBackupAt: '2026-11-10T01:00:00.000Z', changesSinceBackup: 1 })).toBe('Backup: last downloaded 2026-11-10, 1 change since');
@@ -200,7 +201,8 @@ describe('Workbook file', () => {
 
         const { file, text } = await model.exportFile();
         expect(file.fileType).toBe(WORKBOOK_FILE_TYPE);
-        expect(file.folders).toEqual(['Empty', 'F']);
+        expect(file.folders.map((folder) => folder.name)).toEqual(['Empty', 'F']);
+        expect(file.workbookVersion).toBe(2);
         expect(file.songs[0]).toMatchObject({ path: 'root.json', comment: 'c1', source: 'practice/root.json' });
         expect(file.songs[0].song).toEqual(JSON.parse(SONG_A));
         expect(text).toBe(serializeWorkbookFile(file));
@@ -228,7 +230,7 @@ describe('Workbook file', () => {
         expect(parseWorkbookFile('not json').error).toMatch(/not valid JSON/);
         expect(parseWorkbookFile(JSON.stringify({ sections: [], myTunings: [] })).error).toMatch(/Song file/);
         expect(parseWorkbookFile('[]').error).toMatch(/not a Workbook/);
-        expect(parseWorkbookFile(wrap({ workbookVersion: 2 })).error).toMatch(/version/);
+        expect(parseWorkbookFile(wrap({ workbookVersion: 3 })).error).toMatch(/version/);
     });
 
     test('validates untrusted names, duplicates, shapes and limits', () => {
@@ -251,7 +253,7 @@ describe('Workbook file', () => {
             songs: [{ path: 'Week1/a.json', comment: 'x'.repeat(5000), source: 5, song: { sections: [] } }]
         }));
         expect(parsed.ok).toBe(true);
-        expect(parsed.folders).toEqual(['Week1']);
+        expect(parsed.folders.map((folder) => folder.name)).toEqual(['Week1']);
         expect(parsed.songs[0].comment.length).toBe(2000);
         expect(parsed.songs[0].source).toBe('');
     });
@@ -317,7 +319,7 @@ describe('Workbook list order and display sorting (Iteration 2)', () => {
         model.getView({ sortKey: 'alpha', sortDir: -1 });
         expect(names(model.getView().rootSongs)).toEqual(['zed.json', 'Apple.json', 'mid.json']);
         const { file } = await model.exportFile();
-        expect(file.folders).toEqual(['beta', 'Alpha', 'gamma']);
+        expect(file.folders.map((folder) => folder.name)).toEqual(['beta', 'Alpha', 'gamma']);
         expect(file.songs.map((s) => s.path)).toEqual(['zed.json', 'Apple.json', 'mid.json', 'beta/b2.json', 'beta/B1.json', 'gamma/g1.json']);
     });
 

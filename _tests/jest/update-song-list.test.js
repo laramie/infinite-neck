@@ -44,7 +44,8 @@ describe('update-song-list helpers', () => {
         expect(extractInstrumentSummaries(songJson, warnings)).toEqual([
             { fromBaseID: 'P46', wiring: 'Listener', visible: true },
             { fromBaseID: 'S6', wiring: 'Main', visible: false },
-            { fromBaseID: 'S6', wiring: 'Observer', visible: true }
+            { fromBaseID: 'S6', wiring: 'Observer', visible: true },
+            { fromBaseID: '(unknown)', wiring: 'Main', visible: true }
         ]);
         expect(warnings).toEqual(expect.arrayContaining([
             expect.stringContaining('tblP46_1 has stale tuning.visible; ignoring it and using noteTablesLayout'),

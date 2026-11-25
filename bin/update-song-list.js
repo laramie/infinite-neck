@@ -5,9 +5,12 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 import {
     classifyInstrumentRole,
+    escapeHtml,
+    getSongInstrumentSummaries,
     normalizeInstrumentSummary,
     tableIDForBaseID
 } from '../InstrumentRoleBadges.js';
+import { parseWorkbookFile } from '../Workbook.js';
 
 const DEFAULT_SONG_LIST = 'songs/song-list.json';
 
@@ -117,30 +120,54 @@ export function classifyWiring(tableID, wirings = []) {
     return classifyInstrumentRole(tableID, wirings);
 }
 
+/** The Song's instrument badges: the same function, and the same rule, as the App uses for a Workbook entry
+ *  (Sprint 158 it2): layout order, and a tuning with no fromBaseID shows as "(unknown)" instead of being skipped. */
 export function extractInstrumentSummaries(songJson = {}, warnings = []) {
-    const visibilityByTableID = buildVisibilityMap(songJson, warnings);
-    const tunings = Array.isArray(songJson.myTunings) ? songJson.myTunings : [];
-    const result = [];
-
-    tunings.forEach((tuning) => {
+    buildVisibilityMap(songJson, warnings);   // only for its warnings (stale tuning.visible, missing layout entry)
+    (Array.isArray(songJson.myTunings) ? songJson.myTunings : []).forEach((tuning) => {
         const baseID = `${tuning?.baseID || ''}`.trim();
         const tableID = tableIDForBaseID(baseID);
-        if (!baseID || !tableID) {
-            return;
+        if (baseID && tableID && !`${tuning?.fromBaseID || ''}`.trim()) {
+            pushMessage(warnings, `UserLog SongListUpdater warning: ${songJson.songName || '<unnamed song>'} ${tableID} has no fromBaseID; showing it as "(unknown)".`);
         }
-        const fromBaseID = `${tuning?.fromBaseID || ''}`.trim();
-        if (!fromBaseID) {
-            pushMessage(warnings, `UserLog SongListUpdater warning: ${songJson.songName || '<unnamed song>'} ${tableID} has no fromBaseID; skipping instrument badge.`);
-            return;
-        }
-        result.push({
-            fromBaseID,
-            wiring: classifyWiring(tableID, songJson.wirings),
-            visible: visibilityByTableID.get(tableID) !== false
+    });
+    return getSongInstrumentSummaries(songJson, { allowUnknown: true });
+}
+
+/** The entry of a .workbook.json file of the Library: its counts, and the union of the instruments of all its Songs.
+ *  Returns { entry } or { error }. */
+export function buildWorkbookListEntry(entry, workbookJson) {
+    const parsed = parseWorkbookFile(JSON.stringify(workbookJson));
+    if (!parsed.ok) {
+        return { error: parsed.error };
+    }
+    const union = new Map();
+    parsed.songs.forEach((song) => {
+        (song.instruments || []).forEach((instrument) => {
+            const key = `${instrument.fromBaseID}|${instrument.wiring}`;
+            const seen = union.get(key);
+            if (!seen) {
+                union.set(key, { ...instrument });
+            } else if (instrument.visible) {
+                seen.visible = true;
+            }
         });
     });
-
-    return result;
+    const lessonCount = new Set(parsed.songs.filter((song) => song.path.includes('/')).map((song) => song.path.split('/')[0])).size;
+    const label = parsed.info.caption || parsed.info.id || (entry.href || '').split('/').pop();
+    const next = {
+        ...entry,
+        kind: 'workbook',
+        description: `<b>${escapeHtml(label)}</b>: ${parsed.songs.length} song${parsed.songs.length === 1 ? '' : 's'} in ${lessonCount} lesson${lessonCount === 1 ? '' : 's'}`,
+        workbookId: parsed.info.id,
+        workbookVersion: parsed.info.version,
+        songCount: parsed.songs.length,
+        lessonCount,
+        instruments: [...union.values()]
+    };
+    delete next.tutorial;
+    delete next.SectionCount;
+    return { entry: next };
 }
 
 export function extractTutorialSummary(songJson = {}) {
@@ -184,6 +211,15 @@ export function updateSongListData(songListJson = {}, options = {}) {
         } catch (error) {
             errors.push(`Unable to read ${href}: ${error.message}`);
             return entry;
+        }
+
+        if (entry.kind === 'workbook') {
+            const built = buildWorkbookListEntry(entry, songJson);
+            if (built.error) {
+                errors.push(`Unable to use ${href}: ${built.error}`);
+                return entry;
+            }
+            return built.entry;
         }
 
         const instruments = extractInstrumentSummaries(songJson, warnings);

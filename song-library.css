@@ -8,7 +8,8 @@
 
 
 #divSongList,
-#divWorkbook {
+#divWorkbook,
+.workbookMountBlock {
     background-color: white;
     display: block;
     width: 95%;
@@ -18,7 +19,8 @@
 }
 
 #divSongList a,
-#divWorkbook a {
+#divWorkbook a,
+.workbookMountBlock a {
     display: inline-block;
     padding: 0.2em 0;
 }
@@ -306,6 +308,95 @@
 
 .workbookSaveForm {
     margin-top: 0.4em;
+}
+
+/* Sprint 158: mounted Tutorials, Workbook / folder info, Library Workbook rows */
+#divWorkbookMountsStatus:empty,
+#divWorkbookMounts:empty {
+    display: none;
+}
+
+#divWorkbookMountsStatus {
+    width: 95%;
+    margin-top: 0.2em;
+}
+
+.workbookMountsHint {
+    font-size: 90%;
+    color: #444;
+}
+
+.workbookMountControls {
+    margin: 0.2em 0 0.4em 1.2em;
+}
+
+.workbookMountControls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.workbookInfoBlock {
+    margin: 0 0 1em 3.4em;
+    padding: 0.3em 0.6em;
+    border-left: 4px solid #663300;
+    background-color: #fff8ee;
+}
+
+.workbookInfoCaptionText {
+    font-weight: bold;
+}
+
+.workbookFolderInfo {
+    margin-left: 2.4em;
+}
+
+.workbookInfoEditor {
+    margin: 0 0 1em 3.4em;
+    padding: 0.4em 0.6em;
+    border: 1px solid #663300;
+    background-color: #ffe9cf;
+}
+
+.workbookEditRow {
+    display: block;
+    margin: 0.3em 0;
+}
+
+.workbookEditDescription {
+    display: block;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.workbookEditHelp {
+    font-size: 85%;
+    color: #444;
+    margin: 0.2em 0 0.4em 0;
+}
+
+.workbookFileName,
+.workbookFolderName {
+    font-weight: normal;
+    font-size: 85%;
+    color: #555;
+    margin-left: 0.4em;
+}
+
+.workbookRowBadges {
+    margin-bottom: 0.2em;
+}
+
+.songLibraryWorkbookRow .songLibraryCellLink {
+    flex-wrap: wrap;
+}
+
+.songLibraryWorkbookRow button {
+    cursor: pointer;
+}
+
+.workbookOpenTutorialLabel {
+    display: inline-block;
+    margin-top: 0.3em;
 }
 
 @media (max-width: 900px) {

@@ -141,7 +141,7 @@ function createSongList(theSongListFile, relDir = null) {
         if (!songEntry || typeof songEntry !== 'object' || Array.isArray(songEntry)) {
             return null;
         }
-        if (typeof songEntry.href !== 'string') {
+        if (typeof songEntry.href !== 'string' || songEntry.kind === 'workbook') {   // Sprint 158: a .workbook.json is not a Song (see song-list-workbook.test.js)
             return null;
         }
         const href = songEntry.href.trim();

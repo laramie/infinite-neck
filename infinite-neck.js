@@ -130,7 +130,7 @@ import { installFillPageSelects } from './fillPageSelectBuilder.js';
 
 import { installLoopTimingModeControls } from './looper-timing-select-handler.js';
 import * as SongLibrary from './SongLibrary.js';
-import { getWorkbookSongState, initializeWorkbook, updateWorkbookSongState } from './WorkbookUI.js';
+import { downloadLibraryWorkbook, getWorkbookSongState, initializeWorkbook, mountLibraryWorkbook, updateWorkbookSongState } from './WorkbookUI.js';
 import { WORKBOOK_FILE_TYPE } from './Workbook.js';
 import { escapeHtml, renderSongInstrumentBadges } from './InstrumentRoleBadges.js';
 
@@ -226,7 +226,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	let gCurrentSongLibraryHref = '';
 	let gPendingSongLibraryHref = '';
 	let gCurrentWorkbookPath = '';   //Sprint 157: the Workbook path the current Song was opened from or saved to, else ''
+	let gCurrentWorkbookMount = '';  //Sprint 158: which mounted Workbook that path is in ("workbook" is the built-in one), else ''
 	let gPendingWorkbookPath = '';
+	let gPendingWorkbookMount = '';
 	let chartInputController = null;
 	export function getSong(){
 		return Globals.getSong();
@@ -621,7 +623,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		tutorialRuntimeState.progress = null;
 		//Sprint 157 it2: a Workbook Song remembers its Include in Looping in the Workbook (not in the Song); every other Song starts with all Sections.
 		tutorialRuntimeState.includeInLoopingSectionIndexes = gCurrentWorkbookPath
-			? (getWorkbookSongState(gCurrentWorkbookPath)?.includeInLooping ?? null)
+			? (getWorkbookSongState(gCurrentWorkbookMount, gCurrentWorkbookPath)?.includeInLooping ?? null)
 			: null;
 		tutorialRuntimeState.lessonSectionListOpen = false;
 		tutorialRuntimeState.hamburgerControlsOpen = true;
@@ -638,7 +640,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			if (gCurrentWorkbookPath){
 				//Sprint 157 it2: a Workbook Song reads Bookmark and Done from the Workbook only (never from Browser Storage).
 				const sectionCount = Array.isArray(song?.sections) ? song.sections.length : 0;
-				tutorialRuntimeState.progress = normalizeTutorialProgress(getWorkbookSongState(gCurrentWorkbookPath)?.progress ?? {}, sectionCount);
+				tutorialRuntimeState.progress = normalizeTutorialProgress(getWorkbookSongState(gCurrentWorkbookMount, gCurrentWorkbookPath)?.progress ?? {}, sectionCount);
 				return tutorialRuntimeState.progress;
 			}
 			const storageEntry = getTutorialStorageEntry(song);
@@ -661,7 +663,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (gCurrentWorkbookPath){
 			const sectionCount = Array.isArray(getSong()?.sections) ? getSong().sections.length : 0;
 			tutorialRuntimeState.progress = normalizeTutorialProgress(progress, sectionCount);
-			void updateWorkbookSongState(gCurrentWorkbookPath, { progress: tutorialRuntimeState.progress });
+			void updateWorkbookSongState(gCurrentWorkbookMount, gCurrentWorkbookPath, { progress: tutorialRuntimeState.progress });
 			return tutorialRuntimeState.progress;
 		}
 		tutorialRuntimeState.progress = writeTutorialProgressToStorage(getTutorialStorageEntry(), progress);
@@ -671,7 +673,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	/** Sprint 157 it2: Include in Looping is remembered only for a Workbook Song, and in the Workbook. */
 	function saveIncludeInLoopingToWorkbook(){
 		if (gCurrentWorkbookPath){
-			void updateWorkbookSongState(gCurrentWorkbookPath, { includeInLooping: tutorialRuntimeState.includeInLoopingSectionIndexes });
+			void updateWorkbookSongState(gCurrentWorkbookMount, gCurrentWorkbookPath, { includeInLooping: tutorialRuntimeState.includeInLoopingSectionIndexes });
 		}
 	}
 
@@ -2392,7 +2394,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function openSong(str, append=false){
 		var jsonObj = JSON.parse(str);
 		if (jsonObj?.fileType === WORKBOOK_FILE_TYPE){
-			alert('This file is a Workbook, not a Song.  Use "Open Workbook" in the Workbook section of the File page.');
+			alert('This file is a Workbook, not a Song.  Use "Open Workbook" (your own Workbook) or "Open Tutorial" (a Tutorial to mount next to it) in the Workbook section of the File page.');
 			return;
 		}
 		const importOptions = normalizeOpenSongImportOptions(append);
@@ -2401,7 +2403,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			gCurrentSongLibraryHref = gPendingSongLibraryHref;
 			gPendingSongLibraryHref = '';
 			gCurrentWorkbookPath = gPendingWorkbookPath;
+			gCurrentWorkbookMount = gPendingWorkbookPath ? gPendingWorkbookMount : '';
 			gPendingWorkbookPath = '';
+			gPendingWorkbookMount = '';
 		}
 		if (Globals.getSong() && hasSelectiveImport){
 			let newSong = new Song(jsonObj);
@@ -2690,17 +2694,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	/** Sprint 157: opens a Song from the Workbook (text comes from the Workbook store).  Same "did you save?" guard as loadSong().
 	 *  Returns false when the User cancels. */
-	export function openWorkbookSong(path, text){
+	export function openWorkbookSong(mountId, path, text){
 		if (!getSong().isEmpty(getSong().getCurrentSection())){
 			if (!confirm("Did you save the current Song with File | Download or Save to Workbook already? ( 'Cancel' cancels, otherwise 'OK' forgets the current song and opens the new one.")){
 				return false;
 			}
 		}
 		gPendingWorkbookPath = path;
+		gPendingWorkbookMount = mountId;
 		try {
 			openSong(text);
 		} finally {
 			gPendingWorkbookPath = '';
+			gPendingWorkbookMount = '';
 		}
 		return true;
 	}
@@ -5115,7 +5121,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			applyInstrumentPrefs,
 			clearInstrumentPrefs,
 			copyApprovedPattern,
-			copySongLink
+			copySongLink,
+			mountLibraryWorkbook,
+			downloadLibraryWorkbook
 		};
 
 		// Sprint 152 it3: blur does not bubble, focusout does.  Losing focus for any reason (a click elsewhere, Esc, looping) accepts the edit.
@@ -5350,7 +5358,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getLibraryHref: () => gCurrentSongLibraryHref,
 			getFilenameBoxValue: () => $("#txtFilename").val(),
 			getCurrentWorkbookPath: () => gCurrentWorkbookPath,
-			setCurrentWorkbookPath: (path) => { gCurrentWorkbookPath = path || ''; },
+			getCurrentWorkbookMount: () => gCurrentWorkbookMount,
+			setCurrentWorkbook: (mountId, path) => {
+				gCurrentWorkbookPath = path || '';
+				gCurrentWorkbookMount = path ? (mountId || '') : '';
+			},
 			openWorkbookSong
 		});
 		setLoopSectionFilter((candidateIndex, context = {}) => filterIncludedLoopSectionIndex(candidateIndex, {

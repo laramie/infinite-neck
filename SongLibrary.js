@@ -50,12 +50,14 @@ function parseSongEntry(songEntry) {
 	const instruments = Array.isArray(songEntry.instruments) ? songEntry.instruments : [];
 	const tutorial = typeof songEntry.tutorial === 'string' ? songEntry.tutorial.trim() : '';
 	const SectionCount = Number.parseInt(songEntry.SectionCount, 10);
+	const isWorkbook = songEntry.kind === 'workbook' && /\.workbook\.json$/i.test(href);
 	return {
 		href,
 		description,
 		instruments,
 		tutorial,
-		SectionCount: Number.isInteger(SectionCount) ? SectionCount : undefined
+		SectionCount: Number.isInteger(SectionCount) ? SectionCount : undefined,
+		kind: isWorkbook ? 'workbook' : 'song'
 	};
 }
 
@@ -91,6 +93,7 @@ export function normalizeSongListEntries(songListJson) {
 				instruments: parsed.instruments.map(normalizeInstrumentSummary).filter(Boolean),
 				tutorial: parsed.tutorial,
 				SectionCount: parsed.SectionCount,
+				kind: parsed.kind || 'song',
 				directory: getDirectoryFromHref(href),
 				filename
 			};
@@ -163,9 +166,8 @@ function renderIntroRow(introHtml) {
 	return "<div class='songLibraryRow songLibraryIntroRow'><div class='songLibraryCell songLibraryCellIntro'>" + introHtml + '</div></div>';
 }
 
-function renderTutorialProgressBadge(song) {
-	const progress = readTutorialProgressFromStorage(song);
-	const badge = getProgressBadgeModel(song, progress);
+/** The progress badge for a getProgressBadgeModel() result (null gives ''). Also used by the Workbook rows. */
+export function renderProgressBadgeHtml(badge) {
 	if (!badge) {
 		return '';
 	}
@@ -175,7 +177,31 @@ function renderTutorialProgressBadge(song) {
 	return `<span class='songLibraryTutorialProgressBadge'>${doneText}${countText}${bookmarkText}</span>`;
 }
 
+function renderTutorialProgressBadge(song) {
+	return renderProgressBadgeHtml(getProgressBadgeModel(song, readTutorialProgressFromStorage(song)));
+}
+
+function renderWorkbookRow(song) {
+	const argsAttr = escapeAttribute(JSON.stringify([song.href]));
+	const safeLinkText = escapeHtml(song.filename || song.href);
+	const instrumentBadges = renderInstrumentBadges(song.instruments || []);
+	return (
+		"<div class='songLibraryRow songLibraryWorkbookRow'>"
+			+ "<div class='songLibraryCell songLibraryCellLink'>"
+			+ '<span>' + safeLinkText + '</span>'
+			+ "<button type='button' data-action='mountLibraryWorkbook' data-action-args='" + argsAttr + "' title='Mount this Workbook as a Tutorial next to your Workbook'>Mount as Tutorial</button>"
+			+ "<button type='button' data-action='downloadLibraryWorkbook' data-action-args='" + argsAttr + "' title='Download this .workbook.json file, to open later with Open Tutorial'>Download</button>"
+			+ '</div>'
+			+ "<div class='songLibraryCell songLibraryCellDescription'>" + (song.description || '') + '</div>'
+			+ "<div class='songLibraryCell songLibraryCellInstruments'>" + instrumentBadges + '</div>'
+			+ '</div>'
+	);
+}
+
 function renderSongRow(song) {
+	if (song.kind === 'workbook') {
+		return renderWorkbookRow(song);
+	}
 	const argsAttr = escapeAttribute(JSON.stringify([song.href]));
 	const copyArgsAttr = escapeAttribute(JSON.stringify([song.href]));
 	const safeLinkText = escapeHtml(song.filename || song.href);

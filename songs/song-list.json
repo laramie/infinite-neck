@@ -473,14 +473,14 @@
           "visible": false
         },
         {
-          "fromBaseID": "P4C",
-          "wiring": "Listener",
-          "visible": true
-        },
-        {
           "fromBaseID": "P4",
           "wiring": "Listener",
           "visible": false
+        },
+        {
+          "fromBaseID": "P4C",
+          "wiring": "Listener",
+          "visible": true
         },
         {
           "fromBaseID": "4thsCalculator",
@@ -803,15 +803,20 @@
       ]
     },
     {
-      "href": "tutorials/C000-intro/L001-one-string-intro/L001-1.json",
-      "description": "One-string Intro",
+      "href": "tutorials/C000-intro.workbook.json",
+      "kind": "workbook",
+      "description": "<b>Introduction to stringed instruments</b>: 1 song in 1 lesson",
       "instruments": [
         {
           "fromBaseID": "S1",
           "wiring": "Main",
           "visible": true
         }
-      ]
+      ],
+      "workbookId": "C000-intro",
+      "workbookVersion": "1",
+      "songCount": 1,
+      "lessonCount": 1
     }
   ],
   "directoryIntros": [
@@ -837,7 +842,7 @@
     },
     {
       "introFor": "tutorials",
-      "html": "Tutorial Songs"
+      "html": "Tutorial courses.  <b>Mount as Tutorial</b> adds the course next to your Workbook, where you can work through its lessons; your Done and Bookmark marks are kept in this browser.  <b>Download</b> saves the course file, to mount later with <i>Open Tutorial</i> on the File page."
     }
   ],
   "ignoredSongs": [],

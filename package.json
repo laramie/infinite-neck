@@ -11,6 +11,8 @@
     "update:help": "node bin/help.html-updater.js",
     "update:song-list": "node bin/update-song-list.js",
     "build:tutorial-prompts": "node bin/build-tutorial-prompts.js",
+    "build:tutorial-workbooks": "node bin/build-tutorial-workbook.js --all songs/tutorials",
+    "check:tutorial-workbooks": "node bin/build-tutorial-workbook.js --all songs/tutorials --check",
     "check:song-list": "node bin/update-song-list.js --check",
     "strip:tuning-visible": "node bin/strip-tuning-visible.js",
     "check:tuning-visible": "node bin/strip-tuning-visible.js --check",

@@ -130,6 +130,16 @@ export function isAllowedInfoAnchorHref(href = '') {
 		|| isAllowedInfoQueryHref(normalized);
 }
 
+// Sprint 158: a Workbook (or tutorial course) description may link to a Song in the SAME Workbook with #open=<path>.json
+// (one optional folder level), and to the help page.  It may not run macros or plugin raises, and it has no Library or external links.
+const OPEN_FRAGMENT_PATTERN = /^#open=(?:[A-Za-z0-9][A-Za-z0-9_-]*\/)?[A-Za-z0-9][A-Za-z0-9._-]*\.json$/;
+
+export function isAllowedWorkbookAnchorHref(href = '') {
+	const normalized = String(href || '').trim();
+	return (OPEN_FRAGMENT_PATTERN.test(normalized) && !normalized.includes('..'))
+		|| HELP_PAGE_FRAGMENT_PATTERN.test(normalized);
+}
+
 function filterWhitelistClasses(classAttribute) {
 	const seen = new Set();
 	String(classAttribute || '').split(/\s+/).forEach((className) => {
@@ -144,7 +154,7 @@ export function isWhitelistedClass(className) {
 	return WHITELIST_CLASSES.has(String(className || ''));
 }
 
-function sanitizeNode(node, doc) {
+function sanitizeNode(node, doc, isHrefAllowed = isAllowedInfoAnchorHref) {
 	if (!node) {
 		return null;
 	}
@@ -169,7 +179,7 @@ function sanitizeNode(node, doc) {
 	const cleanNode = doc.createElement(tagName);
 	if (tagName === 'a') {
 		const href = node.getAttribute('href') || '';
-		if (!isAllowedInfoAnchorHref(href)) {
+		if (!isHrefAllowed(href)) {
 			return null;
 		}
 		cleanNode.setAttribute('href', href.trim());
@@ -179,7 +189,7 @@ function sanitizeNode(node, doc) {
 		cleanNode.setAttribute('class', keptClasses.join(' '));
 	}
 	Array.from(node.childNodes).forEach((childNode) => {
-		const cleanChild = sanitizeNode(childNode, doc);
+		const cleanChild = sanitizeNode(childNode, doc, isHrefAllowed);
 		if (cleanChild) {
 			cleanNode.appendChild(cleanChild);
 		}
@@ -192,7 +202,7 @@ export function trimTrailingWhitespacePreserveLeading(rawHtml = '') {
 	return String(rawHtml ?? '').replace(/[\s\u00a0]+$/u, '');
 }
 
-export function sanitizeHtmlFragment(rawHtml = '') {
+export function sanitizeHtmlFragment(rawHtml = '', isHrefAllowed = isAllowedInfoAnchorHref) {
 	const trimmed = trimTrailingWhitespacePreserveLeading(rawHtml);
 	if (/^[\s\u00a0]*$/u.test(trimmed)) {
 		return '';
@@ -207,7 +217,7 @@ export function sanitizeHtmlFragment(rawHtml = '') {
 
 	const container = document.createElement('div');
 	Array.from(template.content.childNodes).forEach((childNode) => {
-		const cleanChild = sanitizeNode(childNode, document);
+		const cleanChild = sanitizeNode(childNode, document, isHrefAllowed);
 		if (cleanChild) {
 			container.appendChild(cleanChild);
 		}
@@ -226,6 +236,20 @@ export function getSanitizedInfo(rawHtml = '') {
 
 export function getSanitizedSongWidgets(rawHtml = '') {
 	return getSanitizedInfo(rawHtml);
+}
+
+/** Sprint 158: sanitizes a Workbook / Lesson description (untrusted: it can come from a downloaded file).
+ *  Same tags and classes as the Info page, but links are limited to isAllowedWorkbookAnchorHref().
+ *  Unlike sanitizeHtmlFragment(), this FAILS CLOSED without a DOM (Node, Jest): the text is escaped, never passed through. */
+export function getSanitizedWorkbookDescription(rawHtml = '') {
+	const text = String(rawHtml ?? '');
+	if (/^[\s\u00a0]*$/u.test(text)) {
+		return '';
+	}
+	if (typeof document === 'undefined') {
+		return text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+	}
+	return sanitizeHtmlFragment(text, isAllowedWorkbookAnchorHref);
 }
 
 const PLAIN_TEXT_ENTITIES = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&nbsp;': ' ' };

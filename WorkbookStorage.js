@@ -28,6 +28,7 @@ export function createMemoryAdapter() {
 
     return {
         persistent: false,
+        close() {},
         async loadIndex() {
             return { entries: [...entries.values()].map(clone), meta: clone(meta) || {} };
         },
@@ -83,8 +84,29 @@ function transactionDone(tx) {
     });
 }
 
-/** IndexedDB adapter.  Rejects when the database cannot be opened (private modes, blocked storage). */
-export function openIndexedDbAdapter(factory = globalThis.indexedDB) {
+/** Deletes a whole database (an unmounted Workbook).  Resolves when it is gone or was never there. */
+export function deleteIndexedDb(dbName, factory = globalThis.indexedDB) {
+    return new Promise((resolve, reject) => {
+        if (!factory) {
+            resolve();
+            return;
+        }
+        let request;
+        try {
+            request = factory.deleteDatabase(dbName);
+        } catch (error) {
+            reject(error);
+            return;
+        }
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error || new Error('Could not delete the Workbook database.'));
+        request.onblocked = () => resolve();   // another tab still holds it open; it is deleted when that tab lets go
+    });
+}
+
+/** IndexedDB adapter.  Rejects when the database cannot be opened (private modes, blocked storage).
+ *  Sprint 158: `dbName` lets each mounted Workbook have its own database. */
+export function openIndexedDbAdapter(factory = globalThis.indexedDB, dbName = WORKBOOK_DB_NAME) {
     return new Promise((resolve, reject) => {
         if (!factory) {
             reject(new Error('IndexedDB is not available.'));
@@ -92,7 +114,7 @@ export function openIndexedDbAdapter(factory = globalThis.indexedDB) {
         }
         let request;
         try {
-            request = factory.open(WORKBOOK_DB_NAME, WORKBOOK_DB_VERSION);
+            request = factory.open(dbName, WORKBOOK_DB_VERSION);
         } catch (error) {
             reject(error);
             return;
@@ -110,6 +132,9 @@ export function openIndexedDbAdapter(factory = globalThis.indexedDB) {
             db.onversionchange = () => db.close();
             resolve({
                 persistent: true,
+                close() {
+                    db.close();
+                },
                 async loadIndex() {
                     const tx = db.transaction(['entries', 'meta'], 'readonly');
                     const entriesRequest = tx.objectStore('entries').getAll();

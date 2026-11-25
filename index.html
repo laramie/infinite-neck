@@ -145,11 +145,15 @@
                                     name="cbnAppendGraveyardRecords" value="1">Append Graveyard records
                             </label>
                         </nobr>
+                        <br>
+                        <label class="workbookOpenTutorialLabel" for="workbookMountFileInput">&nbsp;&nbsp;Open Tutorial (a .workbook.json to mount next to your Workbook):&nbsp;<input id="workbookMountFileInput" type="file" accept=".json,application/json"></label>
                     </div>
                     <br>
                     <div class="sectionPageControlsGroup">
                         <div id="divSongList"></div>
                         <div id="divWorkbook"></div>
+                        <div id="divWorkbookMountsStatus"></div>
+                        <div id="divWorkbookMounts"></div>
                     </div>
                     <br>
                     <div class="sectionPageControlsGroup">
@@ -165,6 +169,7 @@
                         <button id="btnSaveToWorkbook" type="button">Save to Workbook...</button>
                         <span id="spanWorkbookSaveMessage" class="workbookMessageInfo"></span>
                         <div id="divSaveToWorkbook" class="workbookSaveForm" style="display: none;">
+                            <label for="selWorkbookMount">Workbook:&nbsp;<select id="selWorkbookMount"></select></label>
                             <label for="selWorkbookFolder">Folder:&nbsp;<select id="selWorkbookFolder"></select></label>
                             <label for="txtWorkbookSongName">Name:&nbsp;<input type="text" id="txtWorkbookSongName" size="36" maxlength="70"></label><span style="color: green;">.json</span>
                             <button id="btnWorkbookSaveConfirm" type="button">Save</button>
